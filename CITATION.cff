@@ -2,8 +2,7 @@ cff-version: 1.2.0
 message: "If you use this cookbook in research or teaching, please cite it as below."
 title: "photonics-layout-cookbook: silicon-photonics layout recipes with gdsfactory and a bridge to Ansys Lumerical"
 authors:
-  - family-names: Wang
-    given-names: YongJie
+  - name: "LumaTrace"
 version: 0.1.0
 date-released: 2026-10-23
 license: MIT

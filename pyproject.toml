@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Learn photonic chip layout with gdsfactory on open foundry PDKs — from microring modulators to MZI meshes and optical I/O — with a seamless GDS → Ansys Lumerical (FDTD / MODE / CHARGE) bridge."
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "YongJie Wang" }]
+authors = [{ name = "LumaTrace" }]
 requires-python = ">=3.12,<3.14"
 keywords = ["silicon photonics", "gdsfactory", "layout", "PDK", "Lumerical", "microring modulator", "CHARGE"]
 classifiers = [
