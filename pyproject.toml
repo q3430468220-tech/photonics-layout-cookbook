@@ -1,0 +1,70 @@
+[project]
+name = "photonics-layout-cookbook"
+version = "0.1.0"
+description = "Silicon-photonics layout recipes with gdsfactory: open foundry PDKs, device -> module -> architecture, and a seamless bridge to Ansys Lumerical (FDTD / MODE / CHARGE)."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "YongJie Wang" }]
+requires-python = ">=3.12,<3.14"
+keywords = ["silicon photonics", "gdsfactory", "layout", "PDK", "Lumerical", "microring modulator", "CHARGE"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+]
+dependencies = [
+    # Layout engine. cspdk pins the gdsfactory release it was tested with, so we
+    # only set a floor here and let the resolver pick the matching version.
+    "gdsfactory>=9.0",
+    # First open foundry PDK: CORNERSTONE (Southampton) for gdsfactory.
+    # Both the 1.x (cspdk.si220.cband) and 2.x (cspdk.si220) layouts are supported.
+    "cspdk>=1.4",
+    # GDS reading for the Lumerical bridge (installed with gdsfactory/kfactory anyway).
+    "klayout>=0.28",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "matplotlib>=3.8",
+]
+
+[project.urls]
+Homepage = "https://github.com/q3430468220-tech/photonics-layout-cookbook"
+Issues = "https://github.com/q3430468220-tech/photonics-layout-cookbook/issues"
+
+[project.scripts]
+photonics-cookbook = "photonics_cookbook.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "pre-commit>=3.7",
+]
+
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/photonics_cookbook"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["build"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = [
+    "E501",    # long lines are fine in docstrings / generated script templates
+    "RUF001",  # allow unicode (e.g. Greek letters, Chinese) in strings
+    "RUF002",
+    "RUF003",
+]

@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: uv sync
+      - name: Lint
+        run: uv run ruff check .
+      - name: Tests
+        run: uv run pytest
+      - name: Examples (layout + Lumerical export, no Lumerical needed)
+        run: |
+          uv run python examples/00_getting_started/00_check_environment.py
+          uv run python examples/01_devices/01_ring_modulator/01_layout.py
+          uv run python examples/01_devices/01_ring_modulator/02_export_to_lumerical.py
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        with:
+          name: build-outputs
+          path: build/

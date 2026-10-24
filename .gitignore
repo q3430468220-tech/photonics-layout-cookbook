@@ -1,0 +1,33 @@
+# --- Python / uv ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+dist/
+
+# --- generated layout & simulation outputs ---
+build/
+*.gds
+*.oas
+!docs/**/*.gds
+*.lyrdb
+
+# --- Ansys Lumerical ---
+*.fsp
+*.lms
+*.ldev
+*.icp
+*.log
+*.mat
+*_p0.log
+~#*
+*.lbr.bak
+
+# --- editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

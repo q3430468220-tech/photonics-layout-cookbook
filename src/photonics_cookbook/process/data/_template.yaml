@@ -1,0 +1,47 @@
+# =============================================================================
+#  TEMPLATE -- copy to <foundry>_<platform>.yaml and fill in.
+#  Files starting with "_" are not listed by `photonics-cookbook processes`.
+#
+#  Fastest start for a gdsfactory PDK you have installed:
+#     uv run photonics-cookbook bootstrap-process <python.module.of.pdk> -o my_process.yaml
+#  then complete the roles, Lumerical material names and doping below.
+#
+#  Units: um, cm^-3.  z = 0 at the BOX / device-layer interface.
+#  Write exponents with a sign: 1.0e+18 (YAML 1.1).
+# =============================================================================
+name: my_foundry_platform
+foundry: My Foundry
+platform: 220 nm SOI
+version: "design manual vX.Y"
+wavelength_um: 1.55
+references:
+  - https://example.com/design-manual
+
+upstream_pdk:                 # optional: gdsfactory PDK to cross-check layers against
+  python_package: my_pdk
+  modules: [my_pdk]
+  layer_names: {core: WG, slab: SLAB}
+
+materials:
+  si:   {kind: semiconductor, optical: "Si (Silicon) - Palik", charge: "Si (Silicon)",       mesh_order: 2}
+  sio2: {kind: dielectric,    optical: "SiO2 (Glass) - Palik", charge: "SiO2 (Glass) - Sze", mesh_order: 3}
+  al:   {kind: conductor,     optical: "Al (Aluminium) - CRC", charge: "Al (Aluminium) - CRC", mesh_order: 1}
+
+background:
+  - {name: box,  material: sio2, zmin: -2.0, zmax: 0.0}
+  - {name: clad, material: sio2, zmin:  0.0, zmax: 2.0}
+
+layers:
+  # --- mandatory -------------------------------------------------------------
+  core:  {gds: [1, 0],  kind: structure, material: si, zmin: 0.0, thickness: 0.22}
+  # --- optional (recipes skip roles that are missing) --------------------------
+  slab:  {gds: [2, 0],  kind: structure, material: si, zmin: 0.0, thickness: 0.09}
+  n:     {gds: [20, 0], kind: doping, dopant: n, concentration: 5.0e+17}
+  p:     {gds: [21, 0], kind: doping, dopant: p, concentration: 7.0e+17}
+  np:    {gds: [22, 0], kind: doping, dopant: n, concentration: 3.0e+18}
+  pp:    {gds: [23, 0], kind: doping, dopant: p, concentration: 2.0e+18}
+  npp:   {gds: [24, 0], kind: doping, dopant: n, concentration: 1.0e+20}
+  ppp:   {gds: [25, 0], kind: doping, dopant: p, concentration: 1.0e+20}
+  via:   {gds: [40, 0], kind: via,   material: al, zmin: 0.09, thickness: 1.0}
+  metal: {gds: [41, 0], kind: metal, material: al, zmin: 1.09, thickness: 0.7}
+  label: {gds: [100, 0], kind: annotation}
