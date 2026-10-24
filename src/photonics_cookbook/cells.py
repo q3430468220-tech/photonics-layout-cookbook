@@ -1,12 +1,17 @@
-"""gdsfactory cells built from the cookbook's device recipes.
+"""gdsfactory cells of the cookbook (registered in the cookbook PDK).
 
-This is the only module (besides the examples) that imports gdsfactory. Every cell
-follows the same three steps -- worth reading if you are new to gdsfactory:
+Two ways of building a cell are shown here -- both are standard gdsfactory:
 
-1. load the foundry *process* (role -> GDS layer, see ``photonics_cookbook.process``),
-2. compute role-tagged polygons + ports (pure Python, ``photonics_cookbook.devices``),
-3. put them into a ``gf.Component``: ``add_polygon`` per layer, ``add_port`` per port,
-   and store simulation hints in ``component.info``.
+``ring_modulator`` -- *polygons*
+    1. load the foundry process (role -> GDS layer, see ``photonics_cookbook.process``),
+    2. compute role-tagged polygons + ports in pure Python (``photonics_cookbook.devices``),
+    3. put them into a ``gf.Component`` with ``add_polygon`` / ``add_port`` and store
+       simulation hints in ``component.info``.
+
+``straight_pn`` -- *cross-section extrusion*
+    take the PDK cross-section ``"rib_pn"`` (a list of Sections: core, slab, implants,
+    vias, metal) and extrude it along a path. Every waveguide-like device (phase
+    shifters, routing, heaters ...) is built this way in gdsfactory.
 
 ``@gf.cell`` gives each parameter set a unique, cached cell name -- so calling the
 function twice with the same arguments returns the same cell, and different
@@ -16,59 +21,23 @@ arguments never collide in the GDS.
 from __future__ import annotations
 
 import json
-import warnings
 from typing import Any
 
 import gdsfactory as gf
 import numpy as np
+from gdsfactory.typings import CrossSectionSpec
 
 from photonics_cookbook.devices.ring_modulator import ring_modulator_geometry
 from photonics_cookbook.geometry import Geometry
+from photonics_cookbook.pdk import activate_pdk, ensure_pdk
 from photonics_cookbook.process import Process, load_process
 
 PORT_WIDTH_GRID_UM = 0.002  # kfactory: port widths must be an even number of 1 nm database units
 
+#: Cells registered in the cookbook PDK (see photonics_cookbook.pdk.builder).
+CELLS = ("ring_modulator", "straight_pn")
 
-def activate_pdk(process: str | Process = "cornerstone_si220_active", force: bool = False):
-    """Activate the foundry PDK that belongs to ``process`` (e.g. cspdk for CORNERSTONE).
-
-    Since gdsfactory 9.29 no PDK is active by default, and layer look-ups in
-    ``add_polygon`` / ``add_port`` go through the active PDK -- so *always activate a
-    PDK before drawing*. If a PDK is already active it is kept (switching PDKs
-    invalidates cells that were already built) unless ``force`` is set.
-    Returns the active PDK.
-    """
-    if not force:
-        try:
-            pdk = gf.get_active_pdk()
-            if pdk is not None:
-                return pdk
-        except Exception:
-            pass
-    proc = process if isinstance(process, Process) else load_process(process)
-    modules = list(proc.upstream_pdk.get("modules") or [])
-    errors = []
-    if modules:
-        from photonics_cookbook.process.upstream import import_pdk
-
-        try:
-            _, pdk = import_pdk(modules)
-            pdk.activate()
-            return pdk
-        except Exception as err:
-            errors.append(str(err))
-    try:  # last resort: gdsfactory's generic PDK
-        from gdsfactory.gpdk import PDK as GENERIC
-
-        GENERIC.activate()
-        warnings.warn(
-            f"upstream PDK for {proc.name!r} not available ({'; '.join(errors) or 'none declared'}); "
-            "activated the gdsfactory generic PDK instead",
-            stacklevel=2,
-        )
-        return GENERIC
-    except Exception as err:
-        raise RuntimeError(f"could not activate any PDK: {errors + [str(err)]}") from err
+__all__ = ["CELLS", "activate_pdk", "ensure_pdk", "geometry_to_component", "ring_modulator", "straight_pn"]
 
 
 def _plain(value: Any) -> Any:
@@ -84,6 +53,15 @@ def _plain(value: Any) -> Any:
 
 def _snap(v: float, grid: float) -> float:
     return round(round(float(v) / grid) * grid, 6)
+
+
+def _set_info(c: gf.Component, info: dict[str, Any]) -> None:
+    for key, value in info.items():
+        value = _plain(value)
+        try:
+            c.info[key] = value
+        except Exception:  # older kfactory Info only takes flat values -> store JSON text
+            c.info[key] = json.dumps(value)
 
 
 def geometry_to_component(geom: Geometry, process: Process, c: gf.Component | None = None) -> gf.Component:
@@ -106,12 +84,7 @@ def geometry_to_component(geom: Geometry, process: Process, c: gf.Component | No
             layer=process.gds(p.role),
             port_type=p.port_type,
         )
-    for key, value in {**geom.info, "process": process.name}.items():
-        value = _plain(value)
-        try:
-            c.info[key] = value
-        except Exception:  # older kfactory Info only takes flat values -> store JSON text
-            c.info[key] = json.dumps(value)
+    _set_info(c, {**geom.info, "process": process.name})
     return c
 
 
@@ -140,7 +113,7 @@ def ring_modulator(
     ``e2`` signal pad (inner N side).
     """
     proc = load_process(process)
-    activate_pdk(proc)  # no-op if a PDK is already active
+    ensure_pdk(proc)  # activates the cookbook PDK only if no PDK is active
     geom = ring_modulator_geometry(
         proc,
         radius=radius,
@@ -157,4 +130,53 @@ def ring_modulator(
     )
     c = gf.Component()
     geometry_to_component(geom, proc, c)
+    return c
+
+
+@gf.cell
+def straight_pn(
+    length: float = 500.0,
+    cross_section: CrossSectionSpec = "rib_pn",
+    process: str = "cornerstone_si220_active",
+) -> gf.Component:
+    """Straight lateral-PN rib waveguide: the cross-section ``rib_pn`` extruded over ``length``.
+
+    The building block of a PN depletion phase shifter (Ansys example: 500 um).
+    Ports: ``o1``/``o2`` optical; ``n1``/``n2`` (N-side metal) and ``p1``/``p2``
+    (P-side metal) electrical. ``info["lumerical"]`` holds a cut across the middle
+    for the CHARGE / FDE export.
+
+    Needs a PDK that defines ``rib_pn`` (the cookbook PDK); pass a CrossSection
+    object to use any other profile.
+    """
+    proc = load_process(process)
+    pdk = ensure_pdk(proc)
+    if isinstance(cross_section, str) and cross_section not in pdk.cross_sections:
+        raise ValueError(
+            f"cross-section {cross_section!r} is not defined in the active PDK {pdk.name!r}. "
+            f"Activate the cookbook PDK first: photonics_cookbook.pdk.activate_pdk({proc.name!r})"
+        )
+    xs = gf.get_cross_section(cross_section)
+    c = gf.path.straight(length=length).extrude(xs)
+
+    half = max(abs(s.offset) + s.width / 2 for s in xs.sections) + 1.0
+    half = float(np.ceil(half * 1000) / 1000)
+    x_cut = length / 2
+    _set_info(
+        c,
+        {
+            "length": length,
+            "process": proc.name,
+            "contacts": {"anode": "ppp", "cathode": "npp", "anode_ports": ["p1", "p2"], "cathode_ports": ["n1", "n2"]},
+            "lumerical": {
+                "cut_p0_um": [x_cut, -half],
+                "cut_p1_um": [x_cut, half],
+                "cut_origin_um": [x_cut, 0.0],
+                "bend_radius_um": None,
+                "norm_length_um": length,
+                "anode_role": "ppp" if proc.has("ppp") else "p",
+                "cathode_role": "npp" if proc.has("npp") else "n",
+            },
+        },
+    )
     return c

@@ -8,6 +8,9 @@ What it shows
     2. how to *activate* a foundry PDK and list its cells and layers,
     3. that the cookbook's process file agrees with the PDK's layer numbers,
     4. a first layout: a PDK cell written to GDS (open it in KLayout).
+
+Next: 01_define_your_pdk.py -- how such a PDK is defined, and how the cookbook
+extends cspdk with the active layers (implants, vias, metal).
 """
 
 from __future__ import annotations
@@ -47,7 +50,8 @@ def main() -> None:
     print("\n== 3. cookbook process vs PDK layers")
     _, checks = check_against_pdk(proc)
     for c in checks:
-        print(f"   [{'ok' if c.ok else 'MISMATCH'}] {c.role:<7} {c.process_gds} <-> {c.pdk_name} {c.pdk_gds}")
+        print(f"   [{c.status:<9}] {c.role:<13} {c.name:<10} {c.process_gds}")
+    print("   ('extension' = not in cspdk, added by the cookbook PDK in the next lesson)")
 
     print("\n== 4. first layout from a PDK cell")
     name = next((n for n in ("straight", "ring_single", "mmi1x2") if n in pdk.cells), cells[0])

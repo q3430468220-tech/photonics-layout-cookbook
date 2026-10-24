@@ -27,6 +27,15 @@ def test_shipped_processes_load():
         load_process(n)
 
 
+def test_cornerstone_pdk_names(proc):
+    names = {role: lay.name for role, lay in proc.layers.items()}
+    assert names["core"] == "WG" and names["slab"] == "SLAB" and names["shallow_etch"] == "GRA"
+    assert names["npp"] == "NPP" and names["ppp"] == "PPP" and names["via"] == "VIA"
+    assert names["outline"] == "FLOORPLAN" and names["label"] == "LBL"
+    assert proc.by_name("NPP").gds == (11, 0)
+    assert proc.layer("npp").color and proc.layer("npp").hatch
+
+
 def test_cornerstone_layers(proc):
     assert proc.gds("core") == (3, 0)
     assert proc.gds("slab") == (5, 0)
@@ -52,6 +61,13 @@ layers:
 """
 
 
+def test_default_and_legacy_names(tmp_path):
+    p = _write(tmp_path, BASE + "  npp: {gds: [2, 0], kind: doping, dopant: n, concentration: 1.0e+20}\n")
+    assert load_process(p).layer("npp").name == "NPP"
+    legacy = BASE.replace("name: t\n", "name: t\nupstream_pdk: {layer_names: {core: WG}}\n")
+    assert load_process(_write(tmp_path, legacy)).layer("core").name == "WG"
+
+
 def test_yaml_exponent_without_sign_is_accepted(tmp_path):
     p = _write(tmp_path, BASE + "  n: {gds: [2, 0], kind: doping, dopant: n, concentration: 1.0e18}\n")
     assert load_process(p).layer("n").concentration == pytest.approx(1e18)
@@ -65,6 +81,8 @@ def test_yaml_exponent_without_sign_is_accepted(tmp_path):
         ("  n: {gds: [2, 0], kind: doping, dopant: n, concentration: 1.0e+24}\n", r"cm\^-3"),
         ("  m: {gds: [3, 0], kind: metal, material: al, zmin: 1, thickness: 1}\n", "undefined material"),
         ("  m: {gds: [3, 0], kind: magic}\n", "kind must be"),
+        ("  m: {name: CORE, gds: [3, 0], kind: annotation}\n", "PDK name"),
+        ("  m: {name: 1BAD, gds: [3, 0], kind: annotation}\n", "identifier"),
     ],
 )
 def test_bad_process_files(tmp_path, extra, msg):

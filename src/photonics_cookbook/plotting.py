@@ -62,7 +62,7 @@ def plot_geometry(
             ax.add_patch(
                 Polygon(pts, closed=True, facecolor=fc, alpha=alpha, hatch=hatch, edgecolor=fc, lw=0.4)
             )
-        label = role if process is None else f"{role} ({process.layer(role).gds_str})"
+        label = role if process is None else f"{process.layer(role).name} {process.layer(role).gds_str} ({role})"
         handles.append(Patch(facecolor=fc, alpha=alpha, hatch=hatch, edgecolor=fc, label=label))
     if show_ports:
         for p in geom.ports:

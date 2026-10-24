@@ -1,6 +1,13 @@
 # Roadmap
 
-The cookbook grows like a course: single devices first, then the functional modules built from them, then complete chip architectures. Each recipe is "done" when it has a gdsfactory cell, a process-independent geometry with unit tests, a Lumerical export that runs on the reference Lumerical version, and a short README that explains the design choices and gives a few exercises.
+The cookbook grows like a course: the foundations first (environment and how a gdsfactory PDK describes a foundry), then single devices, the functional modules built from them, and complete chip architectures. Each recipe is "done" when it has a gdsfactory cell registered in the cookbook PDK, a process-independent geometry with unit tests, a Lumerical export that runs on the reference Lumerical version, and a short README that explains the design choices and gives a few exercises.
+
+## Level 0: foundations
+
+| # | lesson | content | status |
+|---|---|---|---|
+| 00 | Environment and an open foundry PDK | uv environment, activating `cspdk`, listing its cells, layers and cross-sections, first GDS | v0.1 |
+| 01 | Defining a gdsfactory PDK | LayerMap, LayerStack, LayerViews, cross-sections, cells and `gf.Pdk` written by hand; then the cookbook PDK generated from the process YAML and extending `cspdk` through `base_pdks`; KLayout technology export ([docs/pdk-tutorial.md](docs/pdk-tutorial.md)) | v0.1 |
 
 ## Level 1: single devices
 
@@ -9,7 +16,7 @@ Single devices follow an official Ansys Lumerical application example wherever o
 | # | device | Ansys reference example | Lumerical chain | status |
 |---|---|---|---|---|
 | 01 | Microring modulator, lateral PN, GSG pads | [Ring Modulator](https://optics.ansys.com/hc/en-us/articles/360042322794-Ring-Modulator) | CHARGE 2D → FDE (bent) → FDTD coupler → INTERCONNECT / CML | v0.1: layout, CHARGE, FDE, 3D FDTD export |
-| 02 | PN depletion phase shifter | [PN depletion phase shifter](https://optics.ansys.com/hc/en-us/articles/360042328674-PN-depletion-phase-shifter) | CHARGE → FDE → CML Compiler | planned |
+| 02 | PN depletion phase shifter | [PN depletion phase shifter](https://optics.ansys.com/hc/en-us/articles/360042328674-PN-depletion-phase-shifter) | CHARGE → FDE → CML Compiler | in progress: `rib_pn` cross-section and `straight_pn` cell with CHARGE/FDE export; pads and example folder next |
 | 03 | Travelling-wave MZM (GSG/GS CPW electrodes) | [Travelling Wave MZM](https://optics.ansys.com/hc/en-us/articles/360042328774-Traveling-Wave-Mach-Zehnder-Modulator), [TW with distributed electrodes](https://optics.ansys.com/hc/en-us/articles/360055852653-Traveling-wave-modulators-with-distributed-electrodes) | CHARGE → FDE, electrode RF model → INTERCONNECT | planned |
 | 04 | PIN phase shifter / PIN MZM | [PIN Mach-Zehnder modulator](https://optics.ansys.com/hc/en-us/articles/360042327854-PIN-Mach-Zehnder-modulator) | CHARGE (forward bias) → FDE | planned |
 | 05 | Thermo-optic phase shifter (doped-Si and metal heaters) | Thermal switch example | HEAT → FDE | planned |
@@ -39,6 +46,7 @@ Single devices follow an official Ansys Lumerical application example wherever o
 | item | status |
 |---|---|
 | CORNERSTONE 220 nm SOI active (`cspdk` passives + public implant / via / metal layers) | v0.1 |
+| gdsfactory PDK generated from each process file (LayerMap, LayerStack, LayerViews, `rib_pn`, cells), extending the upstream PDK | v0.1 |
 | SiEPIC EBeam (`ubcpdk`), gdsfactory generic PDK | planned |
 | VTT 3 µm SOI, Luxtelligence thin-film LiNbO3, CORNERSTONE SiN / Ge-on-Si | planned |
 | INTERCONNECT netlist export from `component.get_netlist()` | planned |

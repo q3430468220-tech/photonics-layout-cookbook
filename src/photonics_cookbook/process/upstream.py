@@ -74,28 +74,58 @@ def import_pdk(modules: Iterable[str]) -> tuple[str, Any]:
 
 @dataclass
 class LayerCheck:
+    """One process layer compared with the upstream PDK's LayerMap.
+
+    status:
+        ``ok``         same name, same GDS numbers
+        ``mismatch``   same name, different GDS numbers  -> fix the YAML (or the PDK moved)
+        ``renamed``    GDS numbers exist upstream under another name -> use that name
+        ``extension``  not in the upstream PDK: added by the cookbook PDK (e.g. implants)
+    """
+
     role: str
+    name: str
     process_gds: tuple[int, int]
-    pdk_name: str
-    pdk_gds: tuple[int, int] | None
+    status: str
+    pdk_name: str | None = None
+    pdk_gds: tuple[int, int] | None = None
 
     @property
     def ok(self) -> bool:
-        return self.pdk_gds == self.process_gds
+        return self.status in ("ok", "extension")
+
+
+def _enum_members(layers: Any) -> dict[str, tuple[int, int]]:
+    out: dict[str, tuple[int, int]] = {}
+    members = getattr(layers, "__members__", None)
+    items = members.items() if members else ((a, getattr(layers, a, None)) for a in dir(layers) if not a.startswith("_"))
+    for name, spec in items:
+        gds = layer_tuple(spec)
+        if gds is not None:
+            out[str(name)] = gds
+    return out
 
 
 def check_against_pdk(process: Process) -> tuple[str, list[LayerCheck]]:
-    """Compare ``process`` with its ``upstream_pdk``; returns (module, checks)."""
+    """Compare every process layer with the upstream PDK's LayerMap; returns (module, checks)."""
     up = process.upstream_pdk
     if not up:
         raise ProcessError(f"process {process.name!r} declares no upstream_pdk")
     modules = up.get("modules") or [up.get("module") or up.get("python_package")]
     module, pdk = import_pdk(modules)
-    layers = getattr(pdk, "layers", None)
+    upstream = _enum_members(getattr(pdk, "layers", None))
+    by_gds: dict[tuple[int, int], str] = {}
+    for name, gds in upstream.items():
+        by_gds.setdefault(gds, name)
     checks = []
-    for role, name in (up.get("layer_names") or {}).items():
-        spec = getattr(layers, name, None) if layers is not None else None
-        checks.append(LayerCheck(role, process.gds(role), name, layer_tuple(spec)))
+    for role, lay in process.layers.items():
+        if lay.name in upstream:
+            status = "ok" if upstream[lay.name] == lay.gds else "mismatch"
+            checks.append(LayerCheck(role, lay.name, lay.gds, status, lay.name, upstream[lay.name]))
+        elif lay.gds in by_gds:
+            checks.append(LayerCheck(role, lay.name, lay.gds, "renamed", by_gds[lay.gds], lay.gds))
+        else:
+            checks.append(LayerCheck(role, lay.name, lay.gds, "extension"))
     return module, checks
 
 
@@ -109,12 +139,14 @@ def bootstrap_from_pdk(module: str) -> dict[str, Any]:
     layers: dict[str, Any] = {}
     referenced: set[tuple[int, int]] = set()
     for name, lvl in levels.items():
-        gds = layer_tuple(getattr(lvl, "layer", None))
+        logical = getattr(lvl, "layer", None)
+        gds = layer_tuple(logical)
+        pdk_name = getattr(getattr(logical, "layer", None), "name", None)
         mat = str(getattr(lvl, "material", "") or "").lower() or "TODO"
         thickness = getattr(lvl, "thickness", None)
         zmin = getattr(lvl, "zmin", None)
         role = name.lower()
-        entry: dict[str, Any] = {}
+        entry: dict[str, Any] = {"name": str(pdk_name) if pdk_name else name.upper()}
         if gds is None:
             entry["gds"] = "TODO  # derived / boolean layer in the PDK -- draw-able layer?"
         else:
@@ -131,14 +163,11 @@ def bootstrap_from_pdk(module: str) -> dict[str, Any]:
         used_materials.add(mat)
 
     # PDK layers that the stack does not reference: often implants, labels, DRC helpers.
-    enum = getattr(pdk, "layers", None)
-    for attr in dir(enum) if enum is not None else []:
-        if attr.startswith("_"):
-            continue
-        gds = layer_tuple(getattr(enum, attr, None))
-        if gds is None or gds in referenced:
+    for attr, gds in _enum_members(getattr(pdk, "layers", None)).items():
+        if gds in referenced:
             continue
         layers[attr.lower()] = {
+            "name": attr,
             "gds": list(gds),
             "kind": "annotation",
             "description": "TODO: not in the LayerStack -- implant? label? set kind/dopant/concentration",

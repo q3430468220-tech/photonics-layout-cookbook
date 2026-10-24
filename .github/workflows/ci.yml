@@ -27,6 +27,9 @@ jobs:
       - name: Examples (layout + Lumerical export, no Lumerical needed)
         run: |
           uv run python examples/00_getting_started/00_check_environment.py
+          uv run python examples/00_getting_started/01_define_your_pdk.py
+          uv run photonics-cookbook check-pdk cornerstone_si220_active
+          uv run photonics-cookbook pdk-info
           uv run python examples/01_devices/01_ring_modulator/01_layout.py
           uv run python examples/01_devices/01_ring_modulator/02_export_to_lumerical.py
       - uses: actions/upload-artifact@v4

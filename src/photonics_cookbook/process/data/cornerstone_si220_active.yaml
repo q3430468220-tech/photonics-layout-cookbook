@@ -4,10 +4,17 @@
 #  Process adapter for photonics-layout-cookbook.  Lengths in um, doping in cm^-3,
 #  z = 0 at the BOX / device-silicon interface.
 #
+#  This one file feeds both halves of the cookbook:
+#   * photonics_cookbook.pdk builds a gdsfactory PDK from it (LayerMap, LayerStack,
+#     LayerViews, rib_pn cross-section, cells) on top of gdsfactory's open `cspdk`,
+#   * photonics_cookbook.lumerical uses the stack, Lumerical material names and
+#     doses to write FDTD / MODE / CHARGE scripts.
+#
 #  Where the numbers come from (all public, no NDA):
-#   * Passive layers WG 3/0, SLAB 5/0, HEATER 39/0, PAD 41/0, LBL 100/0 are the
-#     ones used by gdsfactory's open CORNERSTONE PDK `cspdk` (module cspdk.si220).
-#     `photonics-cookbook check-pdk cornerstone_si220_active` compares them at runtime.
+#   * Passive layers WG 3/0, SLAB 5/0, GRA 6/0, HEATER 39/0, PAD 41/0, FLOORPLAN 99/0
+#     and LBL 100/0 -- names and numbers -- are those of gdsfactory's open CORNERSTONE
+#     PDK `cspdk` (module cspdk.si220).  `photonics-cookbook check-pdk
+#     cornerstone_si220_active` compares them at runtime.
 #   * Implant / via / electrode layers and doping levels: CORNERSTONE 220 nm SOI
 #     active MPW design guidelines (47th call, Oct 2025) and the public layer
 #     table of the Luceda CORNERSTONE PDK (P 7/0, N 8/0, P++ 9/0, N++ 11/0).
@@ -31,16 +38,11 @@ references:
   - https://academy.lucedaphotonics.com/pdks/cornerstone/cornerstone
   - https://europractice-ic.com/technologies/photonics/cornerstone/
 
-# Upstream gdsfactory PDK used for passive cells and for the layer cross-check.
+# Upstream gdsfactory PDK. The cookbook PDK *extends* it: all its layers, cells,
+# cross-sections and models are kept, and the layers below are added on top.
 upstream_pdk:
   python_package: cspdk
   modules: [cspdk.si220, cspdk.si220.cband]   # >=2.0 first, <2.0 fallback
-  layer_names:                                 # role -> name in the PDK's LAYER enum
-    core: WG
-    slab: SLAB
-    heater: HEATER
-    pad: PAD
-    label: LBL
 
 # -----------------------------------------------------------------------------
 # Materials: key -> names in the Lumerical databases
@@ -72,11 +74,15 @@ background:
   - {name: clad,      material: sio2, zmin:  0.0, zmax:  1.22}  # 1 um SiO2 above the 220 nm Si
 
 # -----------------------------------------------------------------------------
-# Drawn layers.  role -> GDS layer + physics.
-#   kind: structure | etch | doping | via | metal | annotation
+# Drawn layers.  role -> PDK layer name + GDS layer + physics + display style.
+#   role : what the device recipes draw on (core, slab, n, ppp, via ...)
+#   name : layer name in the gdsfactory PDK and in KLayout (keep upstream names!)
+#   kind : structure | etch | doping | via | metal | annotation
+#   color / hatch : KLayout display (only needed for layers the upstream PDK lacks)
 # -----------------------------------------------------------------------------
 layers:
   core:
+    name: WG
     gds: [3, 0]
     kind: structure
     material: si
@@ -86,6 +92,7 @@ layers:
       Silicon Etch 2, light field (dark-field twin: 4/0). Drawn shapes keep the
       full 220 nm; undrawn silicon is etched by 120 nm.
   slab:
+    name: SLAB
     gds: [5, 0]
     kind: structure
     material: si
@@ -96,52 +103,72 @@ layers:
       waveguides, doped regions); everything not covered by core or slab is etched
       down to the BOX.
   shallow_etch:
+    name: GRA
     gds: [6, 0]
     kind: etch
     material: sio2
     depth: 0.07
     description: Silicon Etch 1, dark field, 70 nm (grating couplers).
   p:
+    name: P
     gds: [7, 0]
     kind: doping
     dopant: p
     concentration: 5.7e+17
+    color: "#a1d99b"
+    hatch: right-hatched
     description: Low-dose p implant (dose option A ~5.7e17; option B ~2.25e17 cm^-3).
   n:
+    name: N
     gds: [8, 0]
     kind: doping
     dopant: n
     concentration: 1.1e+18
+    color: "#fdae6b"
+    hatch: left-hatched
     description: Low-dose n implant (~1.1e18 cm^-3).
   ppp:
+    name: PPP
     gds: [9, 0]
     kind: doping
     dopant: p
     concentration: 1.0e+20
+    color: "#238b45"
+    hatch: strongly right-hatched dense
     description: High-dose p implant (P++, ~1e20 cm^-3) for ohmic contacts.
   npp:
+    name: NPP
     gds: [11, 0]
     kind: doping
     dopant: n
     concentration: 1.0e+20
+    color: "#d94801"
+    hatch: strongly left-hatched dense
     description: High-dose n implant (N++, ~1e20 cm^-3) for ohmic contacts.
   via:
+    name: VIA
     gds: [12, 0]
     kind: via
     material: al
     zmin: 0.10
     thickness: 1.12
+    color: "#252525"
+    hatch: cross-hatched
     description: >
       Contact via to silicon; must be enclosed by P++ (9/0) or N++ (11/0). zmin is
       the slab top; the CHARGE exporter lands each via on the local silicon top.
   metal:
+    name: METAL
     gds: [13, 0]
     kind: metal
     material: al
     zmin: 1.22
     thickness: 1.6
+    color: "#969696"
+    hatch: dotted
     description: Electrode metal (~1.6 um stack) on the 1 um top cladding; also used for pads.
   heater:
+    name: HEATER
     gds: [39, 0]
     kind: metal
     material: al
@@ -152,6 +179,7 @@ layers:
       may be drawn in the electrode layer instead -- check the guidelines. Material
       and thickness here are placeholders.
   pad:
+    name: PAD
     gds: [41, 0]
     kind: metal
     material: al
@@ -159,10 +187,12 @@ layers:
     thickness: 1.0
     description: Heater contact pads used by cspdk (passive calls). Placeholder stack.
   outline:
+    name: FLOORPLAN
     gds: [99, 0]
     kind: annotation
     description: Cell outline.
   label:
+    name: LBL
     gds: [100, 0]
     kind: annotation
     description: Text labels (not fabricated).

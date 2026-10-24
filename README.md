@@ -1,6 +1,6 @@
 # photonics-layout-cookbook
 
-**Silicon-photonics layout recipes with [gdsfactory](https://github.com/gdsfactory/gdsfactory) — on open foundry PDKs, from single devices to full architectures, with a seamless bridge into Ansys Lumerical.**
+**Silicon-photonics layout recipes with [gdsfactory](https://github.com/gdsfactory/gdsfactory) — on open foundry PDKs, from defining the PDK to single devices and full architectures, with a seamless bridge into Ansys Lumerical.**
 
 [English](README.md) | [简体中文](README_zh-CN.md)
 
@@ -10,7 +10,7 @@
 ![lumerical](https://img.shields.io/badge/simulation-Ansys%20Lumerical-orange)
 ![status](https://img.shields.io/badge/status-v0.1%20alpha-lightgrey)
 
-Many photonics students can simulate a ring modulator in Lumerical but have never drawn one that a foundry would accept. Layout is usually learned by copying a senior's GDS, foundry PDKs sit behind NDAs, and the simulation model ends up disconnected from the layout. This repository teaches layout the other way round: every device is a short, readable **gdsfactory recipe**, drawn against an **open foundry process**, and every GDS it produces can be **imported straight into Lumerical** (FDTD, MODE, CHARGE) without retyping a single dimension.
+Many photonics students can simulate a ring modulator in Lumerical but have never drawn one that a foundry would accept. Layout is usually learned by copying a senior's GDS, foundry PDKs sit behind NDAs, and the simulation model ends up disconnected from the layout. This repository teaches layout the other way round: you first learn how a **gdsfactory PDK** describes a foundry process, then every device is a short, readable **gdsfactory recipe** drawn on an **open foundry process**, and every GDS it produces can be **imported straight into Lumerical** (FDTD, MODE, CHARGE) without retyping a single dimension.
 
 <p align="center">
   <img src="docs/images/ring_modulator_top.png" width="92%" alt="Doped microring modulator drawn for CORNERSTONE 220 nm SOI"><br>
@@ -20,11 +20,13 @@ Many photonics students can simulate a ring modulator in Lumerical but have neve
 
 ## What is inside
 
-The cookbook has three parts that are kept strictly separate, so each can be learned and replaced on its own.
+The cookbook has four parts, kept separate so that each can be learned and replaced on its own.
 
-**Recipes** (`src/photonics_cookbook/devices`, `cells.py`, `examples/`) draw devices on *layer roles* such as `core`, `slab`, `n`, `ppp`, `via` and `metal`, never on raw GDS numbers. In-plane dimensions of the single devices follow the official Ansys Lumerical application examples, so you can cross-check your simulation against Ansys' own files.
+**Process files** (`src/photonics_cookbook/process/data/*.yaml`) describe one foundry platform in a single place: for every layer its *role* (`core`, `slab`, `n`, `ppp`, `via`, `metal` …), its PDK name and GDS numbers, the vertical stack, Lumerical material names, implant type and dose, and its KLayout colours. The first one is the open [CORNERSTONE](https://www.cornerstone.sotonfab.co.uk/) 220 nm SOI active platform.
 
-**Process adapters** (`src/photonics_cookbook/process/data/*.yaml`) map those roles to a specific foundry: GDS layer/datatype, vertical stack, Lumerical material names, implant type and concentration. Porting a recipe to another foundry means writing one YAML file, not editing the device code. The first adapter is the open [CORNERSTONE](https://www.cornerstone.sotonfab.co.uk/) 220 nm SOI active platform, cross-checked at runtime against gdsfactory's [`cspdk`](https://github.com/gdsfactory/cspdk).
+**The PDK** (`src/photonics_cookbook/pdk`) turns a process file into a complete gdsfactory `Pdk` — LayerMap, LayerStack, LayerViews, the `rib_pn` cross-section and the cookbook cells — and *extends* the foundry's open gdsfactory PDK (here [`cspdk`](https://github.com/gdsfactory/cspdk)) so that all its cells and models keep working. A step-by-step tutorial first writes a small PDK entirely by hand, following the [official gdsfactory PDK tutorial](https://gdsfactory.github.io/gdsfactory/notebooks/08_pdk.html), and then shows the generated one. See [docs/pdk-tutorial.md](docs/pdk-tutorial.md).
+
+**Recipes** (`src/photonics_cookbook/devices`, `cells.py`, `examples/`) draw devices on roles, never on raw GDS numbers, either as polygons (`ring_modulator`) or by extruding a PDK cross-section (`straight_pn`). In-plane dimensions of the single devices follow the official Ansys Lumerical application examples, so you can cross-check your simulation against Ansys' own files.
 
 **The Lumerical bridge** (`src/photonics_cookbook/lumerical`) reads *only* the GDS and the process file and writes ready-to-run Lumerical scripts. Because it never looks at Python objects, it also works for layouts made in KLayout or by a foundry PCell.
 
@@ -38,8 +40,11 @@ The cookbook has three parts that are kept strictly separate, so each can be lea
 
 ```mermaid
 flowchart LR
-    A["recipe<br/>(gdsfactory cell)"] --> B["GDS"]
-    P["process YAML<br/>roles → layers, stack,<br/>materials, doping"] --> C
+    Y["process YAML<br/>roles, layer names, GDS,<br/>stack, materials, doping"] --> K["gdsfactory PDK<br/>LayerMap · LayerStack · LayerViews<br/>cross-sections · cells"]
+    U["open foundry PDK<br/>(cspdk)"] -- "base_pdks" --> K
+    K --> A["recipe<br/>(gdsfactory cell)"]
+    A --> B["GDS"]
+    Y --> C
     B --> C{"Lumerical bridge"}
     C --> D["FDTD 3D<br/>gdsimport / Layer Builder"]
     C --> E["CHARGE 2D<br/>cut line → doping, contacts"]
@@ -61,16 +66,21 @@ git clone https://github.com/q3430468220-tech/photonics-layout-cookbook.git
 cd photonics-layout-cookbook
 uv sync                     # creates .venv and uv.lock
 
-# 3. check the set-up and meet the foundry PDK
+# 3. check the set-up and meet the foundry PDK (cspdk)
 uv run python examples/00_getting_started/00_check_environment.py
+
+# 4. learn how a gdsfactory PDK is defined, then inspect the cookbook PDK
+uv run python examples/00_getting_started/01_define_your_pdk.py
 uv run photonics-cookbook show-process cornerstone_si220_active
 uv run photonics-cookbook check-pdk cornerstone_si220_active
+uv run photonics-cookbook pdk-info
+uv run photonics-cookbook write-klayout-tech -o build/klayout_tech   # layer colours for KLayout
 
-# 4. recipe 01: draw the ring modulator, then export it to Lumerical
+# 5. recipe 01: draw the ring modulator, then export it to Lumerical
 uv run python examples/01_devices/01_ring_modulator/01_layout.py
 uv run python examples/01_devices/01_ring_modulator/02_export_to_lumerical.py
 
-# 5. (optional, needs Lumerical + licence) run CHARGE -> MODE through lumapi
+# 6. (optional, needs Lumerical + licence) run CHARGE -> MODE through lumapi
 #    PowerShell: $env:LUMERICAL_ROOT="C:\Program Files\ANSYS Inc\v251\Lumerical"
 uv run python examples/01_devices/01_ring_modulator/03_run_lumerical.py
 
@@ -79,7 +89,20 @@ uv run pytest
 uv run ruff check .
 ```
 
-Outputs go to `build/` (ignored by git). **Lumerical solvers can fail on folders with non-ASCII characters** (for example a path containing Chinese); if your clone lives in such a folder, point the build directory elsewhere with `PHOTONICS_BUILD_DIR=D:\photonics_build`. To view layouts, install [KLayout](https://www.klayout.de/) and open the GDS, or install the `klive` KLayout plug-in and call `c.show()`.
+In your own scripts, activate the PDK before drawing (since gdsfactory 9.29 none is active by default):
+
+```python
+import gdsfactory as gf
+from photonics_cookbook.pdk import activate_pdk
+
+activate_pdk("cornerstone_si220_active")        # cspdk.si220 + implants, vias, metal
+ring = gf.get_component("ring_modulator", radius=10, gap=0.2)
+pn = gf.get_component("straight_pn", length=500)     # rib_pn cross-section, extruded
+mmi = gf.get_component("mmi1x2")                     # cspdk cells still work
+ring.write_gds("ring.gds")
+```
+
+Outputs go to `build/` (ignored by git). **Lumerical solvers can fail on folders with non-ASCII characters** (for example a path containing Chinese); keep the clone on an ASCII path or point the build directory elsewhere with `PHOTONICS_BUILD_DIR=D:\photonics_build`. To view layouts, install [KLayout](https://www.klayout.de/), load `build/klayout_tech/layers.lyp` for the layer colours, or install the `klive` KLayout plug-in and call `c.show()`.
 
 ## Repository layout
 
@@ -87,13 +110,19 @@ Outputs go to `build/` (ignored by git). **Lumerical solvers can fail on folders
 photonics-layout-cookbook/
 ├── pyproject.toml / .python-version     uv project (Python 3.12)
 ├── src/photonics_cookbook/
-│   ├── process/                         foundry process adapters
-│   │   ├── model.py                     roles, stack, materials, doping (+ validation)
-│   │   ├── upstream.py                  cross-check / bootstrap from a gdsfactory PDK
+│   ├── process/                         foundry process files
+│   │   ├── model.py                     roles, PDK names, stack, materials, doping (+ validation)
+│   │   ├── upstream.py                  check against / bootstrap from a gdsfactory PDK
 │   │   └── data/cornerstone_si220_active.yaml, _template.yaml
+│   ├── pdk/                             gdsfactory PDKs generated from the process files
+│   │   ├── builder.py                   LayerMap, LayerStack, LayerViews, rib_pn, Pdk(base_pdks=...)
+│   │   ├── __init__.py                  get_pdk / activate_pdk / write_klayout_tech
+│   │   └── cornerstone_si220_active.py  PDK, LAYER, LAYER_STACK, LAYER_VIEWS (like cspdk)
 │   ├── geometry.py                      tool-independent polygons + ports
-│   ├── devices/ring_modulator.py        recipe maths (pure Python, unit-tested)
-│   ├── cells.py                         gdsfactory cells (@gf.cell)
+│   ├── devices/                         recipe maths (pure Python, unit-tested)
+│   │   ├── ring_modulator.py            doped ring with GSG pads
+│   │   └── pn_waveguide.py              PN rib sections (rib_pn) and straight
+│   ├── cells.py                         gdsfactory cells: ring_modulator, straight_pn
 │   ├── lumerical/                       GDS -> Lumerical bridge
 │   │   ├── gds_reader.py  cutline.py    read GDS (KLayout), extract 2D cuts
 │   │   ├── scripts_3d.py  scripts_2d.py FDTD / Layer Builder / CHARGE / FDE writers
@@ -101,21 +130,23 @@ photonics-layout-cookbook/
 │   │   └── runner.py                    run scripts through lumapi
 │   ├── plotting.py  cli.py  paths.py
 ├── examples/
-│   ├── 00_getting_started/
+│   ├── 00_getting_started/              00_check_environment, 01_define_your_pdk
 │   └── 01_devices/01_ring_modulator/    01_layout → 02_export → 03_run_lumerical
-├── docs/                                lumerical-bridge.md, process-adapters.md, images/
+├── docs/                                pdk-tutorial.md, process-adapters.md, lumerical-bridge.md, images/
 ├── tests/                               pytest (gdsfactory tests skip if not installed)
 └── ROADMAP.md  CONTRIBUTING.md  LICENSE
 ```
 
 ## Roadmap
 
-The curriculum grows in three levels. Each recipe ships with a layout, a Lumerical export and a short explanation of the design choices. See [ROADMAP.md](ROADMAP.md) for the full plan, including which Ansys example each device follows.
+The curriculum starts with the foundations and then grows in three levels. Each recipe ships with a layout, a Lumerical export and a short explanation of the design choices. See [ROADMAP.md](ROADMAP.md) for the full plan, including which Ansys example each device follows.
 
 | level | recipe | Lumerical chain | status |
 |---|---|---|---|
+| 0 · foundations | environment, meeting an open foundry PDK | — | **v0.1** |
+| | defining a gdsfactory PDK: by hand, then generated from a process file on top of cspdk | KLayout tech, Lumerical names in the LayerStack | **v0.1** |
 | 1 · devices | microring modulator (lateral PN) | CHARGE → FDE → FDTD coupler → INTERCONNECT | **v0.1** |
-| | PN depletion phase shifter, travelling-wave MZM | CHARGE → FDE, TW electrode | planned |
+| | PN depletion phase shifter (`straight_pn` from `rib_pn`; pads and travelling-wave electrodes next) | CHARGE → FDE, TW electrode | in progress |
 | | PIN phase shifter / MZM, thermo-optic phase shifter | CHARGE / HEAT → FDE | planned |
 | | Ge photodetector (vertical / lateral) | FDTD → CHARGE | planned |
 | | passives: grating & edge coupler, MMI, DC, y-branch | FDTD / EME / varFDTD | planned |
@@ -127,11 +158,11 @@ Foundry adapters planned next: SiEPIC EBeam (`ubcpdk`), the gdsfactory generic P
 
 ## Design principles
 
-The GDS is the contract: anything downstream (Lumerical, DRC, another tool) reads the GDS and the process file, never Python objects. Recipes use roles instead of layer numbers, so foundry knowledge lives in exactly one place. Every number has a source: process files cite the public design documents they come from, and device defaults cite the Ansys example they follow. And layouts are simulation-ready by construction: each cell stores the hints the simulator needs (cut line, bend radius, doped length, contact layers) in `component.info`.
+One process file per platform is the single source of truth: it generates the gdsfactory PDK and drives the Lumerical bridge, so layout and simulation can never disagree about a layer. Extend, don't copy: the cookbook PDK builds on the foundry's open gdsfactory PDK through `base_pdks` and only adds what is missing. The GDS is the contract: anything downstream (Lumerical, DRC, another tool) reads the GDS and the process file, never Python objects. Recipes use roles instead of layer numbers, so foundry knowledge lives in exactly one place. Every number has a source: process files cite the public design documents they come from, and device defaults cite the Ansys example they follow. And layouts are simulation-ready by construction: each cell stores the hints the simulator needs (cut line, bend radius, doped length, contact layers) in `component.info`.
 
 ## Status and limitations
 
-This is an alpha. The 3D `gdsimport`, CHARGE and FDE routes use documented script commands; the Layer Builder route is marked experimental because some of its property names differ between Lumerical versions (every uncertain call is wrapped in `try` and reported). Generated scripts target Lumerical 2022 R1 or newer. Please open an issue with your Lumerical version if a script fails.
+This is an alpha. The 3D `gdsimport`, CHARGE and FDE routes use documented script commands; the Layer Builder route is marked experimental because some of its property names differ between Lumerical versions (every uncertain call is wrapped in `try` and reported). Generated scripts target Lumerical 2022 R1 or newer. The PDK code is written against gdsfactory 9.5x and cspdk 2.x. Please open an issue with your versions if something fails.
 
 ## Disclaimer
 

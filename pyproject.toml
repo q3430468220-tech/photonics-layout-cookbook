@@ -1,7 +1,7 @@
 [project]
 name = "photonics-layout-cookbook"
 version = "0.1.0"
-description = "Silicon-photonics layout recipes with gdsfactory: open foundry PDKs, device -> module -> architecture, and a seamless bridge to Ansys Lumerical (FDTD / MODE / CHARGE)."
+description = "Learn photonic chip layout with gdsfactory on open foundry PDKs — from microring modulators to MZI meshes and optical I/O — with a seamless GDS → Ansys Lumerical (FDTD / MODE / CHARGE) bridge."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "YongJie Wang" }]

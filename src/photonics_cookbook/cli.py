@@ -5,6 +5,8 @@ Commands
 processes                       list shipped process files
 show-process NAME               print the layer table of a process
 check-pdk NAME                  compare a process with its upstream gdsfactory PDK
+pdk-info NAME                   show the gdsfactory PDK built from a process
+write-klayout-tech NAME -o DIR  write KLayout layer properties / technology files
 bootstrap-process MODULE -o F   draft a process YAML from any gdsfactory PDK
 to-lumerical GDS --process P    write Lumerical scripts for a GDS file
 """
@@ -44,13 +46,51 @@ def cmd_check(args: argparse.Namespace) -> int:
     proc = load_process(args.name)
     module, checks = check_against_pdk(proc)
     print(f"{proc.name} vs {module}.PDK.layers")
-    bad = 0
+    notes = {
+        "ok": "same name and numbers",
+        "extension": "not upstream -> added by the cookbook PDK",
+        "mismatch": "SAME NAME, DIFFERENT NUMBERS -> fix the YAML",
+        "renamed": "numbers exist upstream under another name -> use it",
+    }
     for c in checks:
-        flag = "ok " if c.ok else "MISMATCH"
-        bad += not c.ok
-        print(f"  [{flag}] {c.role:<8} process {c.process_gds}  PDK {c.pdk_name} = {c.pdk_gds}")
-    print("all layers match" if not bad else f"{bad} mismatch(es): update the process YAML")
+        up = f"upstream {c.pdk_name} = {c.pdk_gds}" if c.pdk_name else ""
+        print(f"  [{c.status:<9}] {c.role:<13} {c.name:<10} {c.process_gds!s:<10} {up:<28} {notes[c.status]}")
+    bad = [c for c in checks if not c.ok]
+    print("process is consistent with the upstream PDK" if not bad else f"{len(bad)} problem(s): update the process YAML")
     return 1 if bad else 0
+
+
+def cmd_pdk_info(args: argparse.Namespace) -> int:
+    from photonics_cookbook.pdk import get_pdk
+
+    pdk = get_pdk(args.name)
+    base = ", ".join(p.name for p in pdk.base_pdks) or "-"
+    print(f"PDK {pdk.name!r}  (extends: {base})")
+    members = pdk.layers.__members__ if pdk.layers is not None else {}
+    print(f"\nLayerMap: {len(members)} layers")
+    for name, lay in members.items():
+        print(f"  {name:<20} ({lay.layer}, {lay.datatype})")
+    if pdk.layer_stack is not None:
+        print(f"\nLayerStack: {len(pdk.layer_stack.layers)} levels")
+        for name, lvl in pdk.layer_stack.layers.items():
+            extra = " (background)" if getattr(lvl, "background", False) else ""
+            print(f"  {name:<14} z = {lvl.zmin:+.3f} .. {lvl.zmin + lvl.thickness:+.3f} um  {lvl.material}{extra}")
+    print(f"\ncross-sections ({len(pdk.cross_sections)}): {', '.join(sorted(pdk.cross_sections))}")
+    print(f"cells ({len(pdk.cells)}): {', '.join(sorted(pdk.cells))}")
+    return 0
+
+
+def cmd_write_klayout_tech(args: argparse.Namespace) -> int:
+    from photonics_cookbook.pdk import write_klayout_tech
+
+    out = write_klayout_tech(args.name, args.output)
+    print(f"written to {out}:")
+    for f in sorted(out.rglob("*")):
+        if f.is_file():
+            print(f"  {f.relative_to(out)}")
+    print("KLayout: File > Load Layer Properties > layers.lyp  (or Tools > Manage Technologies > import tech.lyt;")
+    print("         d25/*.lyd25 is a 2.5D view macro: Macros > Macro Development, or copy it next to tech.lyt)")
+    return 0
 
 
 def cmd_bootstrap(args: argparse.Namespace) -> int:
@@ -102,6 +142,13 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("check-pdk", help="cross-check a process with its gdsfactory PDK")
     s.add_argument("name")
     s.set_defaults(fn=cmd_check)
+    s = sub.add_parser("pdk-info", help="show the gdsfactory PDK built from a process")
+    s.add_argument("name", nargs="?", default="cornerstone_si220_active")
+    s.set_defaults(fn=cmd_pdk_info)
+    s = sub.add_parser("write-klayout-tech", help="write KLayout .lyp / .lyt for a process PDK")
+    s.add_argument("name", nargs="?", default="cornerstone_si220_active")
+    s.add_argument("-o", "--output", default="build/klayout_tech")
+    s.set_defaults(fn=cmd_write_klayout_tech)
     s = sub.add_parser("bootstrap-process", help="draft a process YAML from a gdsfactory PDK")
     s.add_argument("module", help="python module exposing PDK, e.g. cspdk.si220")
     s.add_argument("-o", "--output")

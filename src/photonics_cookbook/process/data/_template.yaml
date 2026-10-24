@@ -17,10 +17,9 @@ wavelength_um: 1.55
 references:
   - https://example.com/design-manual
 
-upstream_pdk:                 # optional: gdsfactory PDK to cross-check layers against
-  python_package: my_pdk
+upstream_pdk:                 # optional: gdsfactory PDK to extend (its layers, cells,
+  python_package: my_pdk      # cross-sections and models are kept)
   modules: [my_pdk]
-  layer_names: {core: WG, slab: SLAB}
 
 materials:
   si:   {kind: semiconductor, optical: "Si (Silicon) - Palik", charge: "Si (Silicon)",       mesh_order: 2}
@@ -31,17 +30,21 @@ background:
   - {name: box,  material: sio2, zmin: -2.0, zmax: 0.0}
   - {name: clad, material: sio2, zmin:  0.0, zmax: 2.0}
 
+# role: {name: <PDK layer name>, gds: [layer, datatype], kind: ..., + physics}
+# `name` defaults to the role in upper case. If you extend an upstream PDK, use
+# *its* layer names for the layers it already has (check-pdk verifies this).
+# Optional `color` / `hatch` set the KLayout display of layers the upstream lacks.
 layers:
   # --- mandatory -------------------------------------------------------------
-  core:  {gds: [1, 0],  kind: structure, material: si, zmin: 0.0, thickness: 0.22}
+  core:  {name: WG,    gds: [1, 0],  kind: structure, material: si, zmin: 0.0, thickness: 0.22}
   # --- optional (recipes skip roles that are missing) --------------------------
-  slab:  {gds: [2, 0],  kind: structure, material: si, zmin: 0.0, thickness: 0.09}
-  n:     {gds: [20, 0], kind: doping, dopant: n, concentration: 5.0e+17}
-  p:     {gds: [21, 0], kind: doping, dopant: p, concentration: 7.0e+17}
-  np:    {gds: [22, 0], kind: doping, dopant: n, concentration: 3.0e+18}
-  pp:    {gds: [23, 0], kind: doping, dopant: p, concentration: 2.0e+18}
-  npp:   {gds: [24, 0], kind: doping, dopant: n, concentration: 1.0e+20}
-  ppp:   {gds: [25, 0], kind: doping, dopant: p, concentration: 1.0e+20}
-  via:   {gds: [40, 0], kind: via,   material: al, zmin: 0.09, thickness: 1.0}
-  metal: {gds: [41, 0], kind: metal, material: al, zmin: 1.09, thickness: 0.7}
-  label: {gds: [100, 0], kind: annotation}
+  slab:  {name: SLAB,  gds: [2, 0],  kind: structure, material: si, zmin: 0.0, thickness: 0.09}
+  n:     {name: N,     gds: [20, 0], kind: doping, dopant: n, concentration: 5.0e+17, color: "#fdae6b", hatch: left-hatched}
+  p:     {name: P,     gds: [21, 0], kind: doping, dopant: p, concentration: 7.0e+17, color: "#a1d99b", hatch: right-hatched}
+  np:    {name: NP,    gds: [22, 0], kind: doping, dopant: n, concentration: 3.0e+18}
+  pp:    {name: PP,    gds: [23, 0], kind: doping, dopant: p, concentration: 2.0e+18}
+  npp:   {name: NPP,   gds: [24, 0], kind: doping, dopant: n, concentration: 1.0e+20}
+  ppp:   {name: PPP,   gds: [25, 0], kind: doping, dopant: p, concentration: 1.0e+20}
+  via:   {name: VIA,   gds: [40, 0], kind: via,   material: al, zmin: 0.09, thickness: 1.0}
+  metal: {name: METAL, gds: [41, 0], kind: metal, material: al, zmin: 1.09, thickness: 0.7}
+  label: {name: LBL,   gds: [100, 0], kind: annotation}

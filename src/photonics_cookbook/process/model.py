@@ -4,7 +4,9 @@ A *process* answers three questions that a gdsfactory ``Component`` alone does n
 
 1. **Which GDS layer plays which role?**  Device cells are written against *roles*
    (``core``, ``slab``, ``ppp``, ``via`` ...), never against raw layer numbers, so the
-   same recipe can be re-targeted to another foundry by swapping one YAML file.
+   same recipe can be re-targeted to another foundry by swapping one YAML file. Each
+   layer also carries its *PDK name* (``WG``, ``NPP`` ...) and display style, from which
+   :mod:`photonics_cookbook.pdk` builds a complete gdsfactory ``Pdk``.
 2. **What is the vertical stack?**  ``zmin`` / ``thickness`` / material of each
    layer, plus unpatterned background layers (BOX, cladding ...).
 3. **What do the simulators need?**  Lumerical material names for the optical
@@ -95,6 +97,7 @@ class ProcessLayer:
     role: str
     gds: tuple[int, int]
     kind: str
+    name: str = ""  # layer name in the gdsfactory PDK / KLayout, e.g. "WG", "NPP"
     material: str | None = None
     zmin: float | None = None
     thickness: float | None = None
@@ -103,6 +106,8 @@ class ProcessLayer:
     concentration: float | None = None  # cm^-3
     mesh_order: int | None = None
     description: str = ""
+    color: str | None = None  # KLayout display colour, e.g. "#d94801"
+    hatch: str | None = None  # KLayout dither pattern, e.g. "left-hatched"
 
     @property
     def zmax(self) -> float | None:
@@ -157,6 +162,16 @@ class Process:
     def gds(self, role: str) -> tuple[int, int]:
         return self.layer(role).gds
 
+    def layer_name(self, role: str) -> str:
+        """PDK layer name of ``role`` (what you pass to gdsfactory, e.g. ``"NPP"``)."""
+        return self.layer(role).name
+
+    def by_name(self, name: str) -> ProcessLayer:
+        for lay in self.layers.values():
+            if lay.name == name:
+                return lay
+        raise ProcessError(f"process {self.name!r} has no layer named {name!r}")
+
     def role_of(self, gds: tuple[int, int]) -> str | None:
         for role, lay in self.layers.items():
             if lay.gds == tuple(gds):
@@ -206,7 +221,7 @@ class Process:
     # --------------------------------------------------------------- reporting
     def summary(self) -> str:
         lines = [f"Process '{self.name}'  {self.foundry} / {self.platform}  ({self.version})"]
-        lines.append(f"  {'role':<13} {'GDS':>7}  {'kind':<10} {'z range / dose':<28} material")
+        lines.append(f"  {'role':<13} {'PDK name':<10} {'GDS':>7}  {'kind':<10} {'z range / dose':<28} material")
         for lay in sorted(self.layers.values(), key=lambda x: x.gds):
             if lay.kind == "doping":
                 zinfo = f"{lay.dopant}-type {lay.concentration:.2e} cm^-3"
@@ -217,11 +232,11 @@ class Process:
             else:
                 zinfo = "-"
             lines.append(
-                f"  {lay.role:<13} {lay.gds_str:>7}  {lay.kind:<10} {zinfo:<28} {lay.material or ''}"
+                f"  {lay.role:<13} {lay.name:<10} {lay.gds_str:>7}  {lay.kind:<10} {zinfo:<28} {lay.material or ''}"
             )
         for b in self.background:
             lines.append(
-                f"  {b.name:<13} {'-':>7}  {'background':<10} z = {b.zmin:.3f} .. {b.zmax:.3f} um       {b.material}"
+                f"  {b.name:<13} {'-':<10} {'-':>7}  {'background':<10} z = {b.zmin:.3f} .. {b.zmax:.3f} um       {b.material}"
             )
         return "\n".join(lines)
 
@@ -236,7 +251,7 @@ def available_processes() -> list[str]:
     return sorted(p.stem for p in _data_dir().glob("*.yaml") if not p.stem.startswith("_"))
 
 
-def _parse_layer(role: str, d: dict[str, Any]) -> ProcessLayer:
+def _parse_layer(role: str, d: dict[str, Any], default_name: str | None = None) -> ProcessLayer:
     where = f"layer {role!r}"
     if "gds" not in d:
         raise ProcessError(f"{where}: missing 'gds: [layer, datatype]'")
@@ -267,7 +282,12 @@ def _parse_layer(role: str, d: dict[str, Any]) -> ProcessLayer:
         concentration=opt("concentration"),
         mesh_order=None if d.get("mesh_order") is None else int(d["mesh_order"]),
         description=str(d.get("description", "")).strip(),
+        name=str(d.get("name") or default_name or role.upper()),
+        color=None if d.get("color") is None else str(d["color"]),
+        hatch=None if d.get("hatch") is None else str(d["hatch"]),
     )
+    if not layer.name.isidentifier():
+        raise ProcessError(f"{where}: PDK name {layer.name!r} must be a valid Python identifier")
     # kind-specific requirements
     need: dict[str, tuple[str, ...]] = {
         "structure": ("material", "zmin", "thickness"),
@@ -308,7 +328,12 @@ def load_process(name_or_path: str | Path) -> Process:
             mesh_order=int(m.get("mesh_order", 2)),
         )
 
-    layers = {role: _parse_layer(role, d or {}) for role, d in (raw.get("layers") or {}).items()}
+    # legacy: upstream_pdk.layer_names {role: NAME} -- prefer `name:` on each layer
+    legacy_names = dict((raw.get("upstream_pdk") or {}).get("layer_names") or {})
+    layers = {
+        role: _parse_layer(role, d or {}, legacy_names.get(role))
+        for role, d in (raw.get("layers") or {}).items()
+    }
 
     background = tuple(
         BackgroundLayer(
@@ -343,7 +368,13 @@ def validate_process(proc: Process) -> None:
     if "core" not in proc.layers:
         raise ProcessError(f"process {proc.name!r}: a 'core' layer is mandatory")
     seen: dict[tuple[int, int], str] = {}
+    names: dict[str, str] = {}
     for role, lay in proc.layers.items():
+        if lay.name in names:
+            raise ProcessError(
+                f"process {proc.name!r}: PDK name {lay.name!r} used by both {names[lay.name]!r} and {role!r}"
+            )
+        names[lay.name] = role
         if lay.gds in seen:
             raise ProcessError(
                 f"process {proc.name!r}: GDS {lay.gds_str} used by both {seen[lay.gds]!r} and {role!r}"
