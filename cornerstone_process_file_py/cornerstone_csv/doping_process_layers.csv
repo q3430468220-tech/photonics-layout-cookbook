@@ -1,0 +1,7 @@
+enabled,name,mask layer number,dopant,concentration,process,z surface position,function,range,straggle,skewness,kurtosis,lateral scatter,theta,phi
+1,P_low,7:0,p,6.14e+17,Implant,2.2e-07,Gaussian,1.7e-07,7.37e-08,0,0,5e-09,0,0
+1,N_low_slab,8:0 and not(3:0),n,1.67e+18,Implant,1e-07,Gaussian,5e-08,1e-07,0,0,5e-09,0,0
+1,N_low_sidewall,208:0,n,1.67e+18,Implant,2.2e-07,Gaussian,1.1e-07,3e-07,0,0,5e-09,0,0
+1,P_high,9:0 and not(3:0),p,1e+20,Implant,1e-07,Gaussian,5e-08,1e-07,0,0,5e-09,0,0
+1,N_high,11:0 and not(3:0),n,1e+20,Implant,1e-07,Gaussian,5e-08,1e-07,0,0,5e-09,0,0
+1,Wafer,None,p,1e+15,Background,2.2e-07,Gaussian,5.22e-06,0,0,0,0,0,0

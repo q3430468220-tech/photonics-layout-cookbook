@@ -1,0 +1,13 @@
+enabled,name,layer_number,start_position,thickness,pattern_material,background_material,process,sidewall_angle,pattern_growth_delta
+1,Si_Substrate,None,-2000,-3000,None,Si (Silicon) - Palik,Background,90,0
+1,BOX,None,-2000,2000,None,SiO2 (Glass) - Palik,Background,90,0
+1,TOX,None,0,1220,None,SiO2 (Glass) - Palik,Background,90,0
+1,Air,None,1220,3000,None,Air,Background,90,0
+1,Si_slab,5:0,0,100,Si_np,None,Grow,90,0
+1,Si_slab_contact,9:0 or 11:0,0,100,Si_np,None,Grow,90,300
+1,Si_core,3:0 and not(6:0),0,220,Si_np,None,Grow,90,0
+1,Si_grating,3:0 and 6:0,0,150,Si_np,None,Grow,90,0
+1,Via_P,12:0 and 9:0,100,1120,Al (Aluminium) - Palik,None,Grow,90,0
+1,Via_N,12:0 and 11:0,100,1120,Al (Aluminium) - Palik,None,Grow,90,0
+1,Electrode,13:0,1220,1600,Al (Aluminium) - Palik,None,Grow,90,0
+1,Detector_window,23:0,420,800,Air,None,Grow,90,0

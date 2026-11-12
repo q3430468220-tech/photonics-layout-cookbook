@@ -1,57 +1,58 @@
 # Roadmap
 
-The cookbook grows like a course: the foundations first (environment and how a gdsfactory PDK describes a foundry), then single devices, the functional modules built from them, and complete chip architectures. Each recipe is "done" when it has a gdsfactory cell registered in the cookbook PDK, a process-independent geometry with unit tests, a Lumerical export that runs on the reference Lumerical version, and a short README that explains the design choices and gives a few exercises.
+The cookbook grows along the design flow. A device is done when it has a builder that passes the
+DRC, numbered simulation steps that load its GDS with the process file, plots, and a README that
+states the method, the results and the limits. A process is done when it has a technology file, a
+DRC, process tables with a source for every number, and a compiled process file that passes its
+read-back check.
 
-## Level 0: foundations
+## Done in v0.2
 
-| # | lesson | content | status |
-|---|---|---|---|
-| 00 | Environment and an open foundry PDK | uv environment, activating `cspdk`, listing its cells, layers and cross-sections, first GDS | v0.1 |
-| 01 | Defining a gdsfactory PDK | LayerMap, LayerStack, LayerViews, cross-sections, cells and `gf.Pdk` written by hand; then the cookbook PDK generated from the process YAML and extending `cspdk` through `base_pdks`; KLayout technology export ([docs/pdk-tutorial.md](docs/pdk-tutorial.md)) | v0.1 |
-
-## Level 1: single devices
-
-Single devices follow an official Ansys Lumerical application example wherever one exists, so the layout parameters and the simulation flow can be checked against Ansys' own files.
-
-| # | device | Ansys reference example | Lumerical chain | status |
-|---|---|---|---|---|
-| 01 | Microring modulator, lateral PN, GSG pads | [Ring Modulator](https://optics.ansys.com/hc/en-us/articles/360042322794-Ring-Modulator) | CHARGE 2D → FDE (bent) → FDTD coupler → INTERCONNECT / CML | v0.1: layout, CHARGE, FDE, 3D FDTD export |
-| 02 | PN depletion phase shifter | [PN depletion phase shifter](https://optics.ansys.com/hc/en-us/articles/360042328674-PN-depletion-phase-shifter) | CHARGE → FDE → CML Compiler | in progress: `rib_pn` cross-section and `straight_pn` cell with CHARGE/FDE export; pads and example folder next |
-| 03 | Travelling-wave MZM (GSG/GS CPW electrodes) | [Travelling Wave MZM](https://optics.ansys.com/hc/en-us/articles/360042328774-Traveling-Wave-Mach-Zehnder-Modulator), [TW with distributed electrodes](https://optics.ansys.com/hc/en-us/articles/360055852653-Traveling-wave-modulators-with-distributed-electrodes) | CHARGE → FDE, electrode RF model → INTERCONNECT | planned |
-| 04 | PIN phase shifter / PIN MZM | [PIN Mach-Zehnder modulator](https://optics.ansys.com/hc/en-us/articles/360042327854-PIN-Mach-Zehnder-modulator) | CHARGE (forward bias) → FDE | planned |
-| 05 | Thermo-optic phase shifter (doped-Si and metal heaters) | Thermal switch example | HEAT → FDE | planned |
-| 06 | Ge photodetector, vertical and lateral | [Vertical photodetector](https://optics.ansys.com/hc/en-us/articles/360042957893), Ge-on-Si lateral photodetector | FDTD (generation rate) → CHARGE | planned, needs a process with Ge |
-| 07 | Passives: grating and edge couplers, MMI, directional coupler, y-branch, Euler bends, crossings | Grating coupler, y-branch, MMI examples | FDTD / EME / varFDTD S-parameters | planned |
-
-## Level 2: functional modules
-
-| # | module | key layout skills | simulation | status |
-|---|---|---|---|---|
-| 11 | 2×2 MZI unit cell with phase shifters | symmetric routing, heater placement, thermal isolation trenches | INTERCONNECT from the gdsfactory netlist | planned |
-| 12 | Clements / Reck N×N MZI mesh | parametric arrays, path-length matching, pad fan-out | INTERCONNECT netlist export | planned |
-| 13 | Add-drop and high-order (coupled) ring filters | gap control, FSR / Vernier design, heater per ring | FDTD coupler + INTERCONNECT | planned |
-| 14 | WDM mux / demux (ring bank, lattice filter) | channel spacing, thermal tuning, crosstalk-aware routing | INTERCONNECT | planned |
-| 15 | Ring-modulator WDM transmitter bank | shared bus, per-ring heaters and RF pads | INTERCONNECT (CML models from level 1) | planned |
-
-## Level 3: architectures
-
-| # | architecture | content | status |
-|---|---|---|---|
-| 21 | WDM optical interconnect link | MRM transmitter bank, drop-filter receiver with PDs, fibre I/O, pad ring | planned |
-| 22 | Optical switch fabric | MZI crossbar / Beneš network, electrical routing to the chip edge | planned |
-| 23 | Optical I/O (OIO) chiplet tile | multi-λ × multi-fibre ring-based I/O, EIC bump map, reticle-level floorplan | planned |
-
-## Infrastructure and foundry adapters
-
-| item | status |
+| item | where |
 |---|---|
-| CORNERSTONE 220 nm SOI active (`cspdk` passives + public implant / via / metal layers) | v0.1 |
-| gdsfactory PDK generated from each process file (LayerMap, LayerStack, LayerViews, `rib_pn`, cells), extending the upstream PDK | v0.1 |
-| SiEPIC EBeam (`ubcpdk`), gdsfactory generic PDK | planned |
-| VTT 3 µm SOI, Luxtelligence thin-film LiNbO3, CORNERSTONE SiN / Ge-on-Si | planned |
-| INTERCONNECT netlist export from `component.get_netlist()` | planned |
-| KLayout DRC decks per process (width, spacing, enclosure of via in P++/N++) | planned |
-| Case studies: reproduce published devices (e.g. heavily-doped narrow-trench MRMs) from layout to CHARGE/FDE | planned |
-| Documentation site with notebooks (MkDocs or Jupyter Book) | planned |
+| CORNERSTONE SOI220A as a gdsfactory PDK, with the official layer names | `cornerstone_technology.py` |
+| Design-rule check for the published rules | `cornerstone_drc.py` |
+| Heater-tuned microring modulator layout | `rm_builder.py` |
+| Layer Builder process file from CSV tables, with a read-back check | `cornerstone_process_file_py/` |
+| Six simulation steps: FDTD, MODE, CHARGE, HEAT, MODE, INTERCONNECT | `lumerical_simulations/ring_modulator/` |
 
-Suggestions are welcome: open an issue with the device or architecture you would like to see, ideally with the paper or Ansys example it should follow.
+## Next on the same device
+
+| item | notes |
+|---|---|
+| Compact model with CML Compiler | from the results of steps 1 to 5 |
+| Time-domain modulation in INTERCONNECT | eye diagram at the optical bandwidth found in step 6 |
+| Process corners | enable the variation tables, rerun steps 2 and 6 at the corners |
+| Gap and junction-offset sweep on the mask | a test-structure block around the nominal design |
+| Grating couplers and routing to a full test cell | with the official building blocks |
+
+## More devices on SOI220A
+
+| device | simulation chain | reference |
+|---|---|---|
+| PN depletion phase shifter and Mach-Zehnder modulator | CHARGE → MODE → INTERCONNECT, travelling-wave electrode | the official `MZM` building blocks; Ansys *Traveling Wave Mach-Zehnder Modulator* |
+| Thermo-optic phase shifter | HEAT → MODE | the official `Heater` building block |
+| Defect-mediated detector | FDTD → CHARGE | layer `Detector_Implant_DF` |
+| Passives: grating coupler, MMI, crossing, rib-to-strip taper | FDTD, EME | the official building blocks as a cross-check |
+
+## More processes
+
+Only processes with public data qualify. Candidates:
+
+| process | status of public data |
+|---|---|
+| CORNERSTONE SOI220 passive, SiN 300 nm, SOI 340 nm | in the same official repository |
+| SiEPIC EBeam | open PDK, passive |
+| gdsfactory generic PDK | open, not a real foundry process; useful for exercises |
+
+## Infrastructure
+
+| item | notes |
+|---|---|
+| A second process, to separate what is general from what is CORNERSTONE-specific | then extract the shared code |
+| Check of the technology file against the official `process_overview.yaml` in CI | today an optional test, see `tests/test_technology.py` |
+| Comparison with measured devices | needs published data or a tape-out |
+| Documentation site | once there is more than one device |
+
+Suggestions are welcome. Open an issue with the device or process you would like to see, and the
+public document it should follow.

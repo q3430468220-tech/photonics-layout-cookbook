@@ -1,0 +1,14 @@
+Al heater: 2.0 um wide, 1.6 um thick, on 1.0 um of oxide above the core; heated arc 26.66 um
+ P (mW)  core dT (K)  heater dT (K)
+    2.0         2.74           8.50
+    5.0         6.85          21.25
+   10.0        13.70          42.49
+   20.0        27.41          84.98
+
+core temperature in the heated section: 1.370 K/mW
+averaged over the ring (17% of it is heated): 0.233 K/mW
+
+filament resistance with bulk Al resistivity [assumed]: 0.23 ohm
+10 mW then needs 207 mA, a current density of 6.5e+06 A/cm^2.
+An Al heater this short is a low-resistance, current-driven element; the leads and probes add comparable resistance.
+Still air is modelled as a conductor; convection and radiation are neglected.

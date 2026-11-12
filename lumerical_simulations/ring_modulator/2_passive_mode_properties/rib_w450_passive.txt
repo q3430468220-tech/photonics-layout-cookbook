@@ -1,0 +1,14 @@
+Rib waveguide W = 0.45 um, 220 nm core on a 100 nm slab (cornerstone_process.lbr); FDE mesh 20 nm
+straight, 1.55 um:  n_eff = 2.55145   n_g = 3.9117   TE fraction 0.986   power in |y| < 0.5 um: 0.99
+sweep 1.5-1.6 um:  n_g from the slope of n_eff(lambda) = 3.8908  (cross-check of the solver's n_g)
+
+bent waveguide, 1.55 um:
+ R (um)     n_eff  radiation dB/cm  dB / round trip  mode shift nm  overlap with straight
+   10.0   2.55494           7.0029          0.04400           39.3                 0.9889
+   15.0   2.55296           0.0255          0.00024           22.1                 0.9961
+   20.0   2.55229           0.0000          0.00000           16.3                 0.9979
+   25.0   2.55199           0.0000          0.00000           13.0                 0.9987
+   30.0   2.55182          -0.0000         -0.00000           10.8                 0.9991
+   40.0   2.55166          -0.0000         -0.00000            8.1                 0.9995
+
+ring of R = 25.0 um:  FSR = lambda^2 / (n_g L) = 3.91 nm

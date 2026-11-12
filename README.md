@@ -1,175 +1,227 @@
 # photonics-layout-cookbook
 
-**Silicon-photonics layout recipes with [gdsfactory](https://github.com/gdsfactory/gdsfactory) — on open foundry PDKs, from defining the PDK to single devices and full architectures, with a seamless bridge into Ansys Lumerical.**
+**A foundry-compatible silicon-photonics design flow, worked through on an open active PDK: from the gdsfactory technology file to the layout, the Lumerical process file, and the device and circuit simulations of a heater-tuned microring modulator.**
 
 [English](README.md) | [简体中文](README_zh-CN.md)
 
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
-![gdsfactory](https://img.shields.io/badge/layout-gdsfactory-6f42c1)
+![gdsfactory](https://img.shields.io/badge/layout-gdsfactory%209-6f42c1)
 ![lumerical](https://img.shields.io/badge/simulation-Ansys%20Lumerical-orange)
-![status](https://img.shields.io/badge/status-v0.1%20alpha-lightgrey)
+![foundry](https://img.shields.io/badge/process-CORNERSTONE%20SOI220A-2f8f5b)
 
-Many photonics students can simulate a ring modulator in Lumerical but have never drawn one that a foundry would accept. Layout is usually learned by copying a senior's GDS, foundry PDKs sit behind NDAs, and the simulation model ends up disconnected from the layout. This repository teaches layout the other way round: you first learn how a **gdsfactory PDK** describes a foundry process, then every device is a short, readable **gdsfactory recipe** drawn on an **open foundry process**, and every GDS it produces can be **imported straight into Lumerical** (FDTD, MODE, CHARGE) without retyping a single dimension.
+Most students learn to simulate a ring modulator from a drawing made inside the simulator, with a
+layer stack typed in by hand. A foundry works the other way round. The process is fixed, the
+layout is the only thing you hand in, and the simulation has to describe what that layout becomes
+in that process. This repository shows that flow end to end, on a process whose data is public.
 
 <p align="center">
-  <img src="docs/images/ring_modulator_top.png" width="92%" alt="Doped microring modulator drawn for CORNERSTONE 220 nm SOI"><br>
-  <img src="docs/images/ring_modulator_xsec.png" width="80%" alt="Cross-section extracted from the layout for CHARGE / FDE"><br>
-  <em>Recipe 01: a PN microring modulator on CORNERSTONE 220 nm SOI (top), and the cross-section the bridge extracts from the GDS for CHARGE and MODE-FDE (bottom).</em>
+  <img src="assets/design_flow.svg" width="100%" alt="Design flow: public foundry data, technology file, device builder, process file, Layer Builder, six simulation steps">
 </p>
 
-## What is inside
+The process is described twice, from the same public sources: once for layout (a gdsfactory PDK)
+and once for simulation (a Lumerical Layer Builder process file). A device is drawn with the first
+and simulated with the second. No simulation script contains a thickness, a material or a doping
+level.
 
-The cookbook has four parts, kept separate so that each can be learned and replaced on its own.
+## The flow in five parts
 
-**Process files** (`src/photonics_cookbook/process/data/*.yaml`) describe one foundry platform in a single place: for every layer its *role* (`core`, `slab`, `n`, `ppp`, `via`, `metal` …), its PDK name and GDS numbers, the vertical stack, Lumerical material names, implant type and dose, and its KLayout colours. The first one is the open [CORNERSTONE](https://www.cornerstone.sotonfab.co.uk/) 220 nm SOI active platform.
-
-**The PDK** (`src/photonics_cookbook/pdk`) turns a process file into a complete gdsfactory `Pdk` — LayerMap, LayerStack, LayerViews, the `rib_pn` cross-section and the cookbook cells — and *extends* the foundry's open gdsfactory PDK (here [`cspdk`](https://github.com/gdsfactory/cspdk)) so that all its cells and models keep working. A step-by-step tutorial first writes a small PDK entirely by hand, following the [official gdsfactory PDK tutorial](https://gdsfactory.github.io/gdsfactory/notebooks/08_pdk.html), and then shows the generated one. See [docs/pdk-tutorial.md](docs/pdk-tutorial.md).
-
-**Recipes** (`src/photonics_cookbook/devices`, `cells.py`, `examples/`) draw devices on roles, never on raw GDS numbers, either as polygons (`ring_modulator`) or by extruding a PDK cross-section (`straight_pn`). In-plane dimensions of the single devices follow the official Ansys Lumerical application examples, so you can cross-check your simulation against Ansys' own files.
-
-**The Lumerical bridge** (`src/photonics_cookbook/lumerical`) reads *only* the GDS and the process file and writes ready-to-run Lumerical scripts. Because it never looks at Python objects, it also works for layouts made in KLayout or by a foundry PCell.
-
-| generated script | Lumerical product | what it does |
+| part | file | what it does |
 |---|---|---|
-| `<cell>_geometry3d.lsf` | FDTD / MODE | `gdsimport` of every drawn layer with z-range and material, plus BOX/cladding |
-| `<cell>_fdtd3d.lsf` | FDTD | geometry + 3D FDTD region sized to the optical layers + one port per gdsfactory optical port |
-| `<cell>_layerbuilder.lsf` | FDTD / MODE | builds a Layer Builder from script and lets Lumerical write the foundry `.lbr` process file |
-| `<cell>_charge2d.lsf` | CHARGE | 2D cut through the layout: silicon, implants, vias as contacts, bias sweep, carrier export |
-| `<cell>_fde2d.lsf` | MODE (FDE) | same cut and frame; imports the CHARGE carriers, sweeps bias, reports Δn_eff, loss, pm/V |
+| Technology | [cornerstone_technology.py](cornerstone_technology.py) | The foundry process as a gdsfactory PDK: layers with their official names, design rules, layer stack, cross-sections. |
+| Design rules | [cornerstone_drc.py](cornerstone_drc.py) | Checks a layout against the published rules, in pure Python. |
+| Device | [rm_builder.py](rm_builder.py) | Draws the ring modulator from the PDK cross-sections, checks it, writes the GDS. |
+| Process file | [cornerstone_process_file_py/](cornerstone_process_file_py/) | The same process as CSV tables, compiled into `cornerstone_process.lbr` through `lumapi`. |
+| Simulation | [lumerical_simulations/ring_modulator/](lumerical_simulations/ring_modulator/) | Six steps through FDTD, MODE, CHARGE, HEAT and INTERCONNECT, each loading GDS + `.lbr`. |
 
-```mermaid
-flowchart LR
-    Y["process YAML<br/>roles, layer names, GDS,<br/>stack, materials, doping"] --> K["gdsfactory PDK<br/>LayerMap · LayerStack · LayerViews<br/>cross-sections · cells"]
-    U["open foundry PDK<br/>(cspdk)"] -- "base_pdks" --> K
-    K --> A["recipe<br/>(gdsfactory cell)"]
-    A --> B["GDS"]
-    Y --> C
-    B --> C{"Lumerical bridge"}
-    C --> D["FDTD 3D<br/>gdsimport / Layer Builder"]
-    C --> E["CHARGE 2D<br/>cut line → doping, contacts"]
-    E -- "n, p (.mat)" --> F["MODE FDE 2D<br/>Δn_eff, loss vs V"]
-    D --> G["INTERCONNECT / CML<br/>(roadmap)"]
-    F --> G
-```
+## The process: CORNERSTONE SOI 220 nm active
+
+[CORNERSTONE](https://www.cornerstone.sotonfab.co.uk/) is an open-source, licence-free silicon
+photonics foundry at the University of Southampton. Its active platform, `SOI220A`, offers three
+silicon etches, four implants and one metal layer. Everything used here comes from two public
+documents:
+
+- the official PDK repository [cornerstone-uos/cornerstone-pdk](https://github.com/cornerstone-uos/cornerstone-pdk), folder `SOI220A`: layer names and numbers, per-layer rules, cross-sections, building blocks;
+- the [design guidelines of the 220 nm SOI active MPW call #47](https://cornerstone.sotonfab.co.uk/wp-content/uploads/2025/10/CORNERSTONE-47th-Call-Design-Guidelines_final-1.pdf): process flow, doping, rules between layers, mask processing.
+
+| GDS | official layer name | meaning |
+|---|---|---|
+| 3/0 | `Si_Etch2_LF_120nm` | waveguide core; drawn shapes keep the full 220 nm |
+| 5/0 | `Si_Etch3_LF_100nm_to_BOX` | rib protect; drawn shapes keep a 100 nm slab |
+| 6/0 | `Si_Etch1_DUV_DF_70nm` | grating couplers, etched 70 nm |
+| 7/0, 8/0 | `P_Implant_Low_DF`, `N_Implant_Low_DF` | low-dose implants that form the junction |
+| 9/0, 11/0 | `P_Implant_Hi_DF`, `N_Implant_Hi_DF` | high-dose implants for ohmic contacts |
+| 12/0 | `Via_DF` | via through the top cladding |
+| 13/0 | `Electrode_LF` | Al electrodes, pads and heater filaments |
+
+Three properties of this process shape the device, and the code models each of them:
+
+- **One metal layer.** Heaters are drawn in the electrode layer. The junction electrodes and the
+  heater therefore share the ring: the junction takes the upper 240°, the heater the lower 76°.
+- **A self-aligned n implant.** It enters the rib through the sidewall, about 110 nm deep, wherever
+  the mask edge is drawn inside the core. The junction is not where the mask edge is.
+- **Mask processing by the foundry.** Trenches are generated around every waveguide, and the
+  high-dose implants are merged into the slab. The process file reproduces this.
+
+Where each number comes from, and where the public sources disagree, is documented in
+[cornerstone_csv/README.md](cornerstone_process_file_py/cornerstone_csv/README.md).
+
+## The worked example
+
+<p align="center">
+  <img src="assets/rm_ring.png" width="49%" alt="Ring modulator layout with GSG pads for the junction and two pads for the heater">
+  <img src="assets/rm_ring_zoom.png" width="49%" alt="Ring, coupler, doped section and heater">
+</p>
+
+A 25 µm rib ring with a point coupler. GSG pads in the north drive the PN section. Two pads in the
+south feed the heater above the undoped part of the ring.
+
+| result | value | from |
+|---|---|---|
+| power coupling | κ² = 3.73 · exp(−gap / 101.6 nm) | step 1, FDTD |
+| effective and group index | 2.5515 and 3.912 | step 2, MODE |
+| junction capacitance at 0 V and −4 V | 0.43 and 0.22 fF/µm | step 3, CHARGE |
+| heater efficiency | 1.37 K/mW in the heated section | step 4, HEAT |
+| modulation efficiency VπL at −2 V | 1.4 V·cm | step 5, MODE |
+| gap for critical coupling | 425 nm | step 6, INTERCONNECT |
+| loaded Q and free spectral range | 20 900 and 3.90 nm | step 6 |
+| resonance shift at −4 V | 50 pm | step 6 |
+| thermal tuning | 17.1 pm/mW | step 6 |
+
+<p align="center">
+  <img src="lumerical_simulations/ring_modulator/plots/6_interconnect_ring_modulator/ring_modulator.png" width="100%" alt="Extinction versus gap, spectra versus junction bias, spectra versus heater power">
+</p>
+
+Step 6 returns the gap for critical coupling, and that value is the default gap of the layout.
+The method, the settings that matter and the limits of each step are in
+[lumerical_simulations/ring_modulator/README.md](lumerical_simulations/ring_modulator/README.md).
+These are simulation results. They have not been compared with a fabricated device.
 
 ## Quick start
 
-The project uses [uv](https://docs.astral.sh/uv/) for a reproducible Python environment.
+Layout, DRC and tests need only Python. The process file and the simulations need Ansys Lumerical.
 
 ```bash
-# 1. install uv (once)            Windows PowerShell:  irm https://astral.sh/uv/install.ps1 | iex
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# 2. get the code and the environment (Python 3.12, gdsfactory, cspdk, klayout ...)
+# 1. environment (uv: https://docs.astral.sh/uv/)
 git clone https://github.com/q3430468220-tech/photonics-layout-cookbook.git
 cd photonics-layout-cookbook
-uv sync                     # creates .venv and uv.lock
+uv sync
 
-# 3. check the set-up and meet the foundry PDK (cspdk)
-uv run python examples/00_getting_started/00_check_environment.py
+# 2. the PDK: list the layers, write the KLayout technology
+uv run python cornerstone_technology.py
 
-# 4. learn how a gdsfactory PDK is defined, then inspect the cookbook PDK
-uv run python examples/00_getting_started/01_define_your_pdk.py
-uv run photonics-cookbook show-process cornerstone_si220_active
-uv run photonics-cookbook check-pdk cornerstone_si220_active
-uv run photonics-cookbook pdk-info
-uv run photonics-cookbook write-klayout-tech -o build/klayout_tech   # layer colours for KLayout
+# 3. the device: GDS, DRC report, preview images
+uv run python rm_builder.py
 
-# 5. recipe 01: draw the ring modulator, then export it to Lumerical
-uv run python examples/01_devices/01_ring_modulator/01_layout.py
-uv run python examples/01_devices/01_ring_modulator/02_export_to_lumerical.py
+# 4. the process file (Lumerical with FDTD and CHARGE licences)
+uv run python cornerstone_process_file_py/cornerstone_process_file_compiler.py
 
-# 6. (optional, needs Lumerical + licence) run CHARGE -> MODE through lumapi
-#    PowerShell: $env:LUMERICAL_ROOT="C:\Program Files\ANSYS Inc\v251\Lumerical"
-uv run python examples/01_devices/01_ring_modulator/03_run_lumerical.py
+# 5. the six simulation steps
+cd lumerical_simulations/ring_modulator/scripts
+uv run python coupling_coefficient_fdtd.py --dry   # coarse first; see the folder's README for the rest
 
-# tests and lint
+# tests and lint (no Lumerical needed)
 uv run pytest
 uv run ruff check .
 ```
 
-In your own scripts, activate the PDK before drawing (since gdsfactory 9.29 none is active by default):
+Lumerical is found through the environment variable `LUMERICAL_ROOT`, or in its usual install
+locations:
+
+```bash
+# PowerShell
+$env:LUMERICAL_ROOT = "C:\Program Files\ANSYS Inc\v251\Lumerical"
+# bash
+export LUMERICAL_ROOT=/opt/lumerical/v251
+```
+
+Keep the clone on a path without non-ASCII characters. Lumerical solvers can fail otherwise.
+
+### Using the pieces in your own scripts
 
 ```python
 import gdsfactory as gf
-from photonics_cookbook.pdk import activate_pdk
+import cornerstone_technology as t  # importing it activates the PDK
+import rm_builder as rm
+from cornerstone_drc import run_drc
 
-activate_pdk("cornerstone_si220_active")        # cspdk.si220 + implants, vias, metal
-ring = gf.get_component("ring_modulator", radius=10, gap=0.2)
-pn = gf.get_component("straight_pn", length=500)     # rib_pn cross-section, extruded
-mmi = gf.get_component("mmi1x2")                     # cspdk cells still work
-ring.write_gds("ring.gds")
+phase_shifter = gf.components.straight(length=500, cross_section="rib_1550nm_TE_pn")
+ring = rm.ring_modulator(radius=30, gap=0.40)
+
+assert run_drc(ring).passed
+t.write_gds_for_lumerical(ring, "ring.gds")  # flat, with the layer the process file needs
 ```
 
-Outputs go to `build/` (ignored by git). **Lumerical solvers can fail on folders with non-ASCII characters** (for example a path containing Chinese); keep the clone on an ASCII path or point the build directory elsewhere with `PHOTONICS_BUILD_DIR=D:\photonics_build`. To view layouts, install [KLayout](https://www.klayout.de/), load `build/klayout_tech/layers.lyp` for the layer colours, or install the `klive` KLayout plug-in and call `c.show()`.
+In Lumerical, by script or in the Layer Builder dialog:
+
+```text
+addlayerbuilder;
+loadgdsfile("ring.gds");
+loadprocessfile("cornerstone_process.lbr");
+```
 
 ## Repository layout
 
 ```text
 photonics-layout-cookbook/
-├── pyproject.toml / .python-version     uv project (Python 3.12)
-├── src/photonics_cookbook/
-│   ├── process/                         foundry process files
-│   │   ├── model.py                     roles, PDK names, stack, materials, doping (+ validation)
-│   │   ├── upstream.py                  check against / bootstrap from a gdsfactory PDK
-│   │   └── data/cornerstone_si220_active.yaml, _template.yaml
-│   ├── pdk/                             gdsfactory PDKs generated from the process files
-│   │   ├── builder.py                   LayerMap, LayerStack, LayerViews, rib_pn, Pdk(base_pdks=...)
-│   │   ├── __init__.py                  get_pdk / activate_pdk / write_klayout_tech
-│   │   └── cornerstone_si220_active.py  PDK, LAYER, LAYER_STACK, LAYER_VIEWS (like cspdk)
-│   ├── geometry.py                      tool-independent polygons + ports
-│   ├── devices/                         recipe maths (pure Python, unit-tested)
-│   │   ├── ring_modulator.py            doped ring with GSG pads
-│   │   └── pn_waveguide.py              PN rib sections (rib_pn) and straight
-│   ├── cells.py                         gdsfactory cells: ring_modulator, straight_pn
-│   ├── lumerical/                       GDS -> Lumerical bridge
-│   │   ├── gds_reader.py  cutline.py    read GDS (KLayout), extract 2D cuts
-│   │   ├── scripts_3d.py  scripts_2d.py FDTD / Layer Builder / CHARGE / FDE writers
-│   │   ├── export.py                    export_lumerical(): one call, all scripts
-│   │   └── runner.py                    run scripts through lumapi
-│   ├── plotting.py  cli.py  paths.py
-├── examples/
-│   ├── 00_getting_started/              00_check_environment, 01_define_your_pdk
-│   └── 01_devices/01_ring_modulator/    01_layout → 02_export → 03_run_lumerical
-├── docs/                                pdk-tutorial.md, process-adapters.md, lumerical-bridge.md, images/
-├── tests/                               pytest (gdsfactory tests skip if not installed)
-└── ROADMAP.md  CONTRIBUTING.md  LICENSE
+├── cornerstone_technology.py        the PDK: layers, rules, stack, cross-sections, cells
+├── cornerstone_drc.py               design-rule check (klayout.db)
+├── rm_builder.py                    ring modulator layout
+├── rm_ring.gds                      its output, ready for the Layer Builder
+├── lumerical_env.py                 finds Lumerical and imports lumapi
+│
+├── cornerstone_process_file_py/
+│   ├── cornerstone_process_file_compiler.py   CSV tables → .lbr, with a read-back check
+│   ├── cornerstone_process.lbr                the compiled process file
+│   └── cornerstone_csv/                       stack, doping, materials, variations + README
+│
+├── lumerical_simulations/ring_modulator/
+│   ├── scripts/                     common.py and one script per step
+│   ├── 1_coupling_coefficient/ … 6_interconnect_ring_modulator/   layouts and result summaries
+│   ├── plots/                       one plot script and its figures per step
+│   └── README.md                    method, results and pitfalls of each step
+│
+├── klayout_tech/                    layers.lyp and tech.lyt for KLayout
+├── assets/                          figures of this README
+├── tests/                           pytest: PDK, layout, DRC, process tables
+└── legacy/                          the v0.1 package, kept for reference
 ```
 
-## Roadmap
+## Adapting the flow to another process
 
-The curriculum starts with the foundations and then grows in three levels. Each recipe ships with a layout, a Lumerical export and a short explanation of the design choices. See [ROADMAP.md](ROADMAP.md) for the full plan, including which Ansys example each device follows.
+1. Copy `cornerstone_technology.py` and replace the constants, the layer map, the rules and the
+   cross-sections. Keep the foundry's own layer names.
+2. Copy `cornerstone_csv/` and fill the tables from the same documents. Tag every number with its
+   source, and mark what you had to assume.
+3. Run the compiler. Its read-back check compares the `.lbr` with the tables.
+4. Check one known cross-section in MODE before anything else. A wrong layer expression shows up
+   as a wrong effective index.
+5. Only use public data in a public repository. Never commit a PDK you received under an NDA.
 
-| level | recipe | Lumerical chain | status |
-|---|---|---|---|
-| 0 · foundations | environment, meeting an open foundry PDK | — | **v0.1** |
-| | defining a gdsfactory PDK: by hand, then generated from a process file on top of cspdk | KLayout tech, Lumerical names in the LayerStack | **v0.1** |
-| 1 · devices | microring modulator (lateral PN) | CHARGE → FDE → FDTD coupler → INTERCONNECT | **v0.1** |
-| | PN depletion phase shifter (`straight_pn` from `rib_pn`; pads and travelling-wave electrodes next) | CHARGE → FDE, TW electrode | in progress |
-| | PIN phase shifter / MZM, thermo-optic phase shifter | CHARGE / HEAT → FDE | planned |
-| | Ge photodetector (vertical / lateral) | FDTD → CHARGE | planned |
-| | passives: grating & edge coupler, MMI, DC, y-branch | FDTD / EME / varFDTD | planned |
-| 2 · modules | MZI unit cell → Clements / Reck N×N mesh | INTERCONNECT netlist | planned |
-| | add-drop and high-order ring filters, WDM mux/demux | FDTD + INTERCONNECT | planned |
-| 3 · architectures | WDM optical interconnect link, MZI switch fabric, optical I/O (OIO) tile | INTERCONNECT | planned |
+## Limitations and disclaimer
 
-Foundry adapters planned next: SiEPIC EBeam (`ubcpdk`), the gdsfactory generic PDK, VTT 3 µm SOI and Luxtelligence thin-film lithium niobate.
+- The values are for teaching and for setting up simulations. Before a tape-out, take every number
+  from the design guidelines of the call you submit to, and run the foundry's own DRC.
+- Several inputs are assumptions and are tagged as such: sidewall angle, implant depth profiles,
+  aluminium resistivity, a planar top cladding.
+- The public sources disagree on the oxide thicknesses. This repository follows the design
+  guidelines; see the table in [cornerstone_csv/README.md](cornerstone_process_file_py/cornerstone_csv/README.md).
+- The code is written against gdsfactory 9.5x and Lumerical 2025 R1.
+- This project is not affiliated with or endorsed by CORNERSTONE, the University of Southampton,
+  Ansys or the gdsfactory team. "Ansys" and "Lumerical" are trademarks of Ansys, Inc.
 
-## Design principles
+## Roadmap, contributing, citing
 
-One process file per platform is the single source of truth: it generates the gdsfactory PDK and drives the Lumerical bridge, so layout and simulation can never disagree about a layer. Extend, don't copy: the cookbook PDK builds on the foundry's open gdsfactory PDK through `base_pdks` and only adds what is missing. The GDS is the contract: anything downstream (Lumerical, DRC, another tool) reads the GDS and the process file, never Python objects. Recipes use roles instead of layer numbers, so foundry knowledge lives in exactly one place. Every number has a source: process files cite the public design documents they come from, and device defaults cite the Ansys example they follow. And layouts are simulation-ready by construction: each cell stores the hints the simulator needs (cut line, bend radius, doped length, contact layers) in `component.info`.
+Planned next: a compact model from the six steps, more devices on the same process, and a second
+open process. See [ROADMAP.md](ROADMAP.md). Contributions are welcome, especially new devices and
+new open processes; see [CONTRIBUTING.md](CONTRIBUTING.md). If the cookbook helps your research or
+teaching, please cite it through [CITATION.cff](CITATION.cff). The code is released under the
+[MIT licence](LICENSE).
 
-## Status and limitations
+## References
 
-This is an alpha. The 3D `gdsimport`, CHARGE and FDE routes use documented script commands; the Layer Builder route is marked experimental because some of its property names differ between Lumerical versions (every uncertain call is wrapped in `try` and reported). Generated scripts target Lumerical 2022 R1 or newer. The PDK code is written against gdsfactory 9.5x and cspdk 2.x. Please open an issue with your versions if something fails.
-
-## Disclaimer
-
-Layer numbers, stack and doping values in the process files are taken from publicly available foundry documents and are meant for teaching and simulation set-up. **Before any tape-out, always use the design manual and PDK of the specific run you submit to.** This project is not affiliated with or endorsed by Ansys, CORNERSTONE / University of Southampton or the gdsfactory team. "Ansys" and "Lumerical" are trademarks of Ansys, Inc.
-
-## Contributing, citing, licence
-
-Contributions are very welcome, especially new recipes and new foundry adapters; see [CONTRIBUTING.md](CONTRIBUTING.md). If this cookbook helps your research or teaching, please cite it via [CITATION.cff](CITATION.cff). Code is released under the [MIT licence](LICENSE).
-
-Built on the shoulders of [gdsfactory](https://github.com/gdsfactory/gdsfactory), [cspdk](https://github.com/gdsfactory/cspdk), [KLayout](https://www.klayout.de/) and the [Ansys Optics application gallery](https://optics.ansys.com/hc/en-us).
+- CORNERSTONE, [open PDK repository](https://github.com/cornerstone-uos/cornerstone-pdk) and [design guidelines for the 220 nm SOI active MPW call #47](https://cornerstone.sotonfab.co.uk/wp-content/uploads/2025/10/CORNERSTONE-47th-Call-Design-Guidelines_final-1.pdf)
+- Ansys Optics, [Layer builder - Simulation object](https://optics.ansys.com/hc/en-us/articles/360034382394-Layer-builder-Simulation-object)
+- Ansys Optics, [Ring Modulator](https://optics.ansys.com/hc/en-us/articles/360042322794-Ring-Modulator)
+- Ansys Optics, [Workshop: Designing Foundry-Compatible Photonic Components and Circuits](https://optics.ansys.com/hc/en-us/articles/31257798958611-Workshop-Designing-Foundry-Compatible-Photonic-Components-and-Circuits)
+- gdsfactory, [documentation](https://gdsfactory.github.io/gdsfactory/)

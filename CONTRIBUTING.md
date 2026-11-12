@@ -1,34 +1,61 @@
 # Contributing
 
-Thank you for helping students learn photonic layout. Contributions of every size are welcome: typo fixes, clearer explanations, new device recipes, new foundry adapters and bug reports from your Lumerical version.
+Contributions of every size are welcome: typo fixes, clearer explanations, bug reports from your
+Lumerical version, new devices and new open processes.
 
-## Development set-up
+## Set-up
 
 ```bash
 git clone https://github.com/q3430468220-tech/photonics-layout-cookbook.git
 cd photonics-layout-cookbook
-uv sync                    # runtime + dev dependencies (pytest, ruff, pre-commit)
-uv run pre-commit install  # optional: lint on every commit
+uv sync                    # runtime and development dependencies
+uv run pre-commit install  # optional: lint and format on every commit
 uv run pytest
 uv run ruff check . && uv run ruff format --check .
 ```
 
-## Adding a device recipe
+Tests, lint and layout need no Lumerical. CI runs them on Linux and Windows.
 
-A recipe is accepted when it has the following parts.
+## The one rule about data
 
-1. **Geometry** in `src/photonics_cookbook/devices/<device>.py`: a pure-Python function that takes a `Process` and returns a `Geometry` (polygons on roles, ports, `info`). No gdsfactory import here, so it can be unit-tested anywhere.
-2. **A gdsfactory cell** in `src/photonics_cookbook/cells.py` decorated with `@gf.cell`, built with `geometry_to_component` (polygons) or by extruding a PDK cross-section, and added to `CELLS` so that the cookbook PDK registers it (`gf.get_component("<name>")`). New waveguide profiles go into the PDK as cross-sections (`photonics_cookbook/pdk/builder.py`), with their geometry in `devices/`.
-3. **Simulation hints** in `info["lumerical"]` (cut line, origin, bend radius, normalisation length, contact roles) where they make sense.
-4. **Tests** in `tests/`: dimensions on a cut line, ports, rejected parameters, and anything that would be a fabrication error (shorts, missing enclosures).
-5. **An example folder** `examples/<level>/<nn>_<device>/` with numbered scripts and a README: what the device does, which Ansys example or paper it follows, a parameter table with trade-offs, and three to five exercises.
+**Only public data.** Every layer name, layer number, thickness, doping level and design rule must
+come from a document anyone can download. Give the source next to the number, with the tags the
+repository already uses (`[YAML]`, `[DG]`, ...). Mark a value you had to assume as `[assumed]`.
+Never commit a PDK, a design manual or numbers you received under an NDA, also not "anonymised".
 
-Please cite the source of every default number (Ansys example, paper, design manual) in a comment or the README.
+## Adding a device
 
-## Adding a foundry adapter
+A device follows the structure of the ring modulator.
 
-Follow [docs/process-adapters.md](docs/process-adapters.md) and [docs/pdk-tutorial.md](docs/pdk-tutorial.md): a process YAML is all that is needed, the gdsfactory PDK is generated from it. Only use open PDKs and publicly available design documents, list them under `references:`, and never commit NDA data.
+1. **A builder** `<device>_builder.py` in the repository root. It takes its cross-sections,
+   layers and rules from the technology file and defines none of its own. Running it writes the
+   GDS with `write_gds_for_lumerical`, runs the DRC and renders the preview images.
+2. **Tests** in `tests/`: the builder passes the DRC for its default and for a few other
+   parameter sets, it rejects parameters that would break a rule, and its key dimensions are what
+   the arguments say.
+3. **Simulation steps** in `lumerical_simulations/<device>/scripts/`, one script per solver run.
+   Each script draws a small GDS with the PDK, loads it with the process file through
+   `common.add_layer_builder`, and writes a `.txt` summary. No thickness, material or doping in a
+   script.
+4. **Plots** in `lumerical_simulations/<device>/plots/<step>/`, readable without Lumerical.
+5. **A README** in `lumerical_simulations/<device>/`: what each step answers, how to run it, the
+   results, the settings that matter, and the limits of the model.
+
+State which runs you actually executed, with the Lumerical version. Do not report numbers from a
+run you did not make.
+
+## Adding a process
+
+1. A technology file `<foundry>_technology.py`, modelled on `cornerstone_technology.py`. Keep the
+   foundry's own layer names.
+2. A DRC, modelled on `cornerstone_drc.py`.
+3. A folder `<foundry>_process_file_py/` with the CSV tables, a README that gives the source of
+   every number, and the compiler. The compiler's read-back check must pass.
+4. Tests that tie the tables to the technology file, as in `tests/test_process_tables.py`.
+5. A table of the places where the public sources disagree, and which value you chose.
 
 ## Reporting a Lumerical problem
 
-Include your Lumerical version (for example 2025 R1), the product (FDTD / MODE / CHARGE), the generated script and the full message from the script prompt. Many issues are property-name differences between versions, which we can fix with a fallback.
+Include the Lumerical version, the product (FDTD, MODE, CHARGE, HEAT, INTERCONNECT), the script
+and its arguments, and the full message. Many problems are property names that differ between
+versions.

@@ -1,0 +1,30 @@
+PN section rib_1550nm_TE_pn, W = 0.45 um, slab 14.0 um; doping from cornerstone_process.lbr
+2D cross-section normalised to the doped arc, 104.72 um.  anode = Via_P, cathode = Via_N.
+steady state: 17 points, V = 0.00 ... -4.00 V; leakage at -4.0 V: -9.38e-14 A
+doping check: net doping (donors - acceptors, cm^-3) averaged over each region of the solver mesh
+  p slab, lower 100 nm   -5.64e+17   (published: -5.7e17)
+  p rib, upper 120 nm    -2.27e+17   (published: -2.25e17)
+  n slab, lower 100 nm   +1.03e+18   (published: +1.1e18)
+  p contact              -9.55e+19   (published: -1e20)
+  junction at y = +108 nm from the core centre (expected +115 nm: 110 nm inside the n-side sidewall)
+
+small signal, whole PN section (104.7 um):
+     V   C (fF)  C (fF/um)  Rs (ohm)  Rs (ohm cm)  f_RC (GHz)
+  0.00    45.18      0.431     57.57        0.603        61.2
+ -0.25    40.66      0.388     56.87        0.596        68.8
+ -0.50    37.46      0.358     56.29        0.589        75.5
+ -0.75    34.99      0.334     55.78        0.584        81.6
+ -1.00    33.00      0.315     55.31        0.579        87.2
+ -1.25    31.37      0.300     54.90        0.575        92.4
+ -1.50    30.01      0.287     54.52        0.571        97.3
+ -1.75    28.82      0.275     54.17        0.567       102.0
+ -2.00    27.77      0.265     53.83        0.564       106.5
+ -2.25    26.85      0.256     53.52        0.560       110.7
+ -2.50    26.04      0.249     53.23        0.557       114.8
+ -2.75    25.31      0.242     52.96        0.555       118.7
+ -3.00    24.65      0.235     52.70        0.552       122.5
+ -3.25    24.04      0.230     52.44        0.549       126.2
+ -3.50    23.48      0.224     52.20        0.547       129.8
+ -3.75    22.97      0.219     51.97        0.544       133.3
+ -4.00    22.48      0.215     51.74        0.542       136.8
+C from Im(Y)/omega at 1e+08 Hz, Rs from Re(1/Y) at 3e+10 Hz. f_RC is the intrinsic junction limit, without pads, traces or the driver impedance.

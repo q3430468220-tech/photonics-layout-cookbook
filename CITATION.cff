@@ -1,15 +1,17 @@
 cff-version: 1.2.0
 message: "If you use this cookbook in research or teaching, please cite it as below."
-title: "photonics-layout-cookbook: silicon-photonics layout recipes with gdsfactory and a bridge to Ansys Lumerical"
+title: "photonics-layout-cookbook: a foundry-compatible silicon-photonics design flow with gdsfactory and Ansys Lumerical on an open active PDK"
 authors:
   - name: "LumaTrace"
-version: 0.1.0
-date-released: 2026-10-23
+version: 0.2.0
+date-released: 2026-11-12
 license: MIT
 repository-code: "https://github.com/q3430468220-tech/photonics-layout-cookbook"
 keywords:
   - silicon photonics
   - photonic integrated circuits
   - layout
+  - PDK
   - gdsfactory
   - Lumerical
+  - microring modulator

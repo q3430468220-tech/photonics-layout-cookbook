@@ -1,0 +1,2 @@
+name,base material,include np density,np density model,coefficients,soref and bennett table,electron effective mass,hole effective mass,electron mobility,hole mobility,include temperature effects,linear sensitivity,table of values,temperature sensitivity table,Tref,dn/dt,dk/dt,rgba_r,rgba_g,rgba_b,rgba_a
+Si_np,Si (Silicon) - Palik,1,Soref and Bennett,"Nedeljkovic, Soref & Mashanovich, 2011",NA,NA,NA,NA,NA,1,1,0,NA,300,0.000187,0,0.854902,0,0,1
