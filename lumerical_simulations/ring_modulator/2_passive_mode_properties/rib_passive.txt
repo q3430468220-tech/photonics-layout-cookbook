@@ -1,0 +1,21 @@
+Rib waveguide W = 0.5 um, 220 nm core on a 90 nm slab (gsip_process.lbr); FDE mesh 20 nm, rib-interface mesh 10 nm
+straight, 1.55 um:  n_eff = 2.56770   n_g = 3.9370   TE fraction 0.987
+
+bent waveguide, 1.55 um (bend orientation 180 deg: the mode moves away from the ring centre):
+centroid shift and overlaps use the cell areas of the mesh; 'solver ovl' is Lumerical's m.overlap, 'overlap' is the intensity overlap with the straight mode.
+ R (um)     n_eff      n_g  radiation dB/cm  dB / round trip  mode shift nm   overlap solver ovl
+    4.0   2.58191   3.9396          15.2390          0.03830         -113.6    0.9489     0.9530
+    5.0   2.57825   3.9299           0.5639          0.00177          -69.1    0.9688     0.9686
+    6.0   2.57470   3.9347          -0.0001         -0.00000          -49.2    0.9830     0.9826
+    8.0   2.57158   3.9355          -0.0000         -0.00000          -32.7    0.9919     0.9914
+   10.0   2.57016   3.9361          -0.0000         -0.00000          -25.6    0.9950     0.9947
+   15.0   2.56878   3.9366          -0.0000         -0.00000          -16.8    0.9978     0.9977
+   20.0   2.56831   3.9368          -0.0000         -0.00000          -12.5    0.9988     0.9987
+
+sweep 1.5-1.6 um:  n_g from the slope of n_eff(lambda) = 3.9159  (quadratic fit over the whole sweep)
+  why it differs from the solver's n_g: Lumerical interpolates the tabulated silicon index linearly between its sample wavelengths, so the slope dn/dlambda is piecewise constant; the solver's n_g steps from 3.8686 at 1530 nm to 3.9414 at 1540 nm.
+  the fit is one average over 1500-1600 nm; the solver's n_g is local at 1550 nm and is the value used for the FSR.
+
+core width sweep (n_eff):  0.30: TE0 2.327 / TE1 nan, 0.35: TE0 2.400 / TE1 nan, 0.40: TE0 2.466 / TE1 nan, 0.45: TE0 2.522 / TE1 2.100, 0.50: TE0 2.568 / TE1 2.115, 0.55: TE0 2.606 / TE1 2.140, 0.60: TE0 2.637 / TE1 2.176, 0.70: TE0 2.684 / TE1 2.264, 0.80: TE0 2.718 / TE1 2.355
+
+ring of R = 10.0 um:  n_g = 3.9361  ->  FSR = lambda^2 / (n_g L) = 9.71 nm

@@ -6,9 +6,10 @@ Everything in this folder is the previous structure of the cookbook, kept for re
   extended `cspdk`, and a bridge that wrote Lumerical `.lsf` scripts from a GDS;
 - `examples/`, `docs/`, `tests/`: its examples, documentation and tests.
 
-It is no longer installed, tested or maintained. Since v0.2 the repository follows one flat flow
-instead: technology file, device builder, process file, numbered simulation steps. See the
-[README](../README.md) in the repository root.
+It is no longer installed, tested or maintained. Since v0.2 the flat flow lives in
+[more_processes/cornerstone_soi220a/](../more_processes/cornerstone_soi220a/README.md): technology
+file, device builder, process file, numbered simulation steps. Since v0.3 the course is the root of
+the repository, on the GSiP teaching PDK; see the [README](../README.md) there.
 
 Two things changed in substance, not only in structure:
 

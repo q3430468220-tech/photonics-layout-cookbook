@@ -1,12 +1,12 @@
 [project]
 name = "photonics-layout-cookbook"
-version = "0.2.0"
-description = "A foundry-compatible silicon-photonics design flow on an open active PDK (CORNERSTONE SOI 220 nm): gdsfactory technology file, device layout, Lumerical process file, and FDTD / MODE / CHARGE / HEAT / INTERCONNECT simulations of a heater-tuned microring modulator."
+version = "0.3.0"
+description = "A course in foundry-compatible silicon-photonics design: a complete teaching PDK in gdsfactory, a heater-tuned microring modulator drawn with it, a Lumerical Layer Builder process file, and its FDTD / MODE / CHARGE / HEAT / INTERCONNECT simulations."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "LumaTrace" }]
 requires-python = ">=3.12,<3.14"
-keywords = ["silicon photonics", "gdsfactory", "layout", "PDK", "CORNERSTONE", "Lumerical", "microring modulator", "Layer Builder"]
+keywords = ["silicon photonics", "gdsfactory", "layout", "PDK", "process file", "Lumerical", "Layer Builder", "microring modulator", "tutorial"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
@@ -50,7 +50,8 @@ addopts = "-ra"
 [tool.ruff]
 line-length = 130
 target-version = "py312"
-extend-exclude = ["build", "legacy"]
+extend-exclude = ["build", "legacy", "*.md"]  # Markdown: the snippets of the course keep their hand-set alignment
+src = [".", "more_processes/cornerstone_soi220a"]  # both hold first-party modules
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]

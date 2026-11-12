@@ -1,14 +1,27 @@
-Al heater: 2.0 um wide, 1.6 um thick, on 1.0 um of oxide above the core; heated arc 26.66 um
+TiN heater: 1.6 um wide, 0.15 um thick, 0.88 um above the core; filament 44.72 um
  P (mW)  core dT (K)  heater dT (K)
-    2.0         2.74           8.50
-    5.0         6.85          21.25
-   10.0        13.70          42.49
-   20.0        27.41          84.98
+    2.0         4.70          10.82
+    5.0        11.75          27.05
+   10.0        23.50          54.09
+   20.0        47.01         108.19
+averages over the mesh are area-weighted; slopes are least squares through the origin
 
-core temperature in the heated section: 1.370 K/mW
-averaged over the ring (17% of it is heated): 0.233 K/mW
+core temperature in the heated section: 2.350 K/mW
+heater film: 5.410 K/mW
+averaged over the ring (71% of it is heated): 1.673 K/mW
+  the average assumes electrodes along the whole filament, but 6% of the filament (2.8 of 44.7 um) lies beyond the electrodes
+without metal 1 and the contact vias the core would reach 2.976 K/mW: the electrodes cost 21%
 
-filament resistance with bulk Al resistivity [assumed]: 0.23 ohm
-10 mW then needs 207 mA, a current density of 6.5e+06 A/cm^2.
-An Al heater this short is a low-resistance, current-driven element; the leads and probes add comparable resistance.
-Still air is modelled as a conductor; convection and radiation are neglected.
+free filament: resistance 10.0 ohm/sq x 44.7 um / 1.6 um = 280 ohm
+10 mW needs 1.67 V and 6.0 mA across it
+R, V and I are those of the free filament: the landings and the current spreading into them add a few per cent that this estimate leaves out
+
+transient, reference power switched on at t = 0:
+  time constant tau: the core rise reaches 1 - 1/e = 63 % of its final value at 10.3 us
+  10-90 % rise time: the time from the 10 % to the 90 % point of the final value is 34.3 us
+  the response is not a single exponential (heat diffuses): t_rise / tau = 3.34, a single exponential would give ln 9 = 2.20
+  0.35 / t_rise = 10.2 kHz is a rule of thumb for the bandwidth, not a measured 3 dB point
+
+energy balance: 10.00 mW reach the heat sink, 10.00 mW were set (+0.0 %)
+  flux k dT/dz at 0.2 um above the substrate, k = 1.38 W/m/K; this check does not enter the simulation
+The top of the oxide is treated as insulating; convection and radiation are neglected.

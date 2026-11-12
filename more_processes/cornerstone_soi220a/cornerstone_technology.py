@@ -4,7 +4,7 @@ This file is the layout half of the foundry-compatible flow:
 
     cornerstone_technology.py   layers, design rules, layer stack, cross-sections, cells   (this file)
             |
-    rm_builder.py               device layout drawn with the PDK cross-sections  ->  .gds
+    cornerstone_rm_builder.py   device layout drawn with the PDK cross-sections  ->  .gds
             |
     cornerstone_process_file_py/   the same process as CSV tables  ->  cornerstone_process.lbr
             |

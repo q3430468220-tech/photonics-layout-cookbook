@@ -1,0 +1,21 @@
+enabled,name,layer_number,start_position,thickness,pattern_material,background_material,process,sidewall_angle,pattern_growth_delta
+1,Si_Substrate,None,-2000,-10000,None,Si (Silicon) - Palik,Background,90,0
+1,BOX,None,-2000,2000,None,SiO2 (Glass) - Palik,Background,90,0
+1,TOX,None,0,5700,None,SiO2 (Glass) - Palik,Background,90,0
+1,Si_slab150,2:0,0,150,Si_np,None,Grow,90,0
+1,Si_slab90,3:0,0,90,Si_np,None,Grow,90,0
+1,Si_core,1:0,0,220,Si_np,None,Grow,90,0
+1,Ge,5:0,220,500,Ge (Germanium) - Palik,None,Grow,90,0
+1,SiN,34:0,320,350,Si3N4 (Silicon Nitride) - Luke,None,Grow,90,0
+1,Via_contact_P,40:0 and 25:0,90,1010,Al (Aluminium) - Palik,None,Grow,90,0
+1,Via_contact_N,40:0 and 24:0,90,1010,Al (Aluminium) - Palik,None,Grow,90,0
+1,Metal1,41:0,1100,700,Al (Aluminium) - Palik,None,Grow,90,0
+1,Heater,47:0,1100,150,TiN - Palik,None,Grow,90,0
+1,Via1_on_metal1,44:0 and 41:0,1800,500,Al (Aluminium) - Palik,None,Grow,90,0
+1,Via1_on_heater,44:0 and 47:0,1250,1050,Al (Aluminium) - Palik,None,Grow,90,0
+1,Metal2,45:0,2300,700,Al (Aluminium) - Palik,None,Grow,90,0
+1,Via2,43:0,3000,200,Al (Aluminium) - Palik,None,Grow,90,0
+1,Metal3,49:0,3200,2000,Al (Aluminium) - Palik,None,Grow,90,0
+1,Pad_opening,46:0,5200,500,Air,None,Grow,90,0
+1,Deep_trench,4:0,-7000,12700,Air,None,Grow,90,0
+1,Undercut,6:0,-7000,5000,Air,None,Grow,90,0

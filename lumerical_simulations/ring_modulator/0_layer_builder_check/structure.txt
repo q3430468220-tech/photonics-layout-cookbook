@@ -1,0 +1,11 @@
+Refractive index seen by the mode solver on the cut through the PN section (x = 0, north side of the ring):
+  substrate          (y = R,        z = -5.00): 3.476+0.000j   expect silicon, about 3.48
+  buried oxide       (y = R,        z = -1.00): 1.444+0.000j   expect oxide, about 1.44
+  core centre        (y = R,        z = 0.11): 3.476+0.000j   expect silicon, about 3.48
+  slab               (y = R - 1.0,  z = 0.05): 3.476+0.000j   expect silicon
+  above the slab     (y = R - 1.0,  z = 0.15): 1.444+0.000j   expect oxide, about 1.44
+  inner contact via  (y = R - 2.15, z = 0.60): 1.440+16.000j   expect aluminium (large imaginary part)
+  heater film        (y = R,        z = 1.17): 3.538+6.517j   expect TiN
+  metal 1, outer arc (y = R + 2.6,  z = 1.45): 1.440+16.000j   expect aluminium
+  metal 2 wire       (y = R,        z = 2.65): 1.440+16.000j   expect aluminium
+  between the levels (y = R,        z = 2.00): 1.444+0.000j   expect oxide

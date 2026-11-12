@@ -1,29 +1,36 @@
-Ring modulator: R = 25.0 um, circumference 157.08 um, doped arc 104.72 um, heated arc 26.66 um
-kappa^2(gap) = 3.728 exp(-gap / 101.6 nm)  [step 1]     n_eff = 2.55145, n_g = 3.9117  [step 2]
-round-trip loss at 0 V: waveguide 4.0 dB/cm -> 0.0628 dB, bend radiation 0.0000 dB, free carriers 0.1907 dB  =  0.2535 dB
-critical coupling: kappa^2 = 1 - 10^(-loss/10) = 0.0567  ->  gap = 425 nm
+Ring modulator: R = 10.0 um, circumference 62.83 um, doped arc 41.89 um, heater filament 44.72 um
+kappa^2(gap) = 1.259 exp(-gap / 84.8 nm)  [step 1]     n_eff = 2.57016, n_g = 3.9361  [step 2]
+element index at 0 V = 2.56963 = 2.57016 + doped fraction 0.667 x (-0.000789, n_eff(0 V) - n_eff(no carriers))  [steps 2, 5]
+round-trip loss at 0 V: scattering 2.2 dB/cm -> 0.0138 dB, bend radiation 0.0000 dB, free carriers 0.0556 dB  =  0.0694 dB
+critical coupling: kappa^2 = 1 - 10^(-loss/10) = 0.0159  ->  gap = 371 nm
 
- gap (nm)  kappa^2  extinction dB  loaded Q  linewidth pm
-      300   0.1945            4.8      9134         169.5
-      340   0.1312            7.7     12614         122.7
-      380   0.0885           12.9     16621          93.2
-      420   0.0597           31.5     20933          74.0
-      460   0.0402           15.2     25311          61.2
-      500   0.0271            8.9     29338          52.8
-      540   0.0183            5.7     32819          47.2
+ gap (nm)  kappa^2    extinction dB  loaded Q  linewidth pm  c/(lam Q) GHz
+      250   0.0660              4.1     11894         130.5           16.2
+      280   0.0463              6.1     15799          98.2           12.2
+      310   0.0325              9.2     20426          76.0            9.5
+      340   0.0228             14.8     25634          60.5            7.5
+      370   0.0160             46.2     31165          49.8            6.2
+      400   0.0112             15.3     36689          42.3            5.3
+      430   0.0079              9.4     41879          37.0            4.6
+      470   0.0049              5.5     47857          32.4            4.0
+      520   0.0027              3.0     53488          29.0            3.6
 
-design gap 420 nm (kappa^2 = 0.0597):  loaded Q = 20933, linewidth 74.0 pm, FSR 3.90 nm, extinction 31.5 dB
-     V  resonance shift pm  extinction dB  T at the 0 V resonance, dB
-   0.0                 0.0           31.5                      -31.53
-  -1.0                16.8           25.9                       -7.57
-  -2.0                29.6           23.2                       -3.91
-  -4.0                50.0           20.0                       -1.68
-optical bandwidth from the photon lifetime: f = c / (lambda Q) = 9.2 GHz
-electrical: C = 45.2 fF, Rs = 57.6 ohm at 0 V -> intrinsic f_RC = 61 GHz  [step 3]; the slower of the two limits the modulator
+design gap 370 nm (kappa^2 = 0.0160):  loaded Q = 31165, linewidth 49.8 pm, extinction 46.2 dB
+measured spacing of the two resonances 9.67 nm, centred on 1546.8 nm; lambda^2 / (n_g L) at the design resonance (1551.60 nm) = 9.73 nm
+     V   shift pm  step 5 shift pm  extinction dB  T at the 0 V resonance, dB
+   0.0        0.0              0.0           46.2                      -46.04
+  -1.0       14.9             14.8           28.0                       -5.57
+  -2.0       26.4             26.3           23.3                       -2.51
+  -4.0       44.9             44.8           18.6                       -0.95
+resonance shift per volt, end-point average 0 to 4 V: 11.2 pm/V (step 5: 11.2 pm/V over 0 to 4 V)
+near critical coupling the depth is very sensitive: the analytic all-pass ring with this loss and kappa^2 changed by -1 %, 0 and +1 % has extinction 76.5, 46.2 and 40.1 dB
+photon-lifetime estimate of the optical bandwidth: c / (lambda Q) = 1 / (2 pi tau_photon) = 6.2 GHz (the linewidth in frequency; the exact small-signal response depends on the laser detuning, and on resonance its pole lies at half this value)
+electrical: C = 16.7 fF, Rs = 150 ohm at 0 V -> intrinsic f_RC = 64 GHz  [step 3]
+-3 dB point of the cascade (1 + (f/f1)^2)(1 + (f/f2)^2) = 2, f1 = photon-lifetime bandwidth, f2 = f_RC: 6.1 GHz (exact solution of this equation for two first-order responses, not a general rule)
 
- heater mW  resonance shift pm
-       0.0                 0.0
-      10.0               170.7
-      20.0               341.5
-      40.0               683.2
-thermal tuning 17.1 pm/mW; one FSR (3.90 nm) needs 228 mW
+ heater mW  predicted pm  resonance shift pm
+       0.0           0.0                 0.0
+       5.0         618.8               619.7
+      10.0        1237.6              1239.9
+      20.0        2475.2              2481.7
+thermal tuning 124.0 pm/mW; one FSR at the design resonance (9.73 nm) needs 79 mW

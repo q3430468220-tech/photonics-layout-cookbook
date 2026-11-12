@@ -1,9 +1,7 @@
-"""The technology file against the published CORNERSTONE SOI220A data."""
+"""The technology file against its public sources: the textbook's layer table and the open gdsfactory generic PDK."""
 
 from __future__ import annotations
 
-import os
-import re
 from pathlib import Path
 
 import gdsfactory as gf
@@ -11,24 +9,36 @@ import klayout.db as kdb
 import numpy as np
 import pytest
 
-import cornerstone_technology as t
+import gsip_technology as t
 
-# GDS numbers and names of SOI220A/process_overview.yaml (cornerstone-uos/cornerstone-pdk, v1.2.0).
-OFFICIAL_LAYERS = {
-    "Si_Etch1_DUV_DF_70nm": (6, 0),
-    "Si_Etch2_LF_120nm": (3, 0),
-    "Si_Etch2_DF_120nm": (4, 0),
-    "Si_Etch3_LF_100nm_to_BOX": (5, 0),
-    "P_Implant_Low_DF": (7, 0),
-    "N_Implant_Low_DF": (8, 0),
-    "P_Implant_Hi_DF": (9, 0),
-    "N_Implant_Hi_DF": (11, 0),
-    "Via_DF": (12, 0),
-    "Electrode_LF": (13, 0),
-    "Detector_Implant_DF": (23, 0),
-    "Floorplan": (99, 0),
-    "Label_Etch_DF": (100, 0),
+# GDS layer map of the Generic Silicon Photonics PDK: Chrostowski & Hochberg, "Silicon Photonics Design",
+# Table 10.2 (p. 353).  book name -> (GDS number, the name used here)
+BOOK_TABLE_10_2 = {
+    "Si": (1, "WG"),
+    "SiEtch1": (2, "SLAB150"),
+    "SiEtch2": (3, "SLAB90"),
+    "SiEtch3": (4, "DEEPTRENCH"),
+    "Ge": (5, "GE"),
+    "OxEtch": (6, "UNDERCUT"),
+    "N": (20, "N"),
+    "P": (21, "P"),
+    "N+": (22, "NP"),
+    "P+": (23, "PP"),
+    "Npp": (24, "NPP"),
+    "Ppp": (25, "PPP"),
+    "GeN": (26, "GEN"),
+    "GeP": (27, "GEP"),
+    "VC": (40, "VIAC"),
+    "M1": (41, "M1"),
+    "VL": (44, "VIA1"),
+    "ML": (45, "M2"),
+    "MLOpen": (46, "PADOPEN"),
+    "Text": (66, "TEXT"),
+    "devrec": (68, "DEVREC"),
 }
+# Table 10.1 and the doping levels of Sec. 6.2 of the same book.
+BOOK_PROCESS = {"T_SI": 0.22, "ETCH_RIB": 0.13, "T_BOX": 2.0, "T_GE": 0.5}
+BOOK_DOPING = {"N": 5e17, "P": 7e17, "NP": 3e18, "PP": 2e18, "NPP": 5e20, "PPP": 1.9e20}
 
 
 def y_range(component: gf.Component, layer) -> tuple[float, float]:
@@ -36,90 +46,101 @@ def y_range(component: gf.Component, layer) -> tuple[float, float]:
     return float(points[:, 1].min()), float(points[:, 1].max())
 
 
-def test_layers_match_the_official_table():
-    ours = {name: tuple(getattr(t.LAYER, key)) for key, name in t.OFFICIAL_LAYER_NAMES.items()}
-    simulation_only = ours.pop("Sim_N_Sidewall")
-    assert ours == OFFICIAL_LAYERS
-    assert simulation_only not in OFFICIAL_LAYERS.values()
+def test_layer_numbers_follow_the_book():
+    for book_name, (number, name) in BOOK_TABLE_10_2.items():
+        assert tuple(getattr(t.LAYER, name)) == (number, 0), book_name
 
 
-def test_every_mask_layer_has_a_view_and_rules():
-    for key in t.MIN_WIDTH_SPACE:
-        assert key in t.OFFICIAL_LAYER_NAMES
-    assert set(t.LAYER_VIEWS.layer_views) == set(t.OFFICIAL_LAYER_NAMES.values())
+def test_layer_names_and_numbers_equal_the_gdsfactory_generic_pdk():
+    from gdsfactory.gpdk import LAYER as GENERIC
+
+    shared = [name for name in t.LAYER_INFO if hasattr(GENERIC, name)]
+    assert len(shared) >= 24  # everything except nothing: the map is the generic one, by design
+    for name in shared:
+        assert tuple(getattr(t.LAYER, name)) == tuple(getattr(GENERIC, name)), name
 
 
-@pytest.mark.parametrize(
-    ("name", "width", "width_slab", "radius"),
-    [
-        ("strip_1550nm", 0.45, None, 10),
-        ("strip_1310nm", 0.40, None, 10),
-        ("rib_1550nm_TE", 0.45, 10.45, 25),
-        ("rib_1310nm_TE", 0.40, 10.40, 25),
-    ],
-)
-def test_passive_cross_sections_match_the_official_ones(name, width, width_slab, radius):
-    xs = gf.get_cross_section(name)
-    assert xs.width == pytest.approx(width)
-    assert xs.radius == pytest.approx(radius)
+def test_every_layer_is_described_and_has_a_view():
+    names = {name for name in dir(t.LAYER) if name.isupper()}
+    assert names == set(t.LAYER_INFO)
+    assert set(t.LAYER_VIEWS.layer_views) == set(t.LAYER_INFO)
+    assert set(t.MIN_WIDTH_SPACE) <= set(t.LAYER_INFO)
+
+
+def test_front_end_numbers_follow_the_book():
+    for name, value in BOOK_PROCESS.items():
+        assert getattr(t, name) == pytest.approx(value), name
+    assert pytest.approx(0.09) == t.T_SLAB90
+    for name, value in BOOK_DOPING.items():
+        assert t.DOPING[name] == pytest.approx(value), name
+
+
+def test_stack_is_consistent():
+    stack = {name: (z0, z1) for name, _, z0, z1, _ in t.STACK}
+    assert stack["via_contact"] == pytest.approx((t.T_SLAB90, t.Z_M1))  # from the slab up to metal 1
+    assert stack["heater"][0] == pytest.approx(stack["metal1"][0])  # the two films share a plane
+    assert stack["via1"] == pytest.approx((stack["metal1"][1], stack["metal2"][0]))
+    assert stack["via2"] == pytest.approx((stack["metal2"][1], stack["metal3"][0]))
+    assert stack["cladding"][1] == pytest.approx(t.Z_TOP)
+    assert stack["metal3"][1] < t.Z_TOP  # passivation above the top metal
+    assert stack["box"] == pytest.approx((-t.T_BOX, 0.0))
+    for name, (z0, z1) in stack.items():
+        assert z1 > z0, name
+    assert pytest.approx(10.0) == t.HEATER_SHEET_RESISTANCE
+
+
+@pytest.mark.parametrize(("name", "width", "width_slab"), [("strip", 0.5, None), ("rib", 0.5, 6.0)])
+def test_passive_cross_sections(name, width, width_slab):
     c = gf.components.straight(length=5, cross_section=name)
-    lo, hi = y_range(c, t.CORE)
+    lo, hi = y_range(c, t.WG)
     assert hi - lo == pytest.approx(width)
     if width_slab is not None:
-        lo, hi = y_range(c, t.SLAB)
+        lo, hi = y_range(c, t.SLAB90)
         assert hi - lo == pytest.approx(width_slab)
 
 
-def test_pn_cross_section_follows_the_guidelines():
-    c = gf.components.straight(length=5, cross_section="rib_1550nm_TE_pn")
-    core, p_low, n_low = y_range(c, t.CORE), y_range(c, t.P_LOW), y_range(c, t.N_LOW)
-    n_high, p_high = y_range(c, t.N_HI), y_range(c, t.P_HI)
-    # the n implant edge sits on the core centre and the n region lies inside the background p implant
-    assert min(abs(n_low[0]), abs(n_low[1])) == pytest.approx(0.0, abs=1e-6)
-    assert p_low[0] <= n_low[0] and n_low[1] <= p_low[1]
-    # n on the left of the path (+y), p on the right; high doses keep clear of the core
-    assert n_high[0] == pytest.approx(0.75) and p_high[1] == pytest.approx(-0.80)
-    assert n_high[0] > core[1] and p_high[1] < core[0]
+def test_pn_cross_section_is_nested_and_n_is_left_of_the_path():
+    c = gf.components.straight(length=5, cross_section="rib_pn")
+    half = t.RIB_SLAB_WIDTH / 2
+    # a path along +x has its left side at +y: n there, p at -y
+    assert y_range(c, t.N) == pytest.approx((0.0, half))
+    assert y_range(c, t.P) == pytest.approx((-half, 0.0))
+    assert y_range(c, t.NP) == pytest.approx((t.PN_GAP_MEDIUM, half))
+    assert y_range(c, t.PP) == pytest.approx((-half, -t.PN_GAP_MEDIUM))
+    assert y_range(c, t.NPP) == pytest.approx((t.PN_GAP_HIGH, half))
+    assert y_range(c, t.PPP) == pytest.approx((-half, -t.PN_GAP_HIGH))
 
 
-def test_p_inside_mirrors_the_junction():
-    c = gf.components.straight(length=5, cross_section=gf.get_cross_section("rib_1550nm_TE_pn", p_inside=True))
-    assert y_range(c, t.N_HI)[1] < 0 < y_range(c, t.P_HI)[0]
+def test_pn_cross_section_options():
+    mirrored = gf.components.straight(length=5, cross_section=gf.get_cross_section("rib_pn", p_inside=True))
+    assert y_range(mirrored, t.NPP)[1] < 0 < y_range(mirrored, t.PPP)[0]
+    shifted = gf.components.straight(length=5, cross_section=gf.get_cross_section("rib_pn", junction_offset=0.05))
+    assert y_range(shifted, t.N)[0] == pytest.approx(-0.05)  # the junction moved 50 nm towards p
+    assert y_range(shifted, t.P)[1] == pytest.approx(-0.05)
+    with pytest.raises(ValueError, match="gap_medium_doping"):
+        gf.get_cross_section("rib_pn", gap_medium_doping=2.0, gap_high_doping=1.0)
 
 
-def test_self_aligned_n_sidewall_strip():
-    c = gf.components.straight(length=5, cross_section="rib_1550nm_TE_pn")
-    strip = t.silicon_regions(c)["n_sidewall"].bbox()
-    dbu = c.kcl.dbu
-    assert strip.top * dbu == pytest.approx(0.225)  # the n-side sidewall
-    assert (strip.top - strip.bottom) * dbu == pytest.approx(t.N_SIDEWALL_DEPTH)
+def test_pad_has_an_opening_inside_the_metal():
+    pad = t.pad(size=80)
+    metal, opening = pad.get_region(t.M3).bbox(), pad.get_region(t.PADOPEN).bbox()
+    margin = (metal.width() - opening.width()) / 2 * pad.kcl.dbu
+    assert margin == pytest.approx(t.DESIGN_RULES["padopen_enclosure_by_m3"])
 
 
 def test_write_gds_for_lumerical(tmp_path: Path):
-    c = gf.components.straight(length=5, cross_section="rib_1550nm_TE_pn")
+    c = gf.components.straight(length=5, cross_section="rib_pn")
     path = t.write_gds_for_lumerical(c, tmp_path / "pn.gds", cellname="pn")
     layout = kdb.Layout()
     layout.read(str(path))
     assert [cell.name for cell in layout.top_cells()] == ["pn"]  # one flat cell, no metadata cell
     assert layout.cells() == 1
     layers = {(info.layer, info.datatype) for info in layout.layer_infos()}
-    assert tuple(t.LAYER.SIM_N_SIDEWALL) in layers
-    assert {(3, 0), (5, 0), (7, 0), (8, 0), (9, 0), (11, 0)} <= layers
+    assert {(1, 0), (3, 0), (20, 0), (21, 0), (22, 0), (23, 0), (24, 0), (25, 0)} <= layers
 
 
 def test_klayout_technology_is_written(tmp_path: Path):
     out = t.write_klayout_tech(tmp_path)
     text = (out / "layers.lyp").read_text(encoding="utf-8")
-    for name in OFFICIAL_LAYERS:
-        assert name in text
-
-
-def test_against_a_checkout_of_the_official_repository():
-    """Optional: set CORNERSTONE_PDK to a clone of github.com/cornerstone-uos/cornerstone-pdk."""
-    root = os.environ.get("CORNERSTONE_PDK")
-    if not root:
-        pytest.skip("CORNERSTONE_PDK is not set")
-    text = (Path(root) / "SOI220A" / "process_overview.yaml").read_text(encoding="utf-8")
-    pairs = re.findall(r"- name: (\w+)\s+layer: \[(\d+), (\d+)\]", text)
-    found = {name: (int(layer), int(datatype)) for name, layer, datatype in pairs}
-    assert found == OFFICIAL_LAYERS
+    for name in t.LAYER_INFO:
+        assert f"<name>{name}" in text, name

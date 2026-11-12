@@ -1,0 +1,29 @@
+Ring modulator: R = 25.0 um, circumference 157.08 um, doped arc 104.72 um, heated arc 26.66 um
+kappa^2(gap) = 3.728 exp(-gap / 101.6 nm)  [step 1]     n_eff = 2.55145, n_g = 3.9117  [step 2]
+round-trip loss at 0 V: waveguide 4.0 dB/cm -> 0.0628 dB, bend radiation 0.0000 dB, free carriers 0.1907 dB  =  0.2535 dB
+critical coupling: kappa^2 = 1 - 10^(-loss/10) = 0.0567  ->  gap = 425 nm
+
+ gap (nm)  kappa^2  extinction dB  loaded Q  linewidth pm
+      300   0.1945            4.8      9134         169.5
+      340   0.1312            7.7     12614         122.7
+      380   0.0885           12.9     16621          93.2
+      420   0.0597           31.5     20933          74.0
+      460   0.0402           15.2     25311          61.2
+      500   0.0271            8.9     29338          52.8
+      540   0.0183            5.7     32819          47.2
+
+design gap 420 nm (kappa^2 = 0.0597):  loaded Q = 20933, linewidth 74.0 pm, FSR 3.90 nm, extinction 31.5 dB
+     V  resonance shift pm  extinction dB  T at the 0 V resonance, dB
+   0.0                 0.0           31.5                      -31.53
+  -1.0                16.8           25.9                       -7.57
+  -2.0                29.6           23.2                       -3.91
+  -4.0                50.0           20.0                       -1.68
+optical bandwidth from the photon lifetime: f = c / (lambda Q) = 9.2 GHz
+electrical: C = 45.2 fF, Rs = 57.6 ohm at 0 V -> intrinsic f_RC = 61 GHz  [step 3]; the slower of the two limits the modulator
+
+ heater mW  resonance shift pm
+       0.0                 0.0
+      10.0               170.7
+      20.0               341.5
+      40.0               683.2
+thermal tuning 17.1 pm/mW; one FSR (3.90 nm) needs 228 mW

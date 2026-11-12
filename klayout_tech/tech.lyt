@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <technology>
- <name>cornerstone_soi220a</name>
+ <name>gsip_teaching</name>
  <description/>
  <group/>
  <dbu>0.001</dbu>
@@ -165,9 +165,16 @@
   </mag>
  </writer-options>
  <connectivity>
-  <connection>P_IMPLANT_HI_DF,VIA_DF,ELECTRODE_LF</connection>
-  <connection>N_IMPLANT_HI_DF,VIA_DF,ELECTRODE_LF</connection>
-  <symbols>ELECTRODE_LF='13/0'</symbols>
-  <symbols>VIA_DF='12/0'</symbols>
+  <connection>NPP,VIAC,M1</connection>
+  <connection>PPP,VIAC,M1</connection>
+  <connection>M1,VIA1,M2</connection>
+  <connection>HEATER,VIA1,M2</connection>
+  <connection>M2,VIA2,M3</connection>
+  <symbols>M3='49/0'</symbols>
+  <symbols>M1='41/0'</symbols>
+  <symbols>VIA2='43/0'</symbols>
+  <symbols>VIA1='44/0'</symbols>
+  <symbols>M2='45/0'</symbols>
+  <symbols>VIAC='40/0'</symbols>
  </connectivity>
 </technology>

@@ -13,7 +13,9 @@ build/
 
 # --- Ansys Lumerical projects, logs and raw results ---
 # Projects reach tens of MB and are rebuilt by the scripts.  Kept under version control instead:
-# the layouts (.gds), the process file (.lbr), and the extracted results (.txt, .csv, .png).
+# the layouts (.gds), the process file (.lbr), the result summaries (.txt, .csv), the figures (.png)
+# and the result arrays of the tutorial device (.npz, 7 MB in total): with them every figure can be
+# redrawn without Lumerical.
 *.fsp
 *.lms
 *.ldev
@@ -21,6 +23,7 @@ build/
 *.ich
 *.mat
 *.npz
+!lumerical_simulations/ring_modulator/*/*.npz
 *.h5
 *.log
 *_engine.out
@@ -33,3 +36,6 @@ build/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# --- written on demand by coupling_coefficient_fdtd.py --preview ---
+lumerical_simulations/ring_modulator/figures/check_coupler_setup.png

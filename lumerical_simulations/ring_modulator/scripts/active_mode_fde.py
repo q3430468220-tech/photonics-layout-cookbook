@@ -12,6 +12,13 @@ once the simulation is given the carrier or temperature map.  Both maps come fro
     thermal      Layer Builder with the heater section of step 4  +  "temperature" grid attribute
                  loaded with the temperature HEAT exported   ->  n_eff at the reference heater power
 
+The waveguide is solved bent to the ring radius, with the bend orientation found in step 2: the mode
+moves outwards, towards the p side, which changes how much of it sees each half of the junction.
+
+The window is smaller than step 2's, so the mesh carries a line on every silicon surface (add_rib_mesh).
+The undoped base solved here is compared with the step-2 ring: they must agree, or the two windows
+disagree and the step-5 numbers need a check.
+
     python active_mode_fde.py
     python active_mode_fde.py --mesh 0.01
 
@@ -29,10 +36,12 @@ from common import (
     L_PN,
     L_RING,
     LAM,
+    RADIUS,
     ROOT,
     SLAB_WIDTH,
     WIDTH,
     add_layer_builder,
+    add_rib_mesh,
     import_lumapi,
     require_process_file,
     step_dir,
@@ -41,12 +50,13 @@ from common import (
 
 OUT = step_dir("5_active_mode_properties")
 CHARGE_DIR, HEAT_DIR, PASSIVE_DIR = ROOT / "3_charge_profile", ROOT / "4_heat_profile", ROOT / "2_passive_mode_properties"
-Y_SPAN = 4.4  # stays inside the via bands (they start 2.6 um from the centre)
-Z_MIN, Z_MAX = -0.95, 1.15  # stays below the metal (starts at 1.22 um)
+Y_SPAN = 3.4  # stays inside the contact vias (they start 1.9 um from the centre)
+Z_MIN, Z_MAX = -0.9, 1.0  # stays below metal 1 and the heater film (they start at 1.1 um)
 N_GUESS = 2.6
+AGREE_TOL = 1e-3  # the undoped base here and the step-2 ring must agree to this n_eff
 
 
-def setup(m, gds, y_builder: float, mesh: float) -> None:
+def setup(m, gds, y_builder: float, mesh: float, rib_mesh: float, orientation: int) -> None:
     m.switchtolayout()
     m.deleteall()
     add_layer_builder(m, gds, 6.0, y_builder)
@@ -62,11 +72,17 @@ def setup(m, gds, y_builder: float, mesh: float) -> None:
         m.set(f"d{axis}", mesh * um)
     for bc in ("y min bc", "y max bc", "z min bc", "z max bc"):
         m.set(bc, "PML")
+    # added last: a new object takes the selection, and every set() above is meant for the FDE
+    add_rib_mesh(m, WIDTH, rib_mesh)  # a mesh line on every silicon surface, whatever the window
     m.setanalysis("wavelength", LAM * um)
     m.setanalysis("search", "near n")
     m.setanalysis("use max index", 0)
     m.setanalysis("n", N_GUESS)
     m.setanalysis("number of trial modes", 4)
+    m.setanalysis("bent waveguide", 1)
+    m.setanalysis("bend radius", RADIUS * um)
+    m.setanalysis("bend location", "simulation center")
+    m.setanalysis("bend orientation", orientation)
 
 
 def te0(m) -> dict:
@@ -86,21 +102,27 @@ def te0(m) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--mesh", type=float, default=0.02, help="FDE mesh step (um)")
+    ap.add_argument("--mesh", type=float, default=0.02, help="uniform FDE mesh step (um)")
+    ap.add_argument("--rib-mesh", type=float, default=0.01, help="mesh step on the silicon surfaces of the rib (um)")
     a = ap.parse_args()
     require_process_file()
     lumapi = import_lumapi()
     t0 = time.time()
     charge = np.load(CHARGE_DIR / "pn_rib_charge.npz")
     heat = np.load(HEAT_DIR / "heater_heat.npz")
-    ng = float(np.load(next(PASSIVE_DIR.glob("*_passive.npz")))["ng"])
-    V = np.sort(charge["V"])[::-1]  # 0 -> most negative
-    lines = [f"Active rib waveguide W = {WIDTH} um at {LAM} um; FDE mesh {a.mesh * 1000:.0f} nm; n_g = {ng:.4f} from step 2"]
+    passive = np.load(PASSIVE_DIR / "rib_passive.npz")
+    ng, orientation = float(passive["ring_ng"]), int(passive["bend_orientation"])
+    ring_neff = float(passive["ring_neff"])  # step 2: the same undoped rib bent to the ring radius
+    V = np.sort(charge["V"])[::-1]  # 0 V first, then 0 -> most negative
+    lines = [
+        f"Active rib waveguide W = {WIDTH} um, bent to R = {RADIUS} um, at {LAM} um; FDE mesh {a.mesh * 1000:.0f} nm, "
+        f"rib-interface mesh {a.rib_mesh * 1000:.0f} nm; n_g = {ng:.4f} from step 2"
+    ]
     res = dict(V=V, lam=LAM, ng=ng)
 
     with lumapi.MODE(hide=True) as m:
         # ---- electrical: carriers from CHARGE ----
-        setup(m, CHARGE_DIR / "pn_rib.gds", SLAB_WIDTH + 2.0, a.mesh)
+        setup(m, CHARGE_DIR / "pn_rib.gds", SLAB_WIDTH + 2.0, a.mesh, a.rib_mesh, orientation)
         m.addgridattribute("np Density")
         m.set("name", "carriers")
         m.importdataset(str(CHARGE_DIR / "pn_rib_charge.mat"))
@@ -126,7 +148,7 @@ def main() -> None:
         m.save(str(OUT / "pn_rib.lms"))
 
         # ---- thermal: temperature from HEAT ----
-        setup(m, HEAT_DIR / "heater.gds", 42.0, a.mesh)
+        setup(m, HEAT_DIR / "heater.gds", 42.0, a.mesh, a.rib_mesh, orientation)
         m.addgridattribute("temperature")
         m.set("name", "temperature")
         m.importdataset(str(HEAT_DIR / "heater_T.mat"))
@@ -149,22 +171,43 @@ def main() -> None:
     p_ref = float(heat["P_reference_mW"])
     dneff_dP = (hot["neff"].real - cold["neff"].real) / p_ref  # per mW, in the heated section
     thermal_pm_per_mW = dneff_dP * fraction_heater * LAM / ng * 1e6
+
+    # the undoped base against step 2 (same bent rib, other window); and the carrier effect at 0 V
+    base_neff = base["neff"].real
+    base_minus_passive = base_neff - ring_neff
+    neff0V_minus_base = neff[0] - base_neff
     res.update(
         neff=neff,
         loss_dBcm=loss,
         dneff=dneff,
         shift_pm=shift_pm,
         vpil_Vcm=vpil,
-        base_neff=base["neff"].real,
+        base_neff=base_neff,
         base_loss_dBcm=base["loss"],
+        base_minus_passive=base_minus_passive,
+        neff0V_minus_base=neff0V_minus_base,
         dneff_dP_section=dneff_dP,
         thermal_pm_per_mW=thermal_pm_per_mW,
         fraction_pn=fraction_pn,
         fraction_heater=fraction_heater,
+        neff_cold=cold["neff"].real,
+        neff_hot=hot["neff"].real,
     )
 
     lines += [
-        f"no carriers: n_eff = {base['neff'].real:.6f}, loss = {base['loss']:.4f} dB/cm",
+        f"no carriers: n_eff = {base_neff:.6f}, loss = {base['loss']:.4f} dB/cm",
+        f"step 2, the same undoped rib bent to R = {RADIUS} um: n_eff = {ring_neff:.6f};  "
+        f"base_minus_passive = {base_minus_passive:+.2e}",
+        f"0 V with carriers minus no carriers: neff0V_minus_base = {neff0V_minus_base:+.2e}",
+    ]
+    if abs(base_minus_passive) > AGREE_TOL:
+        warning = (
+            f"WARNING: the step-5 and step-2 windows do not agree: base_minus_passive = {base_minus_passive:+.2e} "
+            f"(tolerance {AGREE_TOL:.0e}).  Check the window and the mesh before using the step-5 numbers."
+        )
+        lines.append(warning)
+        print(warning, flush=True)
+    lines += [
         f"\n{'V':>6} {'n_eff':>10} {'d n_eff':>10} {'loss dB/cm':>11} {'ring shift pm':>14} {'VpiL V cm':>10}",
     ]
     lines += [
@@ -178,10 +221,10 @@ def main() -> None:
         f"\nthermal: n_eff {cold['neff'].real:.6f} -> {hot['neff'].real:.6f} at {p_ref:.0f} mW in the heated section "
         f"= {dneff_dP:.3e} per mW",
         f"ring shift = that x (heated fraction {fraction_heater:.0%}) x lambda / n_g = {thermal_pm_per_mW:.1f} pm/mW",
-        f"The junction at {V[-1]:.0f} V moves the resonance as much as {abs(shift_pm[-1]) / thermal_pm_per_mW:.1f} mW of heater power:",
+        f"The junction at {V[-1]:.0f} V moves the resonance as much as {abs(shift_pm[-1]) / thermal_pm_per_mW:.2f} mW of heater power:",
         "the heater sets the operating point, the junction modulates around it.",
     ]
-    np.savez(OUT / "active.npz", **res)
+    np.savez_compressed(OUT / "active.npz", **res)
     (OUT / "active.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines[-7:]))
     print(f"done in {(time.time() - t0) / 60:.1f} min")

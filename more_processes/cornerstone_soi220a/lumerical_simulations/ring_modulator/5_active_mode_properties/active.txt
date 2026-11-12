@@ -1,0 +1,29 @@
+Active rib waveguide W = 0.45 um at 1.55 um; FDE mesh 20 nm; n_g = 3.9117 from step 2
+no carriers: n_eff = 2.551451, loss = 0.0000 dB/cm
+
+     V      n_eff    d n_eff  loss dB/cm  ring shift pm  VpiL V cm
+  0.00   2.550618  +0.00e+00      18.208            0.0        nan
+ -0.25   2.550635  +1.72e-05      17.884            4.5       1.13
+ -0.50   2.550651  +3.33e-05      17.589            8.8       1.17
+ -0.75   2.550666  +4.85e-05      17.319           12.8       1.20
+ -1.00   2.550680  +6.26e-05      17.074           16.5       1.24
+ -1.25   2.550693  +7.54e-05      16.849           19.9       1.28
+ -1.50   2.550705  +8.75e-05      16.632           23.1       1.33
+ -1.75   2.550717  +9.93e-05      16.420           26.2       1.37
+ -2.00   2.550729  +1.11e-04      16.212           29.3       1.40
+ -2.25   2.550740  +1.22e-04      16.014           32.3       1.42
+ -2.50   2.550751  +1.33e-04      15.828           35.2       1.46
+ -2.75   2.550761  +1.43e-04      15.651           37.8       1.49
+ -3.00   2.550771  +1.53e-04      15.482           40.4       1.52
+ -3.25   2.550780  +1.63e-04      15.317           42.9       1.55
+ -3.50   2.550790  +1.72e-04      15.158           45.4       1.58
+ -3.75   2.550799  +1.81e-04      15.006           47.8       1.61
+ -4.00   2.550808  +1.90e-04      14.860           50.1       1.63
+
+free-carrier loss of the PN section per round trip: 0.1907 dB at 0 V, 0.1556 dB at -4 V
+ring shift = d n_eff x (doped fraction 67%) x lambda / n_g
+
+thermal: n_eff 2.551451 -> 2.553995 at 10 mW in the heated section = 2.544e-04 per mW
+ring shift = that x (heated fraction 17%) x lambda / n_g = 17.1 pm/mW
+The junction at -4 V moves the resonance as much as 2.9 mW of heater power:
+the heater sets the operating point, the junction modulates around it.

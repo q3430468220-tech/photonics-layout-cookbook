@@ -22,13 +22,17 @@ jobs:
         run: uv sync
       - name: Lint
         run: uv run ruff check .
+      # Nothing here needs Lumerical: the PDK, the layout, the DRC, the process tables,
+      # and every figure redrawn from the result data kept in the repository.
       - name: Tests
         run: uv run pytest
-      # Everything below runs without Lumerical: the PDK, the DRC self-test and the device layout.
+      - name: Tests of the second process (CORNERSTONE SOI220A)
+        working-directory: more_processes/cornerstone_soi220a
+        run: uv run pytest
       - name: Technology file and KLayout technology
-        run: uv run python cornerstone_technology.py
+        run: uv run python gsip_technology.py
       - name: DRC self-test
-        run: uv run python cornerstone_drc.py --demo
+        run: uv run python gsip_drc.py --demo
       - name: Ring modulator layout with DRC
         run: uv run python rm_builder.py
       - uses: actions/upload-artifact@v4
@@ -37,5 +41,5 @@ jobs:
           name: layout
           path: |
             rm_ring.gds
-            assets/rm_ring.png
-            assets/rm_ring_zoom.png
+            build/rm_ring_klayout.png
+            build/rm_ring_klayout_zoom.png

@@ -1,24 +1,28 @@
-"""Compile the CORNERSTONE SOI220A process tables into a Lumerical Layer Builder process file (.lbr).
+"""Compile the GSiP teaching process tables into a Lumerical Layer Builder process file (.lbr).
 
 The procedure is the one of the Ansys article "Layer builder - Simulation object" (section
 "Creating a process file using Python script"), and the CSV column names are those of its template,
-so the tables can be compared line by line with the Ansys example.  The data is CORNERSTONE's;
-where each number comes from is documented in cornerstone_csv/README.md.
+so the tables can be compared line by line with the Ansys example.  Where each number comes from is
+documented in gsip_csv/README.md.
 
     1. FDTD     create the custom optical materials (dielectric_materials.csv, index_perturbation_data.csv),
                 add the process layers (process_layers.csv), save the .lbr with the material data inside
-    2. CHARGE   reload the .lbr, add the doping layers (doping_process_layers.csv) and attach an electrical
-                (CT) and a thermal (HT) model to every material (active_material_models.csv), save again
+    2. CHARGE   reload the .lbr, add the doping layers (doping_process_layers.csv), attach an electrical (CT)
+                and a thermal (HT) model to every material (active_material_models.csv) and adjust the models
+                the database does not have (material_property_overrides.csv: the TiN heater film), save again
     3. optional append process variations (pattern_variations.csv, stack_variations.csv)
-    4. QA       reload the finished file and compare every property with the CSV; exit code 1 on a mismatch
+    4. QA       reload the finished file and compare it with the CSV; exit code 1 on a mismatch.  It covers the
+                process layers, the doping layers, the CT and HT model names, and the overridden properties with
+                their model switch.  It does not read back the index-perturbation and dielectric materials
+                (index_perturbation_data.csv, dielectric_materials.csv): steps 0 and 5 exercise those.
 
 Needs a local Lumerical installation with FDTD and CHARGE licences; no GUI is opened.
 
-    python cornerstone_process_file_compiler.py      ->  cornerstone_process.lbr next to this script
+    python gsip_process_file_compiler.py      ->  gsip_process.lbr next to this script
 
 In Lumerical, load the result and a layout into a Layer Builder object:
 
-    addlayerbuilder;  loadgdsfile("rm_ring.gds");  loadprocessfile("cornerstone_process.lbr");
+    addlayerbuilder;  loadgdsfile("rm_ring.gds");  loadprocessfile("gsip_process.lbr");
 """
 
 from __future__ import annotations
@@ -36,10 +40,10 @@ sys.path.insert(0, str(HERE.parent))
 from lumerical_env import import_lumapi  # noqa: E402
 
 # ================================== settings ==================================
-CSV_DIR = HERE / "cornerstone_csv"
-OUTPUT_LBR = HERE / "cornerstone_process.lbr"
+CSV_DIR = HERE / "gsip_csv"
+OUTPUT_LBR = HERE / "gsip_process.lbr"
 
-PROCESS_NAME = "cornerstone"  # prefix of the materials after loading, e.g. "cornerstone Si_np"
+PROCESS_NAME = "gsip"  # prefix of the materials after loading, e.g. "gsip Si_np"
 SIDEWALL_POSITION_REF = "middle"  # which height of a slanted sidewall the GDS edge refers to
 EXPORT_MATERIALS = True  # embed the material data, so that loading does not depend on the local database
 
@@ -51,6 +55,7 @@ QA_TEST = True
 PROCESS_LAYERS_CSV = CSV_DIR / "process_layers.csv"
 DOPING_CSV = CSV_DIR / "doping_process_layers.csv"
 ACTIVE_MATERIAL_CSV = CSV_DIR / "active_material_models.csv"
+OVERRIDES_CSV = CSV_DIR / "material_property_overrides.csv"
 INDEX_PERTURBATION_CSV = CSV_DIR / "index_perturbation_data.csv"
 DIELECTRIC_CSV = CSV_DIR / "dielectric_materials.csv"
 PATTERN_VARIATION_CSV = CSV_DIR / "pattern_variations.csv"
@@ -87,7 +92,7 @@ def _set_color(fdtd, name: str, row: dict[str, str]) -> None:
 
 # ------------------------------------------------------------------ FDTD part
 def add_dielectric_materials(fdtd, rows: list[dict[str, str]]) -> None:
-    """Constant-index materials that the default database lacks (here: air above the cladding)."""
+    """Constant-index materials that the default database lacks (here: air, for openings and trenches)."""
     for m in rows:
         name = m["name"]
         fdtd.setmaterial(fdtd.addmaterial("(n,k) Material"), "name", name)
@@ -192,6 +197,59 @@ def add_ct_ht_models(device, rows: list[dict[str, str]], lumapi) -> None:
                 device.eval(f'select("{parent}"); addmaterialproperties("{kind}", "{r[col]}");')
             except lumapi.LumApiError:
                 sys.exit(f"error: cannot attach the {kind} model '{r[col]}' to '{parent}' (unknown material or model)")
+
+
+def _model_path(row: dict[str, str], active: dict[str, dict[str, str]]) -> str:
+    """Path of the CT or HT model attached to a material: materials::<process material>::<model name>."""
+    column = {"CT": "CT material", "HT": "HT material"}[row["model"]]
+    return f"materials::{PREFIX}{row['material']}::{active[row['material']][column]}"
+
+
+NO_SWITCH = ("mass density",)  # constant-only properties: they have no ".active model" switch
+
+
+def has_switch(prop: str) -> bool:
+    """True for a ".constant" property whose model has an ".active model" switch (every one but mass density)."""
+    return prop.endswith(".constant") and not prop.startswith(NO_SWITCH)
+
+
+def apply_property_overrides(device, rows: list[dict[str, str]], active_rows: list[dict[str, str]], lumapi) -> None:
+    """Change single numbers of an attached model.
+
+    The CHARGE / HEAT database has no TiN, so the heater film borrows the aluminium model and gets its own
+    thermal conductivity, density, specific heat and electrical conductivity.  A property that ends in
+    ".constant" also switches its model to "constant", except mass density, which has no switch.
+    """
+    active = {r["material"]: r for r in active_rows}
+    for r in rows:
+        path, prop, value = _model_path(r, active), r["property"], float(r["value"])
+        try:
+            device.select(path)
+            if has_switch(prop):
+                device.set(prop.removesuffix(".constant") + ".active model", "constant")
+            device.set(prop, value)
+        except lumapi.LumApiError:
+            sys.exit(f"error: cannot set '{prop}' of '{path}'")
+
+
+def qa_property_overrides(device, rows: list[dict[str, str]], active_rows: list[dict[str, str]]) -> int:
+    """Each overridden number, and the model switch of every ".constant" property, which must read "Constant".
+
+    The switch is compared case-insensitively.  Mass density has no switch and is not checked for one.
+    """
+    active = {r["material"]: r for r in active_rows}
+    bad = 0
+    for r in rows:
+        prop = r["property"]
+        device.select(_model_path(r, active))
+        bad += _mismatch(r["material"], f"{r['model']} {prop}", float(r["value"]), device.get(prop))
+        if has_switch(prop):
+            switch = prop.removesuffix(".constant") + ".active model"
+            got = str(device.get(switch))
+            if got.lower() != "constant":
+                print(f"  mismatch  {r['material']} / {r['model']} {switch}: CSV='Constant'  LBR={got!r}")
+                bad += 1
+    return bad
 
 
 # ------------------------------------------------- process variations (optional)
@@ -310,6 +368,8 @@ def main() -> None:
     dielectric_rows = read_csv(DIELECTRIC_CSV)
     doping_rows = read_csv(DOPING_CSV) if ELECTRICAL_PROCESS_FILE else []
     active_rows = read_csv(ACTIVE_MATERIAL_CSV) if (ELECTRICAL_PROCESS_FILE or THERMAL_PROCESS_FILE) else []
+    kinds = {kind for kind, _ in material_model_kinds()}
+    override_rows = [r for r in read_csv(OVERRIDES_CSV) if r["model"] in kinds] if active_rows else []
 
     with lumapi.FDTD(hide=True) as fdtd:
         add_dielectric_materials(fdtd, dielectric_rows)
@@ -330,9 +390,13 @@ def main() -> None:
             if doping_rows:
                 add_doping_layers(device, doping_rows)
             add_ct_ht_models(device, active_rows, lumapi)
+            apply_property_overrides(device, override_rows, active_rows, lumapi)
             device.select("layer group")
             save_process_file(device, OUTPUT_LBR)
-        print(f"[CHARGE] {len(doping_rows)} doping layers, CT/HT models of {len(active_rows)} materials -> {OUTPUT_LBR.name}")
+        print(
+            f"[CHARGE] {len(doping_rows)} doping layers, CT/HT models of {len(active_rows)} materials, "
+            f"{len(override_rows)} adjusted properties -> {OUTPUT_LBR.name}"
+        )
 
     if STATISTICAL_PROCESS_FILE:
         append_process_variation(OUTPUT_LBR, len(process_rows))
@@ -345,6 +409,7 @@ def main() -> None:
         if active_rows:
             with lumapi.DEVICE(hide=True) as device:
                 bad += qa_doping_and_materials(device, doping_rows, active_rows)
+                bad += qa_property_overrides(device, override_rows, active_rows)
         if bad:
             sys.exit(f"[QA]     {bad} mismatches")
         print("[QA]     everything matches")

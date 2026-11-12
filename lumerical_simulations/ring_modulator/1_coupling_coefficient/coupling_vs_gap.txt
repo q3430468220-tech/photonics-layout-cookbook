@@ -1,9 +1,10 @@
-Coupling region, R = 25.0 um, W = 0.45 um, rib waveguide, lambda = 1.55 um
- gap (um)  kappa^2 |S41|^2  t^2 |S21|^2   |S11|^2   |S31|^2     sum  minutes
-    0.200          0.50154      0.49417  1.36e-05  1.06e-05  0.9957     10.6
-    0.300          0.20314      0.79512  1.78e-06  5.60e-06  0.9983     11.9
-    0.400          0.07440      0.92497  1.35e-07  3.61e-07  0.9994      8.8
-    0.500          0.02634      0.97344  7.02e-08  6.15e-08  0.9998      6.4
+Coupling region, R = 10.0 um, W = 0.5 um, rib waveguide, lambda = 1.55 um
+arm alone (port 3 -> port 4, no bus): T = 0.9473  ->  half an arm transmits 0.9733
+ gap (um)   kappa^2  t^2 |S21|^2  kappa^2 + t^2  raw |S41|^2   |S11|^2   |S31|^2  minutes
+    0.200   0.11817      0.88166         0.9998      0.11501  6.23e-08  2.88e-07      5.7
+    0.300   0.03687      0.96308         1.0000      0.03589  6.80e-08  6.78e-08      5.9
+    0.400   0.01129      0.98870         1.0000      0.01099  5.54e-08  1.97e-08      5.6
+    0.500   0.00344      0.99656         1.0000      0.00335  5.22e-08  5.82e-09      5.6
 
-fit: kappa^2 = 3.7280 * exp(-gap / 101.6 nm)
-sum < 1 is the loss of the coupler and of the arm's reverse bends inside the window.
+fit: kappa^2 = 1.2587 * exp(-gap / 84.8 nm); fitted for gaps of 200 to 500 nm; an interpolation formula, do not extrapolate (its amplitude exceeds 1)
+kappa^2 is |S41|^2 divided by the transmission of half an arm; kappa^2 + t^2 = 1 for a lossless coupler.

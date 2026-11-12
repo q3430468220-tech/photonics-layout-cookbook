@@ -1,0 +1,5 @@
+material,model,property,value
+TiN - Palik,HT,thermal conductivity.constant,28
+TiN - Palik,HT,mass density.constant,5400
+TiN - Palik,HT,specific heat.constant,600
+TiN - Palik,CT,conductivity.constant,666667

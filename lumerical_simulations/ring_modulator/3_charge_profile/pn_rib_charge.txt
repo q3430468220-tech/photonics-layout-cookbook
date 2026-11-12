@@ -1,30 +1,34 @@
-PN section rib_1550nm_TE_pn, W = 0.45 um, slab 14.0 um; doping from cornerstone_process.lbr
-2D cross-section normalised to the doped arc, 104.72 um.  anode = Via_P, cathode = Via_N.
-steady state: 17 points, V = 0.00 ... -4.00 V; leakage at -4.0 V: -9.38e-14 A
+PN section rib_pn, W = 0.5 um, slab 6.0 um; doping from gsip_process.lbr
+2D cross-section normalised to the doped arc, 41.89 um.  anode = Via_contact_P, cathode = Via_contact_N.
+steady state: 17 points, V = 0.00 ... -4.00 V
+reverse current stays below 1e-13 A at all reverse biases (largest |I| 3e-14 A): the numerical floor, not a leakage prediction
 doping check: net doping (donors - acceptors, cm^-3) averaged over each region of the solver mesh
-  p slab, lower 100 nm   -5.64e+17   (published: -5.7e17)
-  p rib, upper 120 nm    -2.27e+17   (published: -2.25e17)
-  n slab, lower 100 nm   +1.03e+18   (published: +1.1e18)
-  p contact              -9.55e+19   (published: -1e20)
-  junction at y = +108 nm from the core centre (expected +115 nm: 110 nm inside the n-side sidewall)
+  region            solver   process tables (nominal, nested masks added)
+  n, core       +4.977e+17   +5.000e+17
+  p, core       -6.993e+17   -7.000e+17
+  n+, slab      +3.490e+18   +3.500e+18
+  p+, slab      -2.694e+18   -2.700e+18
+  n++, contact  +5.022e+20   +5.035e+20
+  p++, contact  -1.922e+20   -1.927e+20
+  junction at y = +5 nm from the core centre (drawn at 0)
 
-small signal, whole PN section (104.7 um):
+small signal, whole PN section (41.9 um):
      V   C (fF)  C (fF/um)  Rs (ohm)  Rs (ohm cm)  f_RC (GHz)
-  0.00    45.18      0.431     57.57        0.603        61.2
- -0.25    40.66      0.388     56.87        0.596        68.8
- -0.50    37.46      0.358     56.29        0.589        75.5
- -0.75    34.99      0.334     55.78        0.584        81.6
- -1.00    33.00      0.315     55.31        0.579        87.2
- -1.25    31.37      0.300     54.90        0.575        92.4
- -1.50    30.01      0.287     54.52        0.571        97.3
- -1.75    28.82      0.275     54.17        0.567       102.0
- -2.00    27.77      0.265     53.83        0.564       106.5
- -2.25    26.85      0.256     53.52        0.560       110.7
- -2.50    26.04      0.249     53.23        0.557       114.8
- -2.75    25.31      0.242     52.96        0.555       118.7
- -3.00    24.65      0.235     52.70        0.552       122.5
- -3.25    24.04      0.230     52.44        0.549       126.2
- -3.50    23.48      0.224     52.20        0.547       129.8
- -3.75    22.97      0.219     51.97        0.544       133.3
- -4.00    22.48      0.215     51.74        0.542       136.8
-C from Im(Y)/omega at 1e+08 Hz, Rs from Re(1/Y) at 3e+10 Hz. f_RC is the intrinsic junction limit, without pads, traces or the driver impedance.
+  0.00    16.68      0.398    150.18        0.629        63.5
+ -0.25    15.20      0.363    148.89        0.624        70.3
+ -0.50    14.11      0.337    147.80        0.619        76.3
+ -0.75    13.27      0.317    146.85        0.615        81.7
+ -1.00    12.58      0.300    145.99        0.612        86.7
+ -1.25    12.00      0.286    145.21        0.608        91.3
+ -1.50    11.50      0.275    144.50        0.605        95.7
+ -1.75    11.08      0.264    143.84        0.603        99.9
+ -2.00    10.70      0.255    143.22        0.600       103.9
+ -2.25    10.37      0.247    142.63        0.597       107.6
+ -2.50    10.06      0.240    142.08        0.595       111.3
+ -2.75     9.79      0.234    141.56        0.593       114.8
+ -3.00     9.54      0.228    141.06        0.591       118.2
+ -3.25     9.31      0.222    140.58        0.589       121.6
+ -3.50     9.10      0.217    140.13        0.587       124.8
+ -3.75     8.91      0.213    139.69        0.585       127.9
+ -4.00     8.73      0.208    139.26        0.583       130.9
+C = -1 / (omega Im(1/Y)) at 1e+08 Hz, Rs = Re(1/Y) at 3e+10 Hz. f_RC is the intrinsic junction limit, without pads, traces or the driver impedance.

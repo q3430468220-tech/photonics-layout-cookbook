@@ -1,0 +1,9 @@
+material,CT material,HT material
+Si (Silicon) - Palik,Si (Silicon),Si (Silicon)
+Si_np,Si (Silicon),Si (Silicon)
+SiO2 (Glass) - Palik,SiO2 (Glass) - Sze,SiO2 (Glass) - Sze
+Ge (Germanium) - Palik,Ge (Germanium),Ge (Germanium)
+Si3N4 (Silicon Nitride) - Luke,Si3N4 (Silicon nitride) - Sze,Si3N4 (Silicon nitride) - Sze
+Al (Aluminium) - Palik,Al (Aluminium) - CRC,Al (Aluminium) - CRC
+TiN - Palik,Al (Aluminium) - CRC,Al (Aluminium) - CRC
+Air,Air,Air

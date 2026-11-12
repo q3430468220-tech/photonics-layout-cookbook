@@ -1,0 +1,9 @@
+Coupling region, R = 25.0 um, W = 0.45 um, rib waveguide, lambda = 1.55 um
+ gap (um)  kappa^2 |S41|^2  t^2 |S21|^2   |S11|^2   |S31|^2     sum  minutes
+    0.200          0.50154      0.49417  1.36e-05  1.06e-05  0.9957     10.6
+    0.300          0.20314      0.79512  1.78e-06  5.60e-06  0.9983     11.9
+    0.400          0.07440      0.92497  1.35e-07  3.61e-07  0.9994      8.8
+    0.500          0.02634      0.97344  7.02e-08  6.15e-08  0.9998      6.4
+
+fit: kappa^2 = 3.7280 * exp(-gap / 101.6 nm)
+sum < 1 is the loss of the coupler and of the arm's reverse bends inside the window.

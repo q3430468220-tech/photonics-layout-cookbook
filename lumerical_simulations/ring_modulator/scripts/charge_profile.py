@@ -1,18 +1,21 @@
 """Step 3 - CHARGE: carriers in the PN section versus bias, junction capacitance and series resistance.
 
-Model: a straight section of the PDK cross-section ``rib_1550nm_TE_pn`` with the via bands of
-rm_builder, written to GDS and loaded into a Layer Builder with cornerstone_process.lbr.  All
-doping comes from the process file.  The two via bands are separate solids there (via on P++,
-via on N++), so each can carry its own contact:
+Model: a straight piece of the PDK cross-section ``rib_pn`` with the two rows of contact vias of
+rm_builder, written to GDS and loaded into a Layer Builder with gsip_process.lbr.  All doping comes
+from the process file.  The process file splits the contact via by the implant below it, so the two
+rows are separate solids and each can carry its own contact:
 
-    anode   = Via_P   (p side)          cathode = Via_N   (n side)
+    anode   = Via_contact_P   (p side, outside the ring)
+    cathode = Via_contact_N   (n side, inside the ring)
     V = V_anode - V_cathode;  negative = reverse bias = depletion
 
 The simulation is a 2D cross-section normalised to the length of the doped arc, so currents,
 capacitance and resistance are those of the whole PN section of the ring.
 
     1. steady state, anode 0 V -> V_min:  n(y, z, V), p(y, z, V)  -> .mat file for step 5
-    2. small signal (ssac) at each bias:   C = Im(Y) / omega,  Rs = Re(1 / Y)  ->  f_RC = 1 / (2 pi Rs C)
+    2. small signal (ssac) at each bias: the junction is a series RC, Z = 1 / Y = Rs - j / (omega C), so
+           Rs = Re(Z),   C = -1 / (omega Im(Z))   (exact at every frequency)
+       Im(Y) / omega is only right for omega Rs C << 1.  f_RC = 1 / (2 pi Rs C).
 
     python charge_profile.py                      # 0 -> -4 V in 17 points
     python charge_profile.py --vmin -2 --points 9 --no-ssac
@@ -23,11 +26,14 @@ Output in 3_charge_profile/:  pn_rib.gds / .ldev, pn_rib_charge.mat, pn_rib_char
 from __future__ import annotations
 
 import argparse
+import csv
 import time
+from pathlib import Path
 
 import numpy as np
 from common import (
     L_PN,
+    REPO,
     SLAB_WIDTH,
     T_SI,
     T_SLAB,
@@ -35,10 +41,8 @@ from common import (
     add_layer_builder,
     import_lumapi,
     require_process_file,
-    rm,
     section_gds,
     step_dir,
-    strip,
     t,
     um,
 )
@@ -47,20 +51,9 @@ OUT = step_dir("3_charge_profile")
 NAME = "pn_rib"
 LENGTH = 6.0  # um of waveguide in the GDS; the simulation is 2D
 Y_SPAN = SLAB_WIDTH + 0.4
-Z_MIN, Z_MAX = -0.5, 1.15  # inside the BOX and the top cladding; the vias pass through the top
+Z_MIN, Z_MAX = -0.5, 1.0  # inside the BOX and below metal 1; the vias pass through the top
 JUNCTION_MESH = 0.008  # um, maximum edge length of the mesh over the rib
-
-
-def write_gds():
-    """PN section + via bands.  Along +x the cross-section has n on the left (+y) and p on the right (-y)."""
-
-    def vias(c, x0, x1):
-        for side in (+1, -1):
-            y0, y1 = sorted((side * rm.VIA_GAP, side * (rm.VIA_GAP + rm.VIA_WIDTH)))
-            c.add_polygon(strip(x0, x1, y0, y1), layer=t.VIA)
-
-    xs = {"cross_section": "rib_1550nm_TE_pn", "settings": {"width": WIDTH, "width_slab": SLAB_WIDTH}}
-    return section_gds(OUT / f"{NAME}.gds", xs, LENGTH, extra=vias)
+PROCESS_TABLE = REPO / "gsip_process_file_py" / "gsip_csv" / "doping_process_layers.csv"
 
 
 def setup(d, gds) -> None:
@@ -87,7 +80,7 @@ def setup(d, gds) -> None:
     d.set("z", T_SI / 2 * um)
     d.set("z span", (T_SI + 0.02) * um)
     d.set("max edge length", JUNCTION_MESH * um)
-    for name, solid in (("anode", "Via_P"), ("cathode", "Via_N")):
+    for name, solid in (("anode", "Via_contact_P"), ("cathode", "Via_contact_N")):
         d.addelectricalcontact()
         d.set("name", name)
         d.set("surface type", "solid")
@@ -117,12 +110,61 @@ def region_mean(y, z, elements, values, inside) -> float:
 
 def junction_position(y, z, net) -> float:
     """y (um) where the net doping changes sign inside the core, at mid height of the rib."""
-    sel = (np.abs(z - 0.16) < 0.03) & (np.abs(y) < WIDTH / 2)
+    sel = (np.abs(z - T_SI / 2) < 0.03) & (np.abs(y) < WIDTH / 2)
     ys, ns = y[sel], net[sel]
     order = np.argsort(ys)
     ys, ns = ys[order], ns[order]
     flips = np.where(np.sign(ns[:-1]) != np.sign(ns[1:]))[0]
     return float((ys[flips[0]] + ys[flips[0] + 1]) / 2) if len(flips) else float("nan")
+
+
+def process_table(path: Path = PROCESS_TABLE) -> dict[str, tuple[str, float]]:
+    """The enabled implant rows of the process table: name -> (dopant 'n' or 'p', nominal concentration in cm^-3)."""
+    with path.open(encoding="utf-8", newline="") as f:
+        return {r["name"]: (r["dopant"], float(r["concentration"])) for r in csv.DictReader(f) if r["enabled"] == "1"}
+
+
+def nested_doping(table: dict[str, tuple[str, float]], masks: tuple[str, ...]) -> float:
+    """Net doping (donors minus acceptors, cm^-3) of a region that several nested implant masks cover."""
+    return sum(conc if dopant == "n" else -conc for dopant, conc in (table[m] for m in masks))
+
+
+def _window(y0: float, y1: float, z0: float, z1: float):
+    """Predicate for the mesh centroids inside a rectangle of the cross-section (um)."""
+    return lambda y, z: (y > y0) & (y < y1) & (z > z0) & (z < z1)
+
+
+def doping_check(y, z, elements, net, table) -> list[tuple[str, float, float]]:
+    """Solver net doping against the process table, averaged over the six implant regions.
+
+    Each region's expected value adds up the nested masks of the process table (nominal values):
+    N+ adds to N, N++ adds to N and N+; the p side is the same with acceptors negative.
+
+    The implants are flat in depth by construction: the straggle (1 um) is much larger than the 0.22 um
+    layer, so the concentration changes by well under 1 % over the depth.  The check therefore tests
+    concentration and lateral position, not depth: an error in the depth profile would pass it.
+    """
+    half, medium, high = WIDTH / 2, t.PN_GAP_MEDIUM, t.PN_GAP_HIGH
+    regions = [
+        ("n, core", (0.05, half - 0.02, 0.0, T_SI), ("N",)),
+        ("p, core", (-half + 0.02, -0.05, 0.0, T_SI), ("P",)),
+        ("n+, slab", (medium + 0.1, high - 0.1, 0.0, T_SLAB), ("N", "N_plus")),
+        ("p+, slab", (-high + 0.1, -medium - 0.1, 0.0, T_SLAB), ("P", "P_plus")),
+        ("n++, contact", (high + 0.2, 2.8, 0.0, T_SLAB), ("N", "N_plus", "N_plusplus")),
+        ("p++, contact", (-2.8, -high - 0.2, 0.0, T_SLAB), ("P", "P_plus", "P_plusplus")),
+    ]
+    return [(name, region_mean(y, z, elements, net, _window(*win)), nested_doping(table, masks)) for name, win, masks in regions]
+
+
+def current_floor(V: np.ndarray, current: np.ndarray) -> tuple[float, float]:
+    """Largest reverse-bias current of the sweep (A), and the power of ten just above it (A).
+
+    The steady-state current of this solver is numerical noise at the 1e-14 A level (identical values at
+    several biases), so the sweep supports only a bound, not a leakage prediction.
+    """
+    reverse = np.abs(current[V < 0])
+    peak = float(reverse.max()) if reverse.size else 0.0
+    return peak, float(10.0 ** (np.floor(np.log10(max(peak, 1e-300))) + 1))
 
 
 def main() -> None:
@@ -132,15 +174,17 @@ def main() -> None:
     ap.add_argument("--freqs", type=float, nargs="*", default=[1e8, 1e9, 1e10, 3e10], help="ssac frequencies (Hz)")
     ap.add_argument("--no-ssac", action="store_true")
     a = ap.parse_args()
+    if np.any(np.diff(a.freqs) <= 0):
+        ap.error("--freqs must be strictly ascending: C is read at the lowest and Rs at the highest frequency")
     require_process_file()
     lumapi = import_lumapi()
     t0 = time.time()
-    gds = write_gds()
+    gds = section_gds(OUT / f"{NAME}.gds", doped=True, contacts=True)
     ldev, mat = OUT / f"{NAME}.ldev", OUT / f"{NAME}_charge.mat"
     res = dict(L_pn_um=L_PN, width=WIDTH)
     lines = [
-        f"PN section rib_1550nm_TE_pn, W = {WIDTH} um, slab {SLAB_WIDTH} um; doping from cornerstone_process.lbr",
-        f"2D cross-section normalised to the doped arc, {L_PN:.2f} um.  anode = Via_P, cathode = Via_N.",
+        f"PN section rib_pn, W = {WIDTH} um, slab {SLAB_WIDTH} um; doping from gsip_process.lbr",
+        f"2D cross-section normalised to the doped arc, {L_PN:.2f} um.  anode = Via_contact_P, cathode = Via_contact_N.",
     ]
     with lumapi.DEVICE(hide=True) as d:
         setup(d, gds)
@@ -186,23 +230,25 @@ def main() -> None:
         net = donors - acceptors  # cm^-3
         junction = junction_position(dy, dz, net)
         res["junction_y_um"] = junction
-        half = WIDTH / 2
-
-        def mean(y0: float, y1: float, z0: float, z1: float) -> float:
-            inside = lambda y, z: (y > y0) & (y < y1) & (z > z0) & (z < z1)  # noqa: E731
-            return region_mean(dy, dz, dop["connectivity"], net, inside)
-
-        lines += [
-            f"steady state: {len(V)} points, V = {V.max():.2f} ... {V.min():.2f} V; leakage at {V.min():.1f} V: {current[np.argmin(V)]:.3g} A",
+        checks = doping_check(dy, dz, dop["connectivity"], net, process_table())
+        peak, bound = current_floor(V, current)
+        res.update(reverse_current_bound_A=bound)
+        res.update(
+            check_names=np.array([c[0] for c in checks]),
+            check_simulated=np.array([c[1] for c in checks]),
+            check_expected=np.array([c[2] for c in checks]),
+        )
+        block = [
+            f"steady state: {len(V)} points, V = {V.max():.2f} ... {V.min():.2f} V",
+            f"reverse current stays below {bound:.0e} A at all reverse biases (largest |I| {peak:.2g} A): "
+            "the numerical floor, not a leakage prediction",
             "doping check: net doping (donors - acceptors, cm^-3) averaged over each region of the solver mesh",
-            f"  p slab, lower 100 nm   {mean(-0.78, -half - 0.03, 0.0, T_SLAB):+.3g}   (published: -5.7e17)",
-            f"  p rib, upper 120 nm    {mean(-half, 0.0, T_SLAB, T_SI):+.3g}   (published: -2.25e17)",
-            f"  n slab, lower 100 nm   {mean(half + 0.03, 0.73, 0.0, T_SLAB):+.3g}   (published: +1.1e18)",
-            f"  p contact              {mean(-4.0, -2.0, 0.0, T_SLAB):+.3g}   (published: -1e20)",
-            f"  junction at y = {junction * 1000:+.0f} nm from the core centre "
-            f"(expected {1000 * (half - t.N_SIDEWALL_DEPTH):+.0f} nm: 110 nm inside the n-side sidewall)",
+            f"  {'region':<13} {'solver':>10}   process tables (nominal, nested masks added)",
+            *[f"  {name:<13} {simulated:+10.3e}   {expected:+10.3e}" for name, simulated, expected in checks],
+            f"  junction at y = {junction * 1000:+.0f} nm from the core centre (drawn at 0)",
         ]
-        print("\n".join(lines[-7:]), f"({time.time() - t0:.0f} s)", flush=True)
+        lines += block
+        print("\n".join(block), f"({time.time() - t0:.0f} s)", flush=True)
 
         # ---- 2. small signal: C(V) and Rs ----
         if not a.no_ssac:
@@ -225,8 +271,9 @@ def main() -> None:
                 ac = d.getresult("CHARGE", "ac_anode")
                 i_ac, v_ac = np.ravel(ac["dI"]), np.ravel(ac["dV_anode"])
                 v_ac = v_ac if len(v_ac) == len(i_ac) else np.full(len(i_ac), v_ac[0])
-                Y = i_ac / v_ac
-                C[i], Rs[i] = np.imag(Y) / (2 * np.pi * freq), np.real(1 / Y)
+                Z = 1 / (i_ac / v_ac)  # series RC: Z = Rs - j / (omega C), exact at every frequency
+                Rs[i] = np.real(Z)
+                C[i] = -1 / (2 * np.pi * freq * np.imag(Z))
                 print(f"  ssac {freq:.0e} Hz done ({time.time() - t0:.0f} s)", flush=True)
             c_v, rs_v = C[0], Rs[-1]  # capacitance at the lowest frequency, resistance at the highest
             f_rc = 1 / (2 * np.pi * rs_v * c_v)
@@ -238,13 +285,13 @@ def main() -> None:
                 for k in range(len(V))
             ]
             lines.append(
-                f"C from Im(Y)/omega at {a.freqs[0]:.0e} Hz, Rs from Re(1/Y) at {a.freqs[-1]:.0e} Hz. "
+                f"C = -1 / (omega Im(1/Y)) at {a.freqs[0]:.0e} Hz, Rs = Re(1/Y) at {a.freqs[-1]:.0e} Hz. "
                 "f_RC is the intrinsic junction limit, without pads, traces or the driver impedance."
             )
             print("\n".join(lines[-len(V) - 3 :]), flush=True)
         d.switchtolayout()
         d.save(str(ldev))
-    np.savez(OUT / f"{NAME}_charge.npz", **res)
+    np.savez_compressed(OUT / f"{NAME}_charge.npz", **res)
     (OUT / f"{NAME}_charge.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"done in {(time.time() - t0) / 60:.1f} min")
 
