@@ -225,13 +225,13 @@ stretched five times, so that the 90 nm slab and the 220 nm core can be seen.
 seven building blocks: deep trench and strip waveguide, grating coupler, PN modulator with its contacts
 and metals, thermal phase shifter with its heater, germanium on silicon, silicon nitride, and bond
 pad. (b) The front end of the same blocks, z stretched five times. Layer names and GDS numbers are the
-ones in the layer map. Drawn by `assets/scripts/pdk_stack.py` from the constants of this file and of
+ones in the layer map. Drawn from the constants of this file and of
 `rm_builder.py`; no simulation data is used. Only the blocks in ink are used by the ring modulator of
 chapter 2.
 
 ### How the figure reads the PDK
 
-`assets/scripts/pdk_stack.py` does not read the `STACK` table. It reads constants such as `T_SI`,
+The script that draws the figure does not read the `STACK` table. It reads constants such as `T_SI`,
 `T_SLAB90`, `Z_M1`, `T_M1`, `Z_HEATER`, and more, the names of the layers for the labels, the rules for the
 via and pad enclosures, and the sizes of the device from `rm_builder.py`. The positions of the
 blocks along the horizontal axis are placed by hand, so
@@ -574,7 +574,7 @@ uv run pytest tests/test_technology.py
 ```
 
 The file has eleven test functions, which run as twelve cases (the cross-section test has two).
-The full suite of the repository has 85 tests, and all of them pass.
+The full suite of the repository has 82 tests, and all of them pass.
 
 | test | what it asserts |
 |---|---|

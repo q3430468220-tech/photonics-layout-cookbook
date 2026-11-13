@@ -43,7 +43,7 @@ uv sync
 
 uv run python gsip_technology.py     # 列出图层和膜层堆叠，生成 KLayout 用的图层配色
 uv run python rm_builder.py          # 画微环调制器，跑 DRC，输出 rm_ring.gds
-uv run pytest                        # 85 项测试
+uv run pytest                        # 82 项测试
 ```
 
 `rm_builder.py` 最后会打印 `DRC passed: 0 errors, 0 warnings`。生成的 `rm_ring.gds` 可以用免费的版图软件 [KLayout](https://www.klayout.de) 打开，图层配色在 `klayout_tech/layers.lyp`。
@@ -211,7 +211,7 @@ photonics-layout-cookbook/
 ├── lumerical_simulations/
 │   └── ring_modulator/       scripts/、每一步的结果文件夹、figures/
 ├── docs/                     第 1、2、5 章
-├── assets/                   本页的图片及其绘图脚本
+├── assets/                   本页的图片
 ├── tests/                    PDK、版图、DRC、连通性、工艺表格、图片
 ├── more_processes/           同一套流程在 CORNERSTONE SOI220A 上的实现
 ├── figstyle.py               统一的绘图风格
@@ -223,7 +223,7 @@ photonics-layout-cookbook/
 
 欢迎贡献，见 [CONTRIBUTING.md](CONTRIBUTING.md)。如果这份教程对你的研究或教学有帮助，请按 [CITATION.cff](CITATION.cff) 引用。代码采用 [MIT 许可](LICENSE)。
 
-设计流程图里有三个图标取自研讨会幻灯片，不在 MIT 许可范围内，见[版权说明](assets/third_party/ansys_workshop/NOTICE.md)。本项目与 Ansys、Tower Semiconductor、CORNERSTONE、教材作者及 gdsfactory 团队均无隶属或背书关系。“Ansys”和“Lumerical”是 ANSYS, Inc. 的商标。
+设计流程图里有三个图标取自研讨会幻灯片，不在 MIT 许可范围内。本项目与 Ansys、Tower Semiconductor、CORNERSTONE、教材作者及 gdsfactory 团队均无隶属或背书关系。“Ansys”和“Lumerical”是 ANSYS, Inc. 的商标。
 
 ## 参考资料
 

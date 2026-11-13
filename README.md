@@ -56,7 +56,7 @@ uv sync
 
 uv run python gsip_technology.py     # list the layers and the stack, write the layer colours for KLayout
 uv run python rm_builder.py          # draw the ring modulator, run the DRC, write rm_ring.gds
-uv run pytest                        # 85 tests
+uv run pytest                        # 82 tests
 ```
 
 `rm_builder.py` ends with `DRC passed: 0 errors, 0 warnings`. You can open `rm_ring.gds` in
@@ -289,7 +289,7 @@ photonics-layout-cookbook/
 ├── lumerical_simulations/
 │   └── ring_modulator/       scripts/, one folder of results per step, figures/
 ├── docs/                     chapters 1, 2 and 5
-├── assets/                   figures of this page and their scripts
+├── assets/                   figures of this page
 ├── tests/                    PDK, layout, DRC, nets, process tables, figures
 ├── more_processes/           the same flow on CORNERSTONE SOI220A
 ├── figstyle.py               shared plotting style
@@ -304,7 +304,7 @@ your research or teaching, please cite it with [CITATION.cff](CITATION.cff). The
 [MIT licence](LICENSE).
 
 Three icons in the design-flow figure are taken from the workshop slides and are not covered by
-the MIT licence; see the [notice](assets/third_party/ansys_workshop/NOTICE.md). This project is
+the MIT licence. This project is
 not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the
 textbook or the gdsfactory team. "Ansys" and "Lumerical" are trademarks of ANSYS, Inc.
 

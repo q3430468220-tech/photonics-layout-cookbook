@@ -28,8 +28,7 @@ Commands in this chapter run from the repository root, with the environment made
 
 **Figure 1.** The device taken apart, layer group by layer group. Panel a shows the whole device
 with the five pads. Panels b to e zoom into the ring and add one group of layers at a time. The
-figure is drawn by `assets/scripts/rm_layout.py` from `rm_ring.gds`, so every number in it comes
-from the layout.
+figure is drawn from `rm_ring.gds`, so every number in it comes from the layout.
 
 Read the device as a stack of jobs. Each part has one job, and each job uses one or two layers.
 

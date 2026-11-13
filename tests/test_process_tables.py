@@ -181,7 +181,6 @@ def test_scripts_compile():
     scripts = [
         *REPO.glob("lumerical_simulations/**/*.py"),
         *REPO.glob("gsip_process_file_py/*.py"),
-        *REPO.glob("assets/scripts/*.py"),
         REPO / "lumerical_env.py",
         REPO / "figstyle.py",
     ]

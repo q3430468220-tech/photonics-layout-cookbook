@@ -28,7 +28,7 @@ Windows, with Python 3.12 and 3.13. It does not run the format check, so run tha
 ```bash
 uv run ruff check .                                   # lint (CI runs this)
 uv run ruff format --check .                          # formatting (only you run this)
-uv run pytest                                         # the tests of the main example (85 tests)
+uv run pytest                                         # the tests of the main example (82 tests)
 cd more_processes/cornerstone_soi220a && uv run pytest  # the tests of the second process (24 passed, 1 skipped)
 ```
 

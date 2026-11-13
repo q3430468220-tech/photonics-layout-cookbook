@@ -12,10 +12,7 @@ import pytest
 import figstyle as fs
 
 REPO = Path(__file__).resolve().parents[1]
-SCRIPTS = [
-    *sorted((REPO / "lumerical_simulations" / "ring_modulator" / "figures").glob("fig*.py")),
-    *sorted((REPO / "assets" / "scripts").glob("*.py")),
-]
+SCRIPTS = sorted((REPO / "lumerical_simulations" / "ring_modulator" / "figures").glob("fig*.py"))
 
 
 def test_all_figure_scripts_are_found():
@@ -29,7 +26,6 @@ def test_all_figure_scripts_are_found():
         "fig5_active",
         "fig6_circuit",
     } <= names
-    assert {"pdk_stack", "rm_layout", "design_flow"} <= names
 
 
 @pytest.mark.parametrize("script", SCRIPTS, ids=lambda path: path.stem)
@@ -53,5 +49,4 @@ def test_figure_is_redrawn(script: Path, tmp_path: Path, monkeypatch):
 
 def test_every_figure_has_its_image_in_the_repository():
     for script in SCRIPTS:
-        folder = script.parent if script.parent.name == "figures" else REPO / "assets"
-        assert (folder / f"{script.stem}.png").exists(), script.stem
+        assert (script.parent / f"{script.stem}.png").exists(), script.stem
