@@ -489,6 +489,24 @@ def activate_pdk() -> gf.Pdk:
     return PDK
 
 
+def _make_reproducible(tech_dir: Path) -> None:
+    """Give the written technology the same bytes on every run, so that writing it again changes no tracked file.
+
+    gdsfactory lists the ``<symbols>`` lines of ``tech.lyt`` in the order of a Python set, which differs
+    from run to run, and it creates a ``d25`` folder that it leaves empty.
+    """
+    lyt = tech_dir / "tech.lyt"
+    if lyt.exists():
+        lines = lyt.read_bytes().splitlines(keepends=True)
+        rows = [i for i, line in enumerate(lines) if line.lstrip().startswith(b"<symbols>")]
+        for i, line in zip(rows, sorted(lines[i] for i in rows), strict=True):
+            lines[i] = line
+        lyt.write_bytes(b"".join(lines))
+    d25 = tech_dir / "d25"
+    if d25.is_dir() and not any(d25.iterdir()):
+        d25.rmdir()
+
+
 def write_klayout_tech(tech_dir: str | Path = "klayout_tech") -> Path:
     """Write ``layers.lyp`` (layer names and colours) and ``tech.lyt`` for KLayout.
 
@@ -502,6 +520,7 @@ def write_klayout_tech(tech_dir: str | Path = "klayout_tech") -> Path:
     except Exception as err:  # the layer colours are the part people need; never lose them
         print(f"tech.lyt not written ({err}); writing layers.lyp only")
         LAYER_VIEWS.to_lyp(out / "layers.lyp")
+    _make_reproducible(out)
     return out
 
 

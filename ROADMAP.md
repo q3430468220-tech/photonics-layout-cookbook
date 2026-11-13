@@ -1,83 +1,75 @@
 # Roadmap
 
-The cookbook grows along the design flow of [the front page](README.md): a device is laid out,
-simulated and turned into a model for a circuit. A device is done when it has a builder that
-passes the DRC, numbered simulation steps that load its GDS with the process file, figures
-redrawn from the kept data, and a chapter that states the method, the results and the limits.
-A process is done when it has a technology file, a DRC, process tables with a source for every
-number, and a compiled process file that passes its check.
+The cookbook is built bottom-up. First come the unit devices, the single components a circuit is
+made of, passive and active. Each one is drawn on the same teaching PDK and simulated with the
+same process file. Then come the circuits that use them, in three directions: optical computing,
+optical switching and optical interconnects. For those the deliverable is a layout plus a
+link-level simulation in INTERCONNECT.
 
-No item below has a date. Each one is listed in the order in which the flow needs it.
+A device counts as done when it has a builder that passes the DRC, simulation scripts that load
+its GDS together with the process file, figures drawn from the kept results, and a chapter that
+explains the method, the numbers and the limits. Nothing below has a date.
 
-## Released
+## Where we are
 
-| version | what it added | where |
-|---|---|---|
-| v0.1 | an installable package with a generated PDK on top of `cspdk`, and a bridge that wrote Lumerical scripts | [legacy/](legacy/README.md) |
-| v0.2 | the flat foundry-compatible flow on CORNERSTONE SOI220A: technology file, DRC, device, process file, six simulation steps | [more_processes/cornerstone_soi220a/](more_processes/cornerstone_soi220a/README.md) |
-| v0.3 | this version: the GSiP teaching PDK with a complete back end, seven simulation steps, journal-style figures redrawn from kept data, and the five chapters of the course. The result arrays of every step are kept, so that every figure can be redrawn without Lumerical, and each step carries its own independent checks (a doping check, an energy balance, mesh checks) | the root of the repository |
-
-v0.3 is organised as the five chapters of the course. Each chapter is one document:
-
-| chapter | document | topic |
-|---|---|---|
-| 1 | [docs/pdk.md](docs/pdk.md) | The PDK: a process written as code |
-| 2 | [docs/device.md](docs/device.md) | The device: drawing a heater-tuned ring modulator, and checking it |
-| 3 | [gsip_process_file_py/README.md](gsip_process_file_py/README.md) | The process file: the same process for the simulator |
-| 4 | [lumerical_simulations/ring_modulator/README.md](lumerical_simulations/ring_modulator/README.md) | The simulations: seven steps from the layout to the circuit |
-| 5 | [docs/your_foundry.md](docs/your_foundry.md) | Your foundry: porting the flow to a real PDK |
-
-## Next, on the same device
-
-The next items extend the flow of the ring modulator in the order of the flow figure. Stage 3
-of that figure, the compact model, is drawn but not built yet.
-
-| item | what it adds | why it comes here |
-|---|---|---|
-| Compact model of the ring for INTERCONNECT | a model built from the data of steps 1 to 5, not typed by hand: κ²(gap), n_eff, n_g, the loss per turn, Δn_eff(V), and the K/mW of the heater | stage 3 of the flow figure; step 6 uses the same numbers today through the element's own inputs |
-| Process corners from the statistical process file | the variation tables of the process file, with the reruns of the steps at the corners | the process file already has the variation tables; the flag that writes them is off today |
-| Porting the corrections of v0.3 to the second example | the mesh lines on the silicon interfaces, the volume heat source, the series-RC capacitance, the refined resonances and the energy balance; the second example is kept as released in v0.2 until then | [more_processes/cornerstone_soi220a/](more_processes/cornerstone_soi220a/README.md) |
-| Gap and junction-offset sweep on the mask | a test-structure block around the nominal design, with the gap as the variable | step 6 shows that the extinction depends strongly on the gap |
-
-## More devices on the same process
-
-Each device adds one new kind of simulation, and so teaches one new part of the process.
-
-| device | new simulation | what it teaches |
-|---|---|---|
-| PN phase shifter and Mach-Zehnder modulator | a travelling-wave electrode in INTERCONNECT, on the CHARGE and MODE results of step 3 | the modulator as a long device, not a ring |
-| Thermo-optic phase shifter with the undercut | HEAT with the undercut layer, then MODE | how a removed substrate changes the thermal path |
-| Germanium photodetector | FDTD for the absorption, CHARGE for the reverse bias | the first device that needs the germanium layers |
-| Grating coupler on the 150 nm slab | FDTD for the coupling to a fibre | the slab layer of the process used on its own |
-| Silicon nitride waveguide | MODE on the nitride layer | a second core material in the same process file |
-
-## Modules and circuits
-
-These come after the devices. A module is several devices that share one process; a circuit is a
-set of modules simulated together in INTERCONNECT.
-
-| item | notes |
+| version | what it added |
 |---|---|
-| Mach-Zehnder interferometer as a module | two couplers, two arms, and the phase shifter of the list above |
-| Ring filter and add-drop ring | the ring of this course, with a second bus |
-| Circuit simulation of a modulator link | the modulator, the photodetector and a driver model in one netlist |
+| v0.1 | a first package: a generated PDK and a bridge that wrote Lumerical scripts (removed from the tree, still in the git history) |
+| v0.2 | the foundry-compatible flow on CORNERSTONE SOI220A, now in [more_processes/cornerstone_soi220a/](more_processes/cornerstone_soi220a/README.md) |
+| v0.3 | the GSiP teaching PDK with a full back end, the heater-tuned ring modulator, seven simulation steps and five chapters |
 
-## Other processes
+## Unit devices: passive
 
-A second process shows what is general in the flow and what belongs to one foundry. CORNERSTONE
-SOI220A is the second process of this repository. Only processes with public data qualify.
+| device | main PDK layers | simulation | status |
+|---|---|---|---|
+| Rib waveguide and bend | `WG`, `SLAB90` | MODE: index, group index, bend loss | done as step 2 of the ring modulator; the cells are part of the PDK |
+| Strip waveguide, bends, tapers | `WG` | MODE, EME | planned |
+| Directional coupler | `WG` | FDTD: S-parameters against gap and length | planned; step 1 of the ring already gives κ² against gap |
+| MMI splitters, 1×2 and 2×2 | `WG` | EME, checked with FDTD | planned |
+| Y-branch | `WG` | FDTD | planned |
+| Waveguide crossing | `WG` | FDTD: loss and crosstalk | planned |
+| Grating coupler | `WG`, `SLAB150` | FDTD, 2D then 3D: coupling to a fibre | planned |
+| Edge coupler | `WG`, `DEEPTRENCH` | EME: overlap with a fibre mode | planned |
+| Ring filter, all-pass and add-drop | `WG` | FDTD for the couplers, INTERCONNECT for the spectrum | planned |
+| Mach-Zehnder interferometer | `WG` | INTERCONNECT, from the splitter and waveguide models | planned |
+| Silicon nitride waveguide and the Si to SiN transition | `WGN`, `WG` | MODE, EME | planned |
 
-| process | status of the public data |
+## Unit devices: active
+
+| device | main PDK layers | simulation | status |
+|---|---|---|---|
+| Microring modulator with a heater | `WG`, `SLAB90`, `N`, `P`, `NP`, `PP`, `NPP`, `PPP`, `VIAC`, `M1`, `VIA1`, `M2`, `VIA2`, `M3`, `PADOPEN`, `HEATER` | FDTD, MODE, CHARGE, HEAT, INTERCONNECT | done (v0.3) |
+| Thermo-optic phase shifter, with and without undercut | `WG`, `HEATER`, `VIA1`, `M2`, `UNDERCUT` | HEAT for the temperature and the time constant, MODE for the phase: power per π | planned |
+| PN phase shifter and travelling-wave Mach-Zehnder modulator | `WG`, `SLAB90`, `N`, `P`, `NP`, `PP`, `NPP`, `PPP`, `VIAC`, `M1`, `VIA1`, `M2`, `VIA2`, `M3` | CHARGE and MODE for the phase shifter; INTERCONNECT for the modulator, with the electrode as a transmission line | planned |
+| PIN phase shifter and variable optical attenuator | `WG`, `SLAB90`, `NPP`, `PPP`, `VIAC`, `M1` | CHARGE in forward bias, MODE | planned |
+| Germanium photodetector | `WG`, `GE`, `GEN`, `GEP`, `VIAC`, `M1` | FDTD for the absorption and the generation rate, then CHARGE for responsivity, dark current and bandwidth | planned |
+| Tunable add-drop ring filter | `WG`, `HEATER` | FDTD for the couplers, HEAT and MODE for the tuning, INTERCONNECT for the spectrum | planned |
+
+Before more devices are added, the ring modulator still needs two things. The first is a compact
+model packaged for reuse in other circuits (stage 3 of the flow figure); today step 6 sets the
+parameters of INTERCONNECT's ring modulator element straight from the result files. The second is
+a set of process corners, from the variation tables in `gsip_process_file_py/gsip_csv/`, which the
+compiler adds to the process file on request.
+
+## Circuits and links
+
+Each direction ends in a layout that passes the DRC and a link simulation built from the compact
+models of the unit devices above.
+
+| direction | layout | what the link simulation reports | unit devices it needs |
+|---|---|---|---|
+| Optical computing | an N×N Mach-Zehnder mesh (Reck and Clements arrangements); a microring weight bank | matrix fidelity under phase errors and loss; thermal crosstalk between heaters; phase calibration | Mach-Zehnder interferometers, splitters, thermo-optic phase shifters, ring filters, photodetectors |
+| Optical switching | a 2×2 Mach-Zehnder switch cell; N×N fabrics (Beneš and path-independent-loss arrangements); a ring-based switch | insertion loss and crosstalk per path; extinction; switching time and power | Mach-Zehnder interferometers, splitters, crossings, thermo-optic and PIN phase shifters, ring filters |
+| Optical interconnects | a WDM transmitter with several ring modulators on one bus; a ring or Mach-Zehnder demultiplexer; a germanium receiver; a Mach-Zehnder modulator link | link budget; eye diagram; bit error rate against received power; crosstalk between channels; locking of the rings with their heaters | ring modulator, Mach-Zehnder modulator, photodetector, ring filters, splitters, grating or edge couplers |
+
+## Housekeeping
+
+| item | note |
 |---|---|
-| CORNERSTONE passive platforms | in the same official PDK repository as SOI220A |
-| SiEPIC EBeam | an open PDK, passive |
-
-## Infrastructure
-
-| item | notes |
-|---|---|
-| Check of the technology file against the official `process_overview.yaml` in CI | today an optional test, see `more_processes/cornerstone_soi220a/tests/test_technology.py` |
+| Port the v0.3 corrections to the CORNERSTONE example | mesh lines on the silicon surfaces, the volume heat source, the series-RC extraction, refined resonances |
+| Rerun the FDTD coupler with a 10 nm mesh | κ² moves by 2 % between a 20 nm and a 10 nm mesh, see chapter 4 |
+| More open processes | only processes whose data is public qualify |
 | Comparison with measured devices | needs published data or a tape-out |
 
-Suggestions are welcome. Open an issue with the device or process you would like to see, and the
-public document it should follow. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add one.
+Suggestions are welcome: open an issue with the device or circuit you would like to see and the
+public source it should follow. [CONTRIBUTING.md](CONTRIBUTING.md) explains how to add one.

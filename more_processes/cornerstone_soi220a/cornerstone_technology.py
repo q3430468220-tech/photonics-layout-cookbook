@@ -43,7 +43,7 @@ from gdsfactory.typings import Layer
 # =====================================================================================
 # 1. Process constants (um, cm^-3).  z = 0 is the top of the buried oxide.
 # =====================================================================================
-T_BOX = 2.0  # [DG 4] thermal SiO2 buried oxide.  [YAML] lists 3.0 -- see README "Known inconsistencies"
+T_BOX = 2.0  # [DG 4] thermal SiO2 buried oxide.  [YAML] lists 3.0 -- see "Known inconsistencies" in cornerstone_csv/README.md
 T_SI = 0.22  # [DG 4][YAML] crystalline Si device layer, +-20 nm
 T_SLAB = 0.10  # [DG 4][YAML] rib slab left after Silicon Etch 2 (120 nm)
 ETCH_GRATING = 0.07  # [DG 4] Silicon Etch 1 (grating couplers), +-10 nm

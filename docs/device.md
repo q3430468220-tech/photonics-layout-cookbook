@@ -58,7 +58,7 @@ would ask. The simulation column points to the chapter 4 step that checks the de
 | decision | value | reason | tested later |
 |---|---|---|---|
 | ring radius | 10 µm (circumference 62.83 µm) | The rule `rib_bend_radius` in `DESIGN_RULES` is 10 µm. It is a teaching value, and the builder refuses a smaller ring. Tighter bends lose much more light. | Step 2: bend loss is 15.2 dB/cm at 4 µm, 0.56 dB/cm at 5 µm, and below the solver floor from 6 µm up. |
-| rib waveguide | 0.5 µm core, 220 nm, on a 90 nm slab 6 µm wide | A rib keeps a slab for the implants and the contacts. | Step 2: at 0.5 µm the second TE mode (TE1) is guided, but only just: n_eff 2.115 against the slab mode 2.104. |
+| rib waveguide | 0.5 µm core, 220 nm, on a 90 nm slab 6 µm wide | A rib keeps a slab for the implants and the contacts. | Step 2: at 0.5 µm the second TE mode (TE1) is guided, but barely: n_eff 2.115 against the slab mode 2.104. |
 | PN junction | 240° of the ring, centred on north, 41.89 µm (67 %) | Most of the ring is modulated, the bottom stays free for the bus. | Step 3: the junction is 5 nm from the drawn position. |
 | coupler undoped | no implant at the bottom of the ring | The implants stop short of the bus side, so the coupler region has no doping. | Steps 1 and 6: the coupling and the loss are computed for the layout as drawn. |
 | n inside, p outside | n (signal) inside the ring, p (ground) outside | The signal disc is the inner electrode, the ground arc is the outer one. | Step 3: n core at 4.977e17 against 5e17 in the process. |

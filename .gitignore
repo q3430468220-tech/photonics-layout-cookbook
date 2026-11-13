@@ -39,3 +39,6 @@ desktop.ini
 
 # --- written on demand by coupling_coefficient_fdtd.py --preview ---
 lumerical_simulations/ring_modulator/figures/check_coupler_setup.png
+
+# --- scratch layout of the core-width sweep of step 2 (overwritten for every width) ---
+rib_width_sweep.gds

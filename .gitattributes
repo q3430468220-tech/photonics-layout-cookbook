@@ -1,0 +1,4 @@
+# Written by gsip_technology.py with LF line endings on every platform.  Keeping them LF in the
+# working tree means that running the script again leaves the tree clean on Windows as well.
+klayout_tech/*.lyp text eol=lf
+klayout_tech/*.lyt text eol=lf

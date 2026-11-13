@@ -182,7 +182,7 @@ long each step takes. The process file is compiled with
   `SOI220A/process_overview.yaml` (v1.2.0) and the cross-section file of the same folder.
 - CORNERSTONE, [Design Guidelines, 220 nm SOI Active MPW #47](https://cornerstone.sotonfab.co.uk/wp-content/uploads/2025/10/CORNERSTONE-47th-Call-Design-Guidelines_final-1.pdf)
   (October 2025).
-- N. Nedeljkovic, R. Soref and G. Z. Mashanovich, "Free-carrier electrorefraction and
+- M. Nedeljkovic, R. Soref and G. Z. Mashanovich, "Free-carrier electrorefraction and
   electroabsorption modulation predictions for silicon over the 1–14 µm infrared wavelength
   range", IEEE Photonics Journal 3, 1171 (2011),
   [doi:10.1109/JPHOT.2011.2171930](https://doi.org/10.1109/JPHOT.2011.2171930). The Soref-Bennett

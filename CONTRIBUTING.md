@@ -22,8 +22,8 @@ Set `LUMERICAL_ROOT` if Lumerical is not in a standard location.
 
 ## Checks before a pull request
 
-Run these from the root of the repository. The first three are the checks that CI runs on Linux and
-Windows, on Python 3.12 and 3.13. CI does not run the format check, so run it yourself.
+Run these from the root of the repository. CI runs the lint and both test suites on Linux and
+Windows, with Python 3.12 and 3.13. It does not run the format check, so run that one yourself.
 
 ```bash
 uv run ruff check .                                   # lint (CI runs this)

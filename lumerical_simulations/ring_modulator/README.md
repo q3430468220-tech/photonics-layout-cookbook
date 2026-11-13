@@ -634,7 +634,7 @@ tables:
 | n++, contact | +5.022e20 | +5.035e20 |
 | p++, contact | −1.922e20 | −1.927e20 |
 
-The expected values are read from `gsip_csv/doping_process_layers.csv`, and nested masks are added. The n+ slab is
+The expected values are read from `gsip_process_file_py/gsip_csv/doping_process_layers.csv`, and nested masks are added. The n+ slab is
 3.5 × 10¹⁸ because the masks add up: the N implant covers the slab too, and the N+ implant lies on top of it. The solver
 sees each region within 0.5 %.
 
@@ -1020,9 +1020,9 @@ The resonance positions, depths and widths are refined from the samples of the s
 lowest sample and its two neighbours, and the linewidth from linear interpolation of the two half-depth crossings.
 
 The extinction near critical coupling is very sensitive to κ². The analytic all-pass ring with this loss gives 76.5, 46.2
-and 40.1 dB when κ² is changed by −1 %, 0 and +1 %. The 2 % uncertainty of κ² from step 1 therefore means that the
-extinction is known to several decibels at the design gap. The design gap should be read as the gap of the best
-extinction in this sweep, not as a precise prediction of the best gap.
+and 40.1 dB when κ² is changed by −1 %, 0 and +1 %. The uncertainty of κ² from step 1 is 2 %, more than that. So at the
+design gap the simulation shows that the resonance is deep, but it does not predict the depth. The design gap should be
+read as the gap of the best extinction in this sweep, not as a precise prediction of the best gap.
 
 **The free spectral range.** Two values are given, and they agree. The two resonances around 1547 nm lie 9.67 nm apart,
 centred on 1546.8 nm. At the design resonance, 1551.6 nm, λ²/(n_g L) = 9.73 nm. The second is the one used for "one FSR
@@ -1192,7 +1192,8 @@ These are simulation results. Nothing here has been compared with a fabricated d
   intrinsic junction limit.
 - The waveguide loss of 2.2 dB/cm is a published value for a comparable process, not a simulation.
 - The absolute effective index is good to about 5 × 10⁻⁴, and κ² of the FDTD step to about 2 %. Near critical coupling this
-  makes the extinction uncertain by several decibels; the gap of critical coupling moves by about 2 nm.
+  leaves the depth of the resonance open: a 1 % change of κ² moves the extinction from 46 dB to 40 dB or to 77 dB. The gap
+  of critical coupling moves by about 2 nm.
 - The 0.5 µm rib is close to cut-off for the second TE mode. The bend loss of TE1 has not been simulated.
 
 ---

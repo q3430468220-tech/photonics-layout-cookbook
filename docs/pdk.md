@@ -43,12 +43,12 @@ them.
 | 2. Layers | the `LayerMapGSiP` class, descriptions and colours | 104 to 192 |
 | 3. Design rules | `MIN_WIDTH_SPACE`, `DESIGN_RULES` | 194 to 238 |
 | 4. The stack | the `STACK` table and the gdsfactory `LayerStack` | 241 to 282 |
-| 5. Cross-sections | `strip`, `rib`, `rib_pn`, `nitride`, `heater_metal`, the three metals | 285 to 407 |
-| 6. Cells | `straight`, two bends, `pad` | 410 to 440 |
-| 7. From layout to simulation | `write_gds_for_lumerical` | 443 to 458 |
-| 8. The PDK object and KLayout | connectivity, `PDK`, `write_klayout_tech` | 461 to 503 |
+| 5. Cross-sections | `strip`, `rib`, `rib_pn`, `nitride`, `heater_metal`, the three metals | 285 to 409 |
+| 6. Cells | `straight`, two bends, `pad` | 412 to 442 |
+| 7. From layout to simulation | `write_gds_for_lumerical` | 445 to 460 |
+| 8. The PDK object and KLayout | connectivity, `PDK`, `write_klayout_tech` | 463 to 524 |
 
-Importing the file runs `activate_pdk()` (line 506). Section 8 explains why that matters.
+Importing the file runs `activate_pdk()` (line 527). Section 8 explains why that matters.
 
 Run it from the repository root:
 
@@ -58,7 +58,7 @@ uv run python gsip_technology.py
 
 It prints the layer list with GDS numbers, the stack with heights in µm, and the heater sheet
 resistance. It also writes `klayout_tech/` (section 9 below). The output looks like this, with
-the layers in the order of the file (the full output is in `build/doc_facts/gsip_technology.out`):
+the layers in the order of the file:
 
 ```
 PDK gsip_teaching: 26 layers, 8 cross-sections, 4 cells
@@ -431,8 +431,7 @@ python gsip_drc.py --demo            # self-test on a layout with planted violat
 ```
 
 The demo also writes a KLayout marker file, `gsip_drc_demo.lyrdb`, into the repository root. Its console
-output, saved in `build/doc_facts/gsip_drc_demo.out`, lists seven error rules and one warning, and the
-self-test expects at least seven errors.
+output lists seven error rules and one warning, and the self-test expects at least seven errors.
 
 ## 8. Cells, connectivity and the PDK object
 
@@ -575,7 +574,7 @@ uv run pytest tests/test_technology.py
 ```
 
 The file has eleven test functions, which run as twelve cases (the cross-section test has two).
-The full suite of the repository has 85 tests, and all of them pass (`build/doc_facts/pytest.out`).
+The full suite of the repository has 85 tests, and all of them pass.
 
 | test | what it asserts |
 |---|---|
@@ -589,7 +588,7 @@ The full suite of the repository has 85 tests, and all of them pass (`build/doc_
 | `test_pn_cross_section_options` | `p_inside` mirrors the sides; `junction_offset` moves the junction; wrong gaps raise `ValueError` |
 | `test_pad_has_an_opening_inside_the_metal` | the pad opening has the 2 µm margin in metal 3 |
 | `test_write_gds_for_lumerical` | the file is flat, has one cell with the given name, and contains the implant layers |
-| `test_klayout_technology_is_written` | `layers.lyp` contains every layer name of `LAYER_INFO` |
+| `test_klayout_technology_is_written` | `layers.lyp` contains every layer name of `LAYER_INFO`, and the symbols of `tech.lyt` are sorted, so that writing the technology again changes no tracked file |
 
 Note the honest limit of the first table entry: a test that checks the numbers against the textbook
 guards against typing errors, not against a mistake in the textbook.

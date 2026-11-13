@@ -50,7 +50,7 @@ addopts = "-ra"
 [tool.ruff]
 line-length = 130
 target-version = "py312"
-extend-exclude = ["build", "legacy", "*.md"]  # Markdown: the snippets of the course keep their hand-set alignment
+extend-exclude = ["build", "*.md"]  # Markdown: the snippets of the course keep their hand-set alignment
 src = [".", "more_processes/cornerstone_soi220a"]  # both hold first-party modules
 
 [tool.ruff.lint]

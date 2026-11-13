@@ -144,3 +144,9 @@ def test_klayout_technology_is_written(tmp_path: Path):
     text = (out / "layers.lyp").read_text(encoding="utf-8")
     for name in t.LAYER_INFO:
         assert f"<name>{name}" in text, name
+    # writing the technology again must not change the tracked copy: sorted symbols, no empty d25 folder
+    lyt = out / "tech.lyt"
+    if lyt.exists():  # absent when KLayout cannot write a technology, see write_klayout_tech
+        symbols = [line for line in lyt.read_text(encoding="utf-8").splitlines() if "<symbols>" in line]
+        assert symbols == sorted(symbols)
+    assert not (out / "d25").exists()
