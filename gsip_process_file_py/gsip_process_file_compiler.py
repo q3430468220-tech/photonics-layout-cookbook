@@ -22,7 +22,7 @@ Needs a local Lumerical installation with FDTD and CHARGE licences; no GUI is op
 
 In Lumerical, load the result and a layout into a Layer Builder object:
 
-    addlayerbuilder;  loadgdsfile("rm_ring.gds");  loadprocessfile("gsip_process.lbr");
+    addlayerbuilder;  loadgdsfile("devices/gds/ring_modulator.gds");  loadprocessfile("gsip_process.lbr");
 """
 
 from __future__ import annotations

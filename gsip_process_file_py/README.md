@@ -36,7 +36,7 @@ values, not a foundry's. Chapter 1 explains the sources, and
 ## 1. Two descriptions of one process
 
 **The idea.** The layout half of the flow is Python. `gsip_technology.py` describes the stack,
-and `rm_builder.py` draws shapes with it. The simulation half is Lumerical, which needs the same
+and `devices/ring_modulator_builder.py` draws shapes with it. The simulation half is Lumerical, which needs the same
 stack in its own format. Two descriptions of one process can drift apart. A layout drawn on a
 2.0 µm buried oxide, simulated with a 2.5 µm one, would give numbers for a device that does not
 exist. So each number is written in one place, and a test or a check ties each copy to it.
@@ -62,11 +62,11 @@ of the buried oxide. The compiler adds a second link: it reads the tables back f
 process file it wrote, and compares them with the tables (section 6). Step 0 of the simulations adds a third: it looks at
 the 3D structure that the file produces (section 9).
 
-```text
-gsip_technology.py --(pytest, no licence)--> gsip_csv/*.csv --(compiler QA)--> gsip_process.lbr
-                                                                                      |
-rm_builder.py --> rm_ring.gds ----------------------(step 0, Layer Builder)-----------+
-```
+| link | what it ties together | what checks it |
+|---|---|---|
+| 1 | `gsip_technology.py` and the tables `gsip_csv/*.csv` | pytest, without a licence |
+| 2 | the tables and `gsip_process.lbr` | the QA step of the compiler |
+| 3 | `gsip_process.lbr` together with the layout `devices/gds/ring_modulator.gds`, and the 3D structure they give | step 0, with the Layer Builder |
 
 Why two descriptions of one process? The layout must be drawn with the numbers the simulator
 uses. The Python file is the form the layout reads, and the tables are the form Lumerical reads.
@@ -363,12 +363,21 @@ control will show the difference.
 
 ## 8. Loading the result
 
-**By script.** `common.py` holds the function that every simulation step calls. It is shown here
-as it is written:
+**By script.** `lumerical_simulations/flow.py` holds the function that every simulation step of every
+device calls. It is shown here as it is written:
 
 ```python
-def add_layer_builder(app, gds: Path, x_span: float, y_span: float, name: str = "device") -> None:
-    """Add a Layer Builder centred on the origin and load the layout and the process file (spans in um)."""
+def add_layer_builder(app, gds: Path, x_span: float | None = None, y_span: float | None = None, name: str = "device") -> None:
+    """Add a Layer Builder centred on the origin and load the layout and the process file (spans in um).
+
+    The Layer Builder builds only what lies inside its box, and the box is centred on the origin.  A layout
+    that reaches further is cut off without a word, and the solver then finds air where the device should
+    be.  Leave the spans out and the box is made large enough for the whole layout, wherever it lies.
+    """
+    if x_span is None or y_span is None:
+        left, bottom, right, top = layout_extent(gds)
+        x_span = 2 * max(abs(left), abs(right)) + 2.0 if x_span is None else x_span
+        y_span = 2 * max(abs(bottom), abs(top)) + 2.0 if y_span is None else y_span
     app.addlayerbuilder()
     app.set("name", name)
     app.set("x", 0)
@@ -381,35 +390,36 @@ def add_layer_builder(app, gds: Path, x_span: float, y_span: float, name: str = 
     app.loadprocessfile(LBR.as_posix())
 ```
 
-The spans are given in µm, and `um = 1e-6`. Three Lumerical commands do the work:
+The spans are given in µm, and `um = 1e-6`. Without them the function reads the size of the layout
+and makes the box large enough. Three Lumerical commands do the work:
 `addlayerbuilder` creates the object, `loadgdsfile` loads the layout, and `loadprocessfile` loads
 the process. The reference "Centered at origin" puts the GDS coordinates on the simulation
 coordinates, so a shape at x = 5 µm in the layout is at x = 5 µm in the solver.
 
 To use it, run from the
-[`scripts/`](../lumerical_simulations/ring_modulator/scripts/) folder, so that `common.py` can be
-imported:
+[`scripts/`](../lumerical_simulations/ring_modulator/scripts/) folder of a device. Its `common.py`
+passes the function on:
 
 ```python
 from common import REPO, add_layer_builder, import_lumapi
 
 lumapi = import_lumapi()
 with lumapi.MODE(hide=True) as m:
-    add_layer_builder(m, REPO / "rm_ring.gds", 36.0, 36.0)
+    add_layer_builder(m, REPO / "devices" / "gds" / "ring_modulator.gds", 36.0, 36.0)
 ```
 
-`rm_ring.gds` must exist. `rm_builder.py` writes it at the repository root. The spans are in µm,
+`devices/gds/ring_modulator.gds` must exist. `devices/ring_modulator_builder.py` writes it. The spans are in µm,
 as the function expects.
 
 **In the GUI.** Add a Layer Builder object from the object library, under the simulation objects.
 In its properties, set the x, y and z centre to 0, and the x and y span to the size of the layout
 (36 µm by 36 µm for the step 0 check). Set the GDS position reference to "Centered at origin".
-Then load the GDS file `rm_ring.gds`, and load the process file `gsip_process.lbr`. The property
+Then load the GDS file `devices/gds/ring_modulator.gds`, and load the process file `gsip_process.lbr`. The property
 names are the ones of the script above. The button labels of your Lumerical version may differ
 slightly from the names the script uses.
 
 After loading, the names carry the process prefix. Silicon is `gsip Si_np`, which is the constant
-`SI_MATERIAL` in `common.py`. Use the prefixed name in scripts, or the simulator will not find the
+`SI_MATERIAL` in `lumerical_simulations/flow.py`. Use the prefixed name in scripts, or the simulator will not find the
 material.
 
 ---
@@ -431,7 +441,7 @@ substrate and the buried oxide below the device. Its docstring states the purpos
 > A layer expression that is wrong in the process file shows up here at once, as a missing or
 > misplaced shape. No solver licence is used beyond MODE.
 
-Run it from the scripts folder, after `rm_builder.py` has written `rm_ring.gds`:
+Run it from the scripts folder, after `devices/ring_modulator_builder.py` has written `devices/gds/ring_modulator.gds`:
 
 ```bash
 cd lumerical_simulations/ring_modulator/scripts

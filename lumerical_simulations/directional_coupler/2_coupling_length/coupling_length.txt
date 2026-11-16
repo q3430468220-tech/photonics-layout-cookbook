@@ -1,0 +1,11 @@
+Directional coupler, gap 0.2 um, W = 0.5 um, strip (gsip_process.lbr), 1.55 um; 3D FDTD, mesh accuracy 2, 20 nm over the gap; 35 min for 4 lengths
+
+ L (um)    cross  through      sum  loss dB  cross fraction      fit      back  minutes
+    0.0   0.0158   0.9835   0.9994    0.003          0.0158   0.0159   3.9e-06      4.3
+    6.0   0.1440   0.8546   0.9987    0.006          0.1442   0.1442   2.5e-05      7.4
+   12.0   0.3685   0.6309   0.9994    0.003          0.3687   0.3688   5.3e-05     11.8
+   18.0   0.6282   0.3706   0.9988    0.005          0.6290   0.6289   5.9e-05     11.8
+
+fit of the cross fraction: L_pi = 35.81 um, the S-bends are worth L_bends = 2.88 um of straight coupler (largest deviation from the points 0.0001)
+step 1, supermodes of the cross-section: L_pi = 37.55 um (-4.6 % in FDTD)
+50:50 at 1.55 um:  L = L_pi / 2 - L_bends = 15.03 um

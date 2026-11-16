@@ -1,0 +1,33 @@
+Rib waveguide W = 0.5 um, 220 nm core on a 90 nm slab 6.0 um wide (gsip_process.lbr); FDE mesh 20 nm, rib-surface mesh 10 nm, window 8.0 x 2.4 um
+index on the cross-section: core centre 3.4764 (silicon), slab at y = 1.5 um 3.4764 (silicon), above the slab 1.4440, below 1.4440 (oxide)
+TE0 mode of the 90 nm slab alone: n_eff = 2.1035 (three-layer slab with the indices above); a rib mode is guided sideways only above it
+
+straight, 1.55 um, guided modes (n_eff above the slab mode, power in the core region):
+  mode     n_eff      n_g  TE fraction  in core region  loss dB/cm
+   TE0   2.56770   3.9370        0.987           0.997    -1.6e-09
+   TE1   2.11455   3.2720        0.952           0.600     4.9e-07
+TE1 lies +0.0110 from the slab mode: weakly guided
+
+sweep 1.5-1.6 um, TE0:  n_eff 2.6106 to 2.5239;  n_g from the slope of n_eff(lambda) = 3.9159, solver n_g at 1.55 um = 3.9370
+
+bent waveguide, 1.55 um, TE0.  A 90 degree bend between two straights loses the radiation plus two junctions:
+ R (um)     n_eff  radiation dB/cm  radiation dB/90deg  junction dB  bend dB/90deg  mode shift nm
+    5.0   2.57825            0.564             0.00044       0.1386         0.2777           69.1
+    6.0   2.57470        -0.000109              -1e-07       0.0764         0.1529           49.2
+    8.0   2.57158        -8.96e-09            -1.1e-11       0.0374         0.0749           32.7
+   10.0   2.57016         -1.9e-09              -3e-12       0.0231         0.0462           25.6
+   15.0   2.56878        -1.74e-09            -4.1e-12       0.0100         0.0199           16.8
+   20.0   2.56831        -1.69e-09            -5.3e-12       0.0055         0.0111           12.5
+
+core width sweep, n_eff (nan: not guided, that is, not above the slab mode at 2.1035):
+ W (um)      TE0      TE1  TE1 - slab
+   0.30   2.3273      nan         nan
+   0.35   2.4005      nan         nan
+   0.40   2.4660      nan         nan
+   0.45   2.5216      nan         nan
+   0.50   2.5677   2.1145      0.0110
+   0.55   2.6056   2.1402      0.0367
+   0.60   2.6369   2.1756      0.0721
+   0.70   2.6842   2.2639      0.1603
+   0.80   2.7176   2.3554      0.2519
+TE1 appears between 0.45 and 0.50 um: the sweep finds one TE mode up to 0.45 um

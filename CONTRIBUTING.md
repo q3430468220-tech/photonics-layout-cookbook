@@ -28,7 +28,7 @@ Windows, with Python 3.12 and 3.13. It does not run the format check, so run tha
 ```bash
 uv run ruff check .                                   # lint (CI runs this)
 uv run ruff format --check .                          # formatting (only you run this)
-uv run pytest                                         # the tests of the main example (82 tests)
+uv run pytest                                         # the tests of the main example (115 tests)
 cd more_processes/cornerstone_soi220a && uv run pytest  # the tests of the second process (24 passed, 1 skipped)
 ```
 
@@ -68,25 +68,37 @@ a partner gave you under an agreement does not, even if a copy is found on the i
 A device follows the structure of the ring modulator. The steps below name the files to copy. The
 main example is the template; the second process has the same structure with different names.
 
-1. **Write the builder.** Copy `rm_builder.py` to `<device>_builder.py` in the root. Keep the
+1. **Write the builder.** Add `devices/<device>_builder.py`. A passive device starts from
+   `devices/strip_waveguide_builder.py`, an active one from `devices/ring_modulator_builder.py`. Keep the
    cross-sections, the layers and the rules from the technology file (`gsip_technology.py`). Do
-   not define layers or dimensions that a rule owns. Its `__main__` block writes the GDS with
-   `write_gds_for_lumerical`, runs `run_drc` and prints the report.
-2. **Add tests.** In `tests/`, add one file per device. Check that the builder passes the DRC at
-   its default and at two or three other parameter sets, that it rejects a parameter set that
-   breaks a rule, and that its key dimensions are the ones the arguments say. Copy the pattern of
-   `tests/test_layout.py`.
+   not define layers or dimensions that a rule owns, and refuse arguments that break a rule, with a
+   message that names it. The `__main__` block ends with `write_device` from `devices/__init__.py`,
+   which writes `devices/gds/<device>.gds`, runs the DRC and draws the previews.
+2. **Add tests.** Add the device to `tests/test_passive_devices.py`, or write a file of its own for an
+   active device, after `tests/test_layout.py`. Check that the builder passes the DRC at its default
+   and at two or three other parameter sets, that it rejects a parameter set that breaks a rule, and
+   that its key dimensions are the ones the arguments say. The test of the kept layouts then also
+   checks that `devices/gds/<device>.gds` is what the builder draws.
 3. **Add the simulation steps.** Create `lumerical_simulations/<device>/scripts/` with a
-   `common.py` (copy the one of `ring_modulator`, and change only the device parameters). Add one
-   script per solver run, named after the question it answers. Each script builds a small GDS with
-   the PDK, loads it with the process file through `add_layer_builder`, and writes a `.txt` summary
-   and a `.npz` of the result arrays. No thickness, material or doping level goes into a script.
+   `common.py` that holds the dimensions of the device, read from the builder. Copy the one of
+   `mmi1x2`. Add one script per solver run, named after the question it answers. Each script
+   draws its layout with the builder, loads it with the process file through `add_layer_builder`
+   (`lumerical_simulations/flow.py`), and writes a `.txt` summary and a `.npz` of the result arrays.
+   Take the solver set-up from `lumerical_simulations/solvers.py`; a recipe that a second device
+   needs goes there. No thickness, material or doping level goes into a script.
 4. **Add the figures.** Create `lumerical_simulations/<device>/figures/` with one `fig<n>_<name>.py`
    per figure. Each script reads the `.npz` files of its steps, so that it runs without Lumerical.
-   Follow the rules in the next section.
+   Panels that several devices draw are in `lumerical_simulations/panels.py`. Follow the rules in
+   the next section, and add the figure names to `EXPECTED` in `tests/test_figures.py`.
 5. **Write the README.** Create `lumerical_simulations/<device>/README.md` with what each step
-   answers, how to run it, the results, the settings that matter and the limits of the model. The
-   README of `ring_modulator` is the template.
+   answers, how to run it, the results, the checks, the pitfalls and the limits of the model. The
+   README of `strip_waveguide` is the template for a passive device.
+6. **Link it.** In `README.md` and `README_zh-CN.md`, point the card of the device at its chapter and
+   add a row to the table below the cards. Change its status in `ROADMAP.md`.
+
+A step keeps little: the layout it simulated, the summary, the result arrays, and one Lumerical
+project without fields or modes in it. Dry runs, mesh checks and the layouts of a sweep write their
+projects to `build/scratch/`, which is not kept.
 
 State which runs you actually executed and with which Lumerical version. Do not report numbers from
 a run you did not make.
@@ -95,13 +107,18 @@ a run you did not make.
 
 A step is one solver run with one question. To add one to an existing device:
 
-1. Write `scripts/<step>.py` in the device's folder. It uses `common.py` for the process file and
-   the geometry, and writes its results to a step folder such as `6_interconnect_ring_modulator/`.
+1. Write `scripts/<step>.py` in the device's folder. It uses the `common.py` next to it for the
+   process file and the geometry, and writes its results to a step folder such as
+   `6_interconnect_ring_modulator/`.
 2. Name the step folder with the next number, and keep its small GDS and its `.txt` summary there.
    Ignore the Lumerical projects in `.gitignore`, as the other folders do.
 3. Add `figures/fig<n>_<name>.py` that draws the result from the `.npz` file. Add it to the list in the
    README of the device.
 4. If the step needs the output of an earlier step, say so in its docstring and in the README.
+   Do not draw such connections with characters in a code block: a drawing of that kind goes wrong
+   without anyone noticing. For the ring modulator, add the connection to the table `FLOW` in
+   `figures/fig_data_flow.py`. `tests/test_data_flow.py` compares that table with the folders the
+   scripts read.
 
 ## Adding a process
 

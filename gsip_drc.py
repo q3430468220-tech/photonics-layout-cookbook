@@ -185,7 +185,7 @@ def main(argv: list[str]) -> int:
         return 0
     here = Path(__file__).resolve().parent
     if argv[0] == "--demo":
-        result = run_drc(demo_component(), rdb_path=here / "gsip_drc_demo.lyrdb")
+        result = run_drc(demo_component(), rdb_path=here / "build" / "drc" / "gsip_drc_demo.lyrdb")
         print(result.summary())
         expected = 7
         print(f"self-test: {len(result.errors)} error rules triggered, expected at least {expected}")

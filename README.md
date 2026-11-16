@@ -5,7 +5,7 @@ for the layout and Ansys Lumerical for the simulation. It starts from a PDK (pro
 draws a microring modulator with it, and simulates that layout: FDTD for the coupler, MODE for the
 waveguide, CHARGE and HEAT for the junction and the heater, INTERCONNECT for the circuit.
 
-[English](README.md) | [简体中文](README_zh-CN.md)
+[English](README.md) | [简体中文](README_zh-CN.md) | [Website](https://q3430468220-tech.github.io/photonics-layout-cookbook/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
@@ -42,6 +42,10 @@ Five chapters, meant to be read in order. The first two need no Lumerical.
 | 4 | [The simulations](lumerical_simulations/ring_modulator/README.md) | seven steps from the coupler to the circuit, with the pitfalls of each |
 | 5 | [Your own foundry](docs/your_foundry.md) | moving the flow to a real PDK without leaking NDA data |
 
+The ring modulator is the first device treated this way. The [device library](#device-library)
+further down has the others: four passive devices so far, each with its own chapter, and those that
+are planned.
+
 ## Quick start
 
 You need Python 3.12 or 3.13 and [uv](https://docs.astral.sh/uv/). If you plan to run the
@@ -54,17 +58,19 @@ git clone https://github.com/q3430468220-tech/photonics-layout-cookbook.git
 cd photonics-layout-cookbook
 uv sync
 
-uv run python gsip_technology.py     # list the layers and the stack, write the layer colours for KLayout
-uv run python rm_builder.py          # draw the ring modulator, run the DRC, write rm_ring.gds
-uv run pytest                        # 82 tests
+uv run python gsip_technology.py                  # list the layers and the stack, write the layer colours for KLayout
+uv run python devices/ring_modulator_builder.py   # draw the ring modulator, run the DRC, write its layout
+uv run pytest                                     # 115 tests
 ```
 
-`rm_builder.py` ends with `DRC passed: 0 errors, 0 warnings`. You can open `rm_ring.gds` in
-[KLayout](https://www.klayout.de), a free layout viewer; the layer colours are in
-`klayout_tech/layers.lyp`.
+The builder ends with `DRC passed: 0 errors, 0 warnings` and writes `devices/gds/ring_modulator.gds`.
+You can open that file in [KLayout](https://www.klayout.de), a free layout viewer; the layer colours
+are in `klayout_tech/layers.lyp`. Every device of the [device library](#device-library) has a builder
+of this kind in `devices/`.
 
 **Figures** (no Lumerical needed). The simulation results are kept in the repository, so every
-figure of chapter 4 can be redrawn from them. Each one has a script in `figures/`, for example:
+figure of chapter 4 and of the device chapters can be redrawn from them. Each one has a script in
+the `figures/` folder of its device, for example:
 
 ```bash
 uv run python lumerical_simulations/ring_modulator/figures/fig2_passive.py
@@ -117,9 +123,9 @@ gdsfactory generic PDK, or [T] a teaching value chosen here, with the reason bes
 
 ## The ring modulator
 
-<p align="center"><img src="assets/rm_layout.png" width="100%" alt="Layout of the ring modulator: the whole device, then silicon and implants, contacts and heater, metal 2, and all layers"></p>
+<p align="center"><img src="assets/ring_modulator_layout.png" width="100%" alt="Layout of the ring modulator: the whole device, then silicon and implants, contacts and heater, metal 2, and all layers"></p>
 
-*The device drawn by [rm_builder.py](rm_builder.py): the whole device (a), three groups of layers
+*The device drawn by [ring_modulator_builder.py](devices/ring_modulator_builder.py): the whole device (a), three groups of layers
 (b to d), and all layers together (e).*
 
 The device is a ring of rib waveguide with a 10 µm radius, next to a bus waveguide. A PN junction
@@ -140,7 +146,7 @@ a radius below the 10 µm minimum, and names the rule. From the repository root:
 
 ```python
 import gsip_technology as t          # importing it activates the PDK
-import rm_builder as rm
+from devices import ring_modulator_builder as rm
 from gsip_drc import run_drc
 
 ring = rm.ring_modulator(radius=12, gap=0.40)
@@ -150,12 +156,12 @@ t.write_gds_for_lumerical(ring, "build/ring_r12.gds", cellname="ring_r12")
 
 In Lumerical's script language, three commands turn a layout into a structure. Steps 0 to 5 all
 begin this way, through `add_layer_builder` in
-[scripts/common.py](lumerical_simulations/ring_modulator/scripts/common.py). Step 0 loads the whole
-device; each later step loads only the section it simulates.
+[lumerical_simulations/flow.py](lumerical_simulations/flow.py), which the simulations of every device
+share. Step 0 loads the whole device; each later step loads only the section it simulates.
 
 ```text
 addlayerbuilder;
-loadgdsfile("rm_ring.gds");
+loadgdsfile("devices/gds/ring_modulator.gds");
 loadprocessfile("gsip_process_file_py/gsip_process.lbr");
 ```
 
@@ -265,18 +271,94 @@ same flow to a real open process. It has a single metal layer and no heater laye
 a rather different device. That example is kept as it was released in v0.2; its README lists the
 corrections made in v0.3 that it does not have yet.
 
+## Device library
+
+The ring modulator is one device of a library. Each device in it gets the same treatment: a builder
+in `devices/` that draws it with the PDK, simulations that load that layout together with the
+process file, and a chapter with the method, the results and the pitfalls.
+
+A card with a filled dot has its tutorial, and a click on the card opens it. The other cards are
+planned; they lead to their entry in [ROADMAP.md](ROADMAP.md). The drawings are schematics, not
+layouts.
+
+### Passive devices
+
+Twelve devices on the silicon and silicon nitride layers of the GSiP process. The first four have
+their tutorials; the table below the cards gives the main result of each.
+
+<p align="center">
+<a href="lumerical_simulations/strip_waveguide/README.md" title="Strip waveguide, bend and taper"><img src="assets/device_library/passive/strip_waveguide.png" width="24%" alt="Strip waveguide, bend and taper"></a>
+<a href="lumerical_simulations/rib_waveguide/README.md" title="Rib waveguide and bend"><img src="assets/device_library/passive/rib_waveguide.png" width="24%" alt="Rib waveguide and bend"></a>
+<a href="lumerical_simulations/directional_coupler/README.md" title="Directional coupler"><img src="assets/device_library/passive/directional_coupler.png" width="24%" alt="Directional coupler"></a>
+<a href="lumerical_simulations/mmi1x2/README.md" title="1×2 MMI splitter"><img src="assets/device_library/passive/mmi1x2.png" width="24%" alt="1×2 MMI splitter"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="2×2 MMI coupler"><img src="assets/device_library/passive/mmi2x2.png" width="24%" alt="2×2 MMI coupler"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="Y-branch"><img src="assets/device_library/passive/y_branch.png" width="24%" alt="Y-branch"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="Waveguide crossing"><img src="assets/device_library/passive/waveguide_crossing.png" width="24%" alt="Waveguide crossing"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="Grating coupler"><img src="assets/device_library/passive/grating_coupler.png" width="24%" alt="Grating coupler"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="Edge coupler"><img src="assets/device_library/passive/edge_coupler.png" width="24%" alt="Edge coupler"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="Add-drop ring filter"><img src="assets/device_library/passive/ring_filter.png" width="24%" alt="Add-drop ring filter"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="Mach-Zehnder interferometer"><img src="assets/device_library/passive/mach_zehnder_interferometer.png" width="24%" alt="Mach-Zehnder interferometer"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="SiN waveguide and transition"><img src="assets/device_library/passive/sin_waveguide.png" width="24%" alt="SiN waveguide and transition"></a>
+</p>
+<p align="center"><img src="assets/device_library/passive/legend.png" width="100%" alt="Colour key of the passive devices"></p>
+
+| device | solvers | result at 1.55 µm, TE |
+|---|---|---|
+| [Strip waveguide, bend and taper](lumerical_simulations/strip_waveguide/README.md) | MODE, EME | n_eff 2.444, n_g 4.24; a 90° bend of 5 µm radius loses 0.012 dB; a 20 µm taper to 3 µm loses 0.02 dB |
+| [Rib waveguide and bend](lumerical_simulations/rib_waveguide/README.md) | MODE | n_eff 2.568, n_g 3.94; a 90° bend of 10 µm radius loses 0.046 dB |
+| [Directional coupler](lumerical_simulations/directional_coupler/README.md) | MODE, FDTD | 50:50 with a 15 µm straight section at a 0.2 µm gap, a length known to 0.3 µm; 0.003 dB loss; within 45:55 over 29 nm |
+| [1×2 MMI splitter](lumerical_simulations/mmi1x2/README.md) | EME, FDTD | equal split with a 2.5 × 5.5 µm multimode section, 0.085 dB loss; 0.04 to 0.21 dB from 1500 to 1600 nm |
+
+### Active devices
+
+Eight devices that use the implants, the germanium, the heater and the metals of the same
+process. The ring modulator is the one this page describes.
+
+<p align="center">
+<a href="ROADMAP.md#unit-devices-active" title="Thermo-optic phase shifter"><img src="assets/device_library/active/thermo_optic_phase_shifter.png" width="24%" alt="Thermo-optic phase shifter"></a>
+<a href="ROADMAP.md#unit-devices-active" title="PN phase shifter"><img src="assets/device_library/active/pn_phase_shifter.png" width="24%" alt="PN phase shifter"></a>
+<a href="ROADMAP.md#unit-devices-active" title="PIN phase shifter and VOA"><img src="assets/device_library/active/pin_phase_shifter.png" width="24%" alt="PIN phase shifter and VOA"></a>
+<a href="lumerical_simulations/ring_modulator/README.md" title="Microring modulator"><img src="assets/device_library/active/ring_modulator.png" width="24%" alt="Microring modulator"></a>
+<a href="ROADMAP.md#unit-devices-active" title="Mach-Zehnder modulator"><img src="assets/device_library/active/mach_zehnder_modulator.png" width="24%" alt="Mach-Zehnder modulator"></a>
+<a href="ROADMAP.md#unit-devices-active" title="Germanium photodetector"><img src="assets/device_library/active/ge_photodetector.png" width="24%" alt="Germanium photodetector"></a>
+<a href="ROADMAP.md#unit-devices-active" title="Tunable ring filter"><img src="assets/device_library/active/tunable_ring_filter.png" width="24%" alt="Tunable ring filter"></a>
+<a href="ROADMAP.md#unit-devices-active" title="2×2 Mach-Zehnder switch"><img src="assets/device_library/active/mzi_switch.png" width="24%" alt="2×2 Mach-Zehnder switch"></a>
+</p>
+<p align="center"><img src="assets/device_library/active/legend.png" width="100%" alt="Colour key of the active devices"></p>
+
+### Thin-film lithium niobate
+
+Eight electro-optic devices on x-cut lithium niobate on insulator. The GSiP process has no
+lithium niobate, so they need a second teaching process, written from published values as GSiP
+was. That process does not exist yet.
+
+<p align="center">
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="Rib waveguide and bend"><img src="assets/device_library/tfln/waveguide.png" width="24%" alt="Rib waveguide and bend"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="Edge coupler"><img src="assets/device_library/tfln/edge_coupler.png" width="24%" alt="Edge coupler"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="1×2 MMI splitter"><img src="assets/device_library/tfln/mmi1x2.png" width="24%" alt="1×2 MMI splitter"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="Electro-optic phase shifter"><img src="assets/device_library/tfln/eo_phase_shifter.png" width="24%" alt="Electro-optic phase shifter"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="Mach-Zehnder modulator"><img src="assets/device_library/tfln/mach_zehnder_modulator.png" width="24%" alt="Mach-Zehnder modulator"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="Racetrack modulator"><img src="assets/device_library/tfln/racetrack_modulator.png" width="24%" alt="Racetrack modulator"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="Thermo-optic phase shifter"><img src="assets/device_library/tfln/thermo_optic_phase_shifter.png" width="24%" alt="Thermo-optic phase shifter"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="2×2 electro-optic switch"><img src="assets/device_library/tfln/eo_switch.png" width="24%" alt="2×2 electro-optic switch"></a>
+</p>
+<p align="center"><img src="assets/device_library/tfln/legend.png" width="100%" alt="Colour key of the lithium niobate devices"></p>
+
 ## Roadmap
 
-Unit devices come first, then the circuits and links built from them. [ROADMAP.md](ROADMAP.md)
-has the full tables.
+The unit devices of the library come first, then the circuits and links built from them.
+[ROADMAP.md](ROADMAP.md) has the full tables.
 
 | area | planned |
 |---|---|
-| passive devices | strip waveguides, couplers and splitters, crossings, grating and edge couplers, ring filters, Mach-Zehnder interferometers, SiN waveguides |
-| active devices | thermo-optic, PN and PIN phase shifters, variable optical attenuator, Mach-Zehnder modulator, germanium photodetector, tunable filters |
 | optical computing | Mach-Zehnder meshes and microring weight banks: layout and link simulation |
-| optical switching | switch cells and N×N fabrics: layout, loss and crosstalk |
+| optical switching | N×N switch fabrics: layout, loss and crosstalk |
 | optical interconnects | WDM transmitters, demultiplexers and receivers: layout, link budget, eye diagram |
+
+## Website
+
+The course is also a website: <https://q3430468220-tech.github.io/photonics-layout-cookbook/>. It shows the same chapters and the same results as this
+repository.
 
 ## Repository layout
 
@@ -284,13 +366,16 @@ has the full tables.
 photonics-layout-cookbook/
 ├── gsip_technology.py        the PDK: layers, stack, cross-sections, design rules
 ├── gsip_drc.py               design-rule check
-├── rm_builder.py             the ring modulator; writes rm_ring.gds
+├── devices/                  one builder per device, and the layouts they write (gds/)
 ├── gsip_process_file_py/     process tables (CSV), the compiler, and the compiled gsip_process.lbr
 ├── lumerical_simulations/
-│   └── ring_modulator/       scripts/, one folder of results per step, figures/
+│   ├── flow.py               what every simulation shares: paths and the Layer Builder set-up
+│   ├── solvers.py            solver recipes for MODE, EME and FDTD
+│   ├── panels.py             figure panels that several devices use
+│   └── <device>/             scripts/, one folder of results per step, figures/, README.md
 ├── docs/                     chapters 1, 2 and 5
-├── assets/                   figures of this page
-├── tests/                    PDK, layout, DRC, nets, process tables, figures
+├── assets/                   figures of this page; the drawings of the device library
+├── tests/                    PDK, layouts, DRC, nets, process tables, figures
 ├── more_processes/           the same flow on CORNERSTONE SOI220A
 ├── figstyle.py               shared plotting style
 ├── lumerical_env.py          finds Lumerical and imports lumapi
@@ -304,7 +389,8 @@ your research or teaching, please cite it with [CITATION.cff](CITATION.cff). The
 [MIT licence](LICENSE).
 
 Three icons in the design-flow figure are taken from the workshop slides and are not covered by
-the MIT licence. This project is
+the MIT licence. Neither are the design of the website, the name DARK MODE and its logo, which are
+not part of this repository. This project is
 not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the
 textbook or the gdsfactory team. "Ansys" and "Lumerical" are trademarks of ANSYS, Inc.
 

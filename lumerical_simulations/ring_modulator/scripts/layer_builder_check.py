@@ -1,6 +1,6 @@
 """Check - what did the Layer Builder build?  Refractive-index slices of the finished device.
 
-Before any physics, look at the structure.  The whole ring modulator (rm_ring.gds) is loaded with
+Before any physics, look at the structure.  The whole ring modulator (devices/gds/ring_modulator.gds) is loaded with
 gsip_process.lbr, and the mode solver's mesh is used as a probe: it reports the refractive index it
 sees on a plane.  Two vertical cuts and four horizontal cuts are saved:
 
@@ -29,7 +29,7 @@ import numpy as np
 from common import GAP, LAM, RADIUS, REPO, WIDTH, add_layer_builder, import_lumapi, require_process_file, step_dir, um
 
 OUT = step_dir("0_layer_builder_check")
-GDS = REPO / "rm_ring.gds"
+GDS = REPO / "devices" / "gds" / "ring_modulator.gds"
 SPAN = 36.0  # um: the Layer Builder covers the ring and the first part of the wires
 PN_CUT_Z = (-5.5, 3.6)  # um: the PN cut reaches the substrate (-12 .. -2 um) and the buried oxide (-2 .. 0 um)
 Y_BUS = -(RADIUS + WIDTH + GAP)
@@ -71,7 +71,7 @@ def main() -> None:
     parser.parse_args()  # no options: --help prints this text and exits before the solver is started
     require_process_file()
     if not GDS.exists():
-        raise SystemExit(f"{GDS} is missing: run rm_builder.py first")
+        raise SystemExit(f"{GDS} is missing: run devices/ring_modulator_builder.py first")
     lumapi = import_lumapi()
     t0 = time.time()
     res = dict(radius=RADIUS, width=WIDTH, gap=GAP, y_bus=Y_BUS)

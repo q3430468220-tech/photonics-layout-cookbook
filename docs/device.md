@@ -5,7 +5,7 @@ Previous: [Chapter 1, The PDK](pdk.md) | [Course map](../README.md) | Next: [Cha
 This chapter draws one device from first principles. The device is a microring modulator. A
 ring is a closed rib waveguide next to a straight bus. A PN junction in the ring changes the
 refractive index when a voltage is applied, and a heater above the ring shifts the resonance
-with heat. The layout comes from one Python file, `rm_builder.py`, which uses the process
+with heat. The layout comes from one Python file, `devices/ring_modulator_builder.py`, which uses the process
 defined in chapter 1, `gsip_technology.py`.
 
 By the end you should be able to:
@@ -24,11 +24,11 @@ Commands in this chapter run from the repository root, with the environment made
 
 ## 1. The device in one picture
 
-<p align="center"><img src="../assets/rm_layout.png" width="100%" alt="The ring modulator in five panels: the whole device with its pads, the silicon and implants, the contacts, metal 1 and heater, via 1 with metal 2, and all layers together."></p>
+<p align="center"><img src="../assets/ring_modulator_layout.png" width="100%" alt="The ring modulator in five panels: the whole device with its pads, the silicon and implants, the contacts, metal 1 and heater, via 1 with metal 2, and all layers together."></p>
 
 **Figure 1.** The device taken apart, layer group by layer group. Panel a shows the whole device
 with the five pads. Panels b to e zoom into the ring and add one group of layers at a time. The
-figure is drawn from `rm_ring.gds`, so every number in it comes from the layout.
+figure is drawn from `devices/gds/ring_modulator.gds`, so every number in it comes from the layout.
 
 Read the device as a stack of jobs. Each part has one job, and each job uses one or two layers.
 
@@ -83,7 +83,7 @@ for the simulator. Both use the same numbers. Chapter 1 explains where those num
 
 ## 3. How the builder is organised
 
-`rm_builder.py` has five cells and a set of helpers. Each cell is a function decorated with
+`devices/ring_modulator_builder.py` has five cells and a set of helpers. Each cell is a function decorated with
 `@gf.cell`. A cell is built once and cached. The cells are:
 
 | cell | what it draws | ports |
@@ -312,7 +312,7 @@ count as an overlap.
 **Run it on a component.** This is the usual way. The check reads the component directly:
 
 ```python
-import rm_builder as rm
+from devices import ring_modulator_builder as rm
 from gsip_drc import run_drc
 
 device = rm.ring_modulator()
@@ -321,15 +321,15 @@ print(result.summary())
 ```
 
 The default device prints `DRC passed: 0 errors, 0 warnings`. Pass `rdb_path=` to save the
-markers, as the builder does with `rm_ring_drc.lyrdb`.
+markers, as the builder does with `build/drc/ring_modulator.lyrdb`.
 
 **Run it on a GDS file.** This is the way to check any layout, including one from another tool:
 
 ```bash
-uv run python gsip_drc.py rm_ring.gds
+uv run python gsip_drc.py devices/gds/ring_modulator.gds
 ```
 
-The check writes `rm_ring_drc.lyrdb` next to the file. The exit code is 0 when the layout passes.
+The check writes `ring_modulator_drc.lyrdb` next to the file. The exit code is 0 when the layout passes.
 
 **What the output means.** The summary has one line for each rule that fired, with the number of
 places where it fired. The count is of distinct places, not of edge pairs. A rule that fires at
@@ -374,7 +374,7 @@ arc, with no implant and no metal around them, and runs the check:
 ```python
 import gdsfactory as gf
 import gsip_technology as t
-import rm_builder as rm
+from devices import ring_modulator_builder as rm
 from gsip_drc import run_drc
 
 @gf.cell
@@ -397,23 +397,27 @@ the metal around it is.
 Chapter 4 simulates the device in Lumerical. Lumerical reads one cell of one flat GDS file. The
 function `write_gds_for_lumerical` in `gsip_technology.py` writes that file. It places the
 component in a new cell, flattens it, names the cell and writes the file without the metadata
-cell that gdsfactory adds. The builder does this in its `__main__` block:
+cell that gdsfactory adds. The builder calls it at its end, through `write_device` in
+`devices/__init__.py`. Every builder of the device library ends with that function: it writes the
+layout, runs the DRC and draws a preview image.
 
 ```python
-gds = t.write_gds_for_lumerical(device, here / "rm_ring.gds", cellname="rm_ring")
+gds = t.write_gds_for_lumerical(component, GDS / f"{name}.gds", cellname=name)
 ```
 
 Run the builder to make the file:
 
 ```bash
-uv run python rm_builder.py
+uv run python devices/ring_modulator_builder.py
 ```
 
-The command writes `rm_ring.gds`, the DRC report `rm_ring_drc.lyrdb`, and two preview images in
-`build/`. It prints one line with the lengths the simulations need, and the DRC summary:
+The command writes `devices/gds/ring_modulator.gds`, the DRC report `build/drc/ring_modulator.lyrdb`, and two
+preview images in `build/previews/`. It prints the lengths the simulations need, the file it wrote and the
+DRC summary:
 
 ```text
-GDS -> rm_ring.gds   ring 62.832 um, PN section 41.888 um, heater 44.724 um   ports: ['G1', 'S', 'G2', 'H1', 'H2', 'o1', 'o2']
+ring 62.832 um, PN section 41.888 um, heater 44.724 um
+GDS -> devices/gds/ring_modulator.gds   ports: ['G1', 'S', 'G2', 'H1', 'H2', 'o1', 'o2']
 DRC passed: 0 errors, 0 warnings
 ```
 
@@ -494,8 +498,8 @@ broke. The default device test is the main one: if it fails, a rule of the proce
 
 ## Exercises
 
-1. **Radius 12.** Run `uv run python rm_builder.py` after changing `radius` to 12.0 in the
-   `ring_modulator` defaults in `rm_builder.py`. Read the lengths printed on the first line and
+1. **Radius 12.** Run `uv run python devices/ring_modulator_builder.py` after changing `radius` to 12.0 in the
+   `ring_modulator` defaults in `devices/ring_modulator_builder.py`. Read the lengths printed on the first line and
    check them against the circumference, 2π × 12 µm. Run the DRC on the component and confirm
    that it passes. Then ask: how much room is there now between the heater landings and the bus?
    Work it out from `y_bus`, the radius and the lowest point of the heater, and compare the result
@@ -505,7 +509,7 @@ broke. The default device test is the main one: if it fails, a rule of the proce
    the repository root, run:
 
    ```python
-   import rm_builder as rm
+   from devices import ring_modulator_builder as rm
    from gsip_drc import run_drc
 
    for gap in (0.25, 0.31, 0.34, 0.37, 0.40, 0.43, 0.52):
@@ -518,11 +522,11 @@ broke. The default device test is the main one: if it fails, a rule of the proce
    legal gap is not a good gap.
 
 3. **`p_inside=True`.** Edit nothing. Build the device with `rm.ring_modulator(p_inside=True)` and
-   run the DRC. It passes. Now look at the figure in panel b of `assets/rm_layout.png`, and think
+   run the DRC. It passes. Now look at the figure in panel b of `assets/ring_modulator_layout.png`, and think
    about which side of the junction the signal disc now sits on. The DRC checks enclosure by N++
    or P++ and does not check which side the signal is on. The CHARGE step of chapter 4 (step 3)
    would show it, because it simulates the doping as drawn. To return to the device that is
-   simulated, pass `p_inside=False`, or change the default of `p_inside` in `rm_builder.py`.
+   simulated, pass `p_inside=False`, or change the default of `p_inside` in `devices/ring_modulator_builder.py`.
 
 4. **A heater angle that the builder rejects.** Build the device with `pn_angle=240.0` and
    `heater_angle=240.0`. The builder raises `heater_angle must exceed pn_angle by more: -1.20 um
@@ -533,8 +537,8 @@ broke. The default device test is the main one: if it fails, a rule of the proce
    259.8°. The upper limit is set by the bus check, at about 277.6°. Confirm both limits, and say
    which check gives each one.
 
-5. **Your own builder.** Copy the `contact_arc` snippet of section 7 into a new file in the
-   repository root named `my_device.py`. Add a second cell that places a row of vias on the other
-   side of the ring, and a `__main__` block that writes the GDS and runs the DRC. Use
-   `t.write_gds_for_lumerical` as in section 8. Predict the DRC result before you run it, then
-   check the marker file in KLayout.
+5. **Your own builder.** Copy the `contact_arc` snippet of section 7 into a new file
+   `devices/my_device_builder.py`. Take the first lines, with the imports, from
+   `devices/strip_waveguide_builder.py`. Add a second cell that places a row of vias on the other
+   side of the ring, and a `__main__` block that ends with `write_device`, as in section 8.
+   Predict the DRC result before you run it, then check the marker file in KLayout.

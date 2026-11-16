@@ -1,0 +1,20 @@
+Two strips W = 0.5 um, 220 nm silicon in oxide (gsip_process.lbr); FDE mesh 20 nm, 10 nm on the cores and in the gap, window 6.0 x 2.4 um
+
+gap 0.2 um, 1.55 um:
+  mode     n_eff      n_g  TE fraction  in core region  loss dB/cm
+  even   2.45591   4.1578        0.983           1.000      -5e-09
+   odd   2.43528   4.2988        0.984           1.000    -2.7e-09
+n_even - n_odd = 0.02064  ->  L_pi = 37.55 um (all the light has crossed), L_pi / 2 = 18.78 um (half of it)
+
+gap sweep, 1.55 um:
+ gap (um)    n_even     n_odd  L_pi (um)
+     0.20   2.45591   2.43528      37.55
+     0.25   2.45151   2.43825      58.43
+     0.30   2.44889   2.44031      90.34
+     0.35   2.44728   2.44171     139.19
+     0.40   2.44626   2.44264     213.97
+     0.50   2.44520   2.44366     502.92
+fit: L_pi = 6.72 um * exp(gap / 115.7 nm) for gaps of 200 to 500 nm; an interpolation formula, do not extrapolate
+
+wavelength sweep at gap 0.2 um:
+  1500 nm: 46.83 um,  1520 nm: 42.87 um,  1540 nm: 39.25 um,  1560 nm: 35.94 um,  1580 nm: 32.95 um,  1600 nm: 30.26 um

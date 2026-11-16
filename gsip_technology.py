@@ -2,7 +2,7 @@
 
     gsip_technology.py        layers, design rules, layer stack, cross-sections, cells      (this file)
             |
-    rm_builder.py             device layout drawn with the PDK cross-sections   ->  .gds
+    devices/<device>_builder.py   device layout drawn with the PDK cross-sections   ->  devices/gds/<device>.gds
             |
     gsip_process_file_py/     the same process as CSV tables                    ->  gsip_process.lbr
             |
@@ -192,7 +192,7 @@ VIAC, M1, HEATER, VIA1, M2, VIA2, M3, PADOPEN = (
 )  # fmt: skip
 
 # =====================================================================================
-# 3. Design rules (um).  Each value says where its rule is enforced: [DRC] gsip_drc.py, [builder] rm_builder.py,
+# 3. Design rules (um).  Each value says where its rule is enforced: [DRC] gsip_drc.py, [builder] devices/ring_modulator_builder.py,
 #    or [construction].  [T] marks a teaching value.
 #    [B Listing 10.4] gives one example rule: silicon width and space 0.2 um.  Everything else is [T]:
 #    round numbers of the size a 248 nm process offers, so that the layout exercises make sense.

@@ -1,0 +1,33 @@
+Strip waveguide W = 0.5 um, 220 nm silicon in oxide (gsip_process.lbr); FDE mesh 20 nm, core-surface mesh 10 nm, window 5.0 x 2.4 um
+index on the cross-section: core centre 3.4764 (silicon), beside the core 1.4440, below 1.4440, above 1.4440 (oxide)
+
+straight, 1.55 um, guided modes (n_eff above the oxide, power in the core region):
+  mode     n_eff      n_g  TE fraction  in core region  loss dB/cm
+   TE0   2.44448   4.2387        0.983           1.000      -4e-09
+   TM0   1.77230   3.7808        0.045           0.995      -0.002
+   TE1   1.49335   2.4566        0.697           0.871        -1.8
+
+sweep 1.5-1.6 um, TE0:  n_eff 2.5005 to 2.3865;  n_g from the slope of n_eff(lambda) = 4.2164, solver n_g at 1.55 um = 4.2387
+
+bent waveguide, 1.55 um, TE0.  A 90 degree bend between two straights loses the radiation plus two junctions:
+ R (um)     n_eff  radiation dB/cm  radiation dB/90deg  junction dB  bend dB/90deg  mode shift nm
+    3.0   2.44844         0.000447             2.1e-07       0.0171         0.0341           24.5
+    4.0   2.44670        -8.37e-08            -5.3e-11       0.0095         0.0189           18.3
+    5.0   2.44590        -4.69e-10            -3.7e-13       0.0060         0.0120           14.6
+    7.5   2.44511        -3.65e-09            -4.3e-12       0.0027         0.0053            9.7
+   10.0   2.44484        -3.94e-09            -6.2e-12       0.0015         0.0030            7.3
+
+core width sweep, n_eff (nan: not guided):
+ W (um)      TE0      TM0      TE1
+   0.30   1.8271   1.5938      nan
+   0.35   2.0530   1.6450      nan
+   0.40   2.2265   1.6926      nan
+   0.45   2.3524   1.7352      nan
+   0.50   2.4445   1.7723   1.4934
+   0.55   2.5133   1.8044   1.5720
+   0.60   2.5659   1.8319   1.6900
+   0.70   2.6397   1.8760   1.9582
+   0.80   2.6878   1.9089   2.1675
+   0.90   2.7208   1.9338   2.3142
+   1.00   2.7445   1.9531   2.4183
+TE1 appears between 0.45 and 0.50 um: the sweep finds one TE mode up to 0.45 um

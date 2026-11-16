@@ -11,7 +11,7 @@ import pytest
 from test_connectivity import number, pad_nets
 
 import gsip_technology as t
-import rm_builder as rm
+from devices import ring_modulator_builder as rm
 from gsip_drc import demo_component, run_drc
 
 

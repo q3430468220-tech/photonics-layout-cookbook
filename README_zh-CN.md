@@ -2,7 +2,7 @@
 
 用 [gdsfactory](https://github.com/gdsfactory/gdsfactory) 画版图、用 Ansys Lumerical 做仿真的硅光设计教程。从一套 PDK（工艺设计套件）出发，画出一个微环调制器，再对这份版图做仿真：FDTD 算耦合器，MODE 算波导，CHARGE 和 HEAT 算 PN 结和加热器，INTERCONNECT 算电路。
 
-[English](README.md) | [简体中文](README_zh-CN.md)
+[English](README.md) | [简体中文](README_zh-CN.md) | [网站](https://q3430468220-tech.github.io/photonics-layout-cookbook/)
 
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue)
@@ -30,6 +30,8 @@
 | 4 | [仿真](lumerical_simulations/ring_modulator/README.md) | 从耦合器到电路共七步，以及每一步的易错点 |
 | 5 | [换成自己的工艺](docs/your_foundry.md) | 把流程搬到真实的代工厂 PDK 上，同时不泄露保密数据 |
 
+微环调制器是按这套流程做完的第一个器件。其余的器件见下文的[器件库](#器件库)：目前有四个无源器件，各有一章教程，另外还有计划中的器件。
+
 ## 快速开始
 
 需要 Python 3.12 或 3.13，以及 [uv](https://docs.astral.sh/uv/)。如果打算跑仿真，请把仓库放在不含中文等非 ASCII 字符的路径下，否则 Lumerical 求解器可能报错。
@@ -41,14 +43,14 @@ git clone https://github.com/q3430468220-tech/photonics-layout-cookbook.git
 cd photonics-layout-cookbook
 uv sync
 
-uv run python gsip_technology.py     # 列出图层和膜层堆叠，生成 KLayout 用的图层配色
-uv run python rm_builder.py          # 画微环调制器，跑 DRC，输出 rm_ring.gds
-uv run pytest                        # 82 项测试
+uv run python gsip_technology.py                  # 列出图层和膜层堆叠，生成 KLayout 用的图层配色
+uv run python devices/ring_modulator_builder.py   # 画微环调制器，跑 DRC，输出版图
+uv run pytest                                     # 115 项测试
 ```
 
-`rm_builder.py` 最后会打印 `DRC passed: 0 errors, 0 warnings`。生成的 `rm_ring.gds` 可以用免费的版图软件 [KLayout](https://www.klayout.de) 打开，图层配色在 `klayout_tech/layers.lyp`。
+builder 最后会打印 `DRC passed: 0 errors, 0 warnings`，并输出 `devices/gds/ring_modulator.gds`。这个文件可以用免费的版图软件 [KLayout](https://www.klayout.de) 打开，图层配色在 `klayout_tech/layers.lyp`。[器件库](#器件库)里的每个器件在 `devices/` 下都有一个这样的 builder。
 
-**图片**（不需要 Lumerical）。仿真结果已经保存在仓库里，第 4 章的每张图都可以直接重画。绘图脚本都在 `figures/` 下，例如：
+**图片**（不需要 Lumerical）。仿真结果已经保存在仓库里，第 4 章和各器件教程的每张图都可以直接重画。绘图脚本在各器件的 `figures/` 文件夹下，例如：
 
 ```bash
 uv run python lumerical_simulations/ring_modulator/figures/fig2_passive.py
@@ -91,9 +93,9 @@ uv run python ring_modulator_interconnect.py     # 第 6 步，不到 1 分钟
 
 ## 微环调制器
 
-<p align="center"><img src="assets/rm_layout.png" width="100%" alt="微环调制器版图：整体，硅与注入，接触孔与加热器，金属 2，全部图层"></p>
+<p align="center"><img src="assets/ring_modulator_layout.png" width="100%" alt="微环调制器版图：整体，硅与注入，接触孔与加热器，金属 2，全部图层"></p>
 
-*[rm_builder.py](rm_builder.py) 画出的器件：a 是整体，b 到 d 各显示一组图层，e 是全部图层。*
+*[ring_modulator_builder.py](devices/ring_modulator_builder.py) 画出的器件：a 是整体，b 到 d 各显示一组图层，e 是全部图层。*
 
 器件是一个半径 10 µm 的脊形波导微环，旁边是一根总线波导。PN 结覆盖环的 240°，n 区在环内侧。TiN 加热器在芯层正上方，覆盖 270°。金属 2 引出到五个焊盘：PN 结用地、信号、地（G-S-G）三个，加热器用两个（H）。
 
@@ -109,7 +111,7 @@ uv run python ring_modulator_interconnect.py     # 第 6 步，不到 1 分钟
 
 ```python
 import gsip_technology as t          # 导入即激活 PDK
-import rm_builder as rm
+from devices import ring_modulator_builder as rm
 from gsip_drc import run_drc
 
 ring = rm.ring_modulator(radius=12, gap=0.40)
@@ -117,11 +119,11 @@ print(run_drc(ring).summary())       # DRC passed: 0 errors, 0 warnings
 t.write_gds_for_lumerical(ring, "build/ring_r12.gds", cellname="ring_r12")
 ```
 
-用 Lumerical 的脚本语言，三条命令就能把版图搭成结构。第 0 到 5 步都是这样开头的，由 [scripts/common.py](lumerical_simulations/ring_modulator/scripts/common.py) 里的 `add_layer_builder` 完成。第 0 步载入整个器件，后面各步只载入自己要仿真的那一段。
+用 Lumerical 的脚本语言，三条命令就能把版图搭成结构。第 0 到 5 步都是这样开头的，由 [lumerical_simulations/flow.py](lumerical_simulations/flow.py) 里的 `add_layer_builder` 完成，所有器件的仿真共用这个函数。第 0 步载入整个器件，后面各步只载入自己要仿真的那一段。
 
 ```text
 addlayerbuilder;
-loadgdsfile("rm_ring.gds");
+loadgdsfile("devices/gds/ring_modulator.gds");
 loadprocessfile("gsip_process_file_py/gsip_process.lbr");
 ```
 
@@ -188,17 +190,84 @@ loadprocessfile("gsip_process_file_py/gsip_process.lbr");
 
 [more_processes/cornerstone_soi220a/](more_processes/cornerstone_soi220a/README.md) 把同样的流程用在一条真实的开放工艺上。那条工艺只有一层金属，也没有专门的加热器层，做出来的器件相当不同。这个例子保持 v0.2 发布时的样子，v0.3 的修正还没有同步过去，具体缺哪些见它的 README。
 
+## 器件库
+
+微环调制器是器件库里的一个器件。库里的每个器件都是同样的做法：`devices/` 下一个用 PDK 画版图的 builder，一组把这份版图和工艺文件一起载入的仿真脚本，再加一章讲方法、结果和易错点的教程。器件教程的正文目前也是英文。
+
+卡片右上角是实心圆点的，教程已经写好，点卡片就能打开。其余的还在计划中，点开是 [ROADMAP.md](ROADMAP.md) 里对应的条目。这些图是示意图，不是版图。
+
+### 无源器件
+
+GSiP 工艺的硅层和氮化硅层上的 12 个器件。前四个的教程已经写好，卡片下方的表格列出了各自的主要结果。
+
+<p align="center">
+<a href="lumerical_simulations/strip_waveguide/README.md" title="条形波导、弯曲和锥形"><img src="assets/device_library/passive/strip_waveguide.png" width="24%" alt="条形波导、弯曲和锥形"></a>
+<a href="lumerical_simulations/rib_waveguide/README.md" title="脊形波导和弯曲"><img src="assets/device_library/passive/rib_waveguide.png" width="24%" alt="脊形波导和弯曲"></a>
+<a href="lumerical_simulations/directional_coupler/README.md" title="定向耦合器"><img src="assets/device_library/passive/directional_coupler.png" width="24%" alt="定向耦合器"></a>
+<a href="lumerical_simulations/mmi1x2/README.md" title="1×2 MMI 分束器"><img src="assets/device_library/passive/mmi1x2.png" width="24%" alt="1×2 MMI 分束器"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="2×2 MMI 耦合器"><img src="assets/device_library/passive/mmi2x2.png" width="24%" alt="2×2 MMI 耦合器"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="Y 分支"><img src="assets/device_library/passive/y_branch.png" width="24%" alt="Y 分支"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="交叉波导"><img src="assets/device_library/passive/waveguide_crossing.png" width="24%" alt="交叉波导"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="光栅耦合器"><img src="assets/device_library/passive/grating_coupler.png" width="24%" alt="光栅耦合器"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="端面耦合器"><img src="assets/device_library/passive/edge_coupler.png" width="24%" alt="端面耦合器"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="上下载型微环滤波器"><img src="assets/device_library/passive/ring_filter.png" width="24%" alt="上下载型微环滤波器"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="马赫-曾德尔干涉仪"><img src="assets/device_library/passive/mach_zehnder_interferometer.png" width="24%" alt="马赫-曾德尔干涉仪"></a>
+<a href="ROADMAP.md#unit-devices-passive" title="氮化硅波导和层间过渡"><img src="assets/device_library/passive/sin_waveguide.png" width="24%" alt="氮化硅波导和层间过渡"></a>
+</p>
+<p align="center"><img src="assets/device_library/passive/legend.png" width="100%" alt="无源器件的配色说明"></p>
+
+| 器件 | 求解器 | 1.55 µm、TE 光下的结果 |
+|---|---|---|
+| [条形波导、弯曲和锥形](lumerical_simulations/strip_waveguide/README.md) | MODE、EME | n_eff 2.444，n_g 4.24；半径 5 µm 的 90° 弯曲损耗 0.012 dB；20 µm 长、展宽到 3 µm 的锥形损耗 0.02 dB |
+| [脊形波导和弯曲](lumerical_simulations/rib_waveguide/README.md) | MODE | n_eff 2.568，n_g 3.94；半径 10 µm 的 90° 弯曲损耗 0.046 dB |
+| [定向耦合器](lumerical_simulations/directional_coupler/README.md) | MODE、FDTD | 间隙 0.2 µm、直波导段 15 µm 时分光 50:50，这个长度的精度约 0.3 µm；损耗 0.003 dB；分光比保持在 45:55 以内的带宽是 29 nm |
+| [1×2 MMI 分束器](lumerical_simulations/mmi1x2/README.md) | EME、FDTD | 多模区 2.5 × 5.5 µm 时两路均分，损耗 0.085 dB；1500 到 1600 nm 内损耗 0.04 到 0.21 dB |
+
+### 有源器件
+
+用到同一套工艺里的注入、锗、加热器和金属的 8 个器件。本页讲的微环调制器是其中之一。
+
+<p align="center">
+<a href="ROADMAP.md#unit-devices-active" title="热光移相器"><img src="assets/device_library/active/thermo_optic_phase_shifter.png" width="24%" alt="热光移相器"></a>
+<a href="ROADMAP.md#unit-devices-active" title="PN 移相器"><img src="assets/device_library/active/pn_phase_shifter.png" width="24%" alt="PN 移相器"></a>
+<a href="ROADMAP.md#unit-devices-active" title="PIN 移相器和可变光衰减器"><img src="assets/device_library/active/pin_phase_shifter.png" width="24%" alt="PIN 移相器和可变光衰减器"></a>
+<a href="lumerical_simulations/ring_modulator/README.md" title="微环调制器"><img src="assets/device_library/active/ring_modulator.png" width="24%" alt="微环调制器"></a>
+<a href="ROADMAP.md#unit-devices-active" title="马赫-曾德尔调制器"><img src="assets/device_library/active/mach_zehnder_modulator.png" width="24%" alt="马赫-曾德尔调制器"></a>
+<a href="ROADMAP.md#unit-devices-active" title="锗光电探测器"><img src="assets/device_library/active/ge_photodetector.png" width="24%" alt="锗光电探测器"></a>
+<a href="ROADMAP.md#unit-devices-active" title="可调微环滤波器"><img src="assets/device_library/active/tunable_ring_filter.png" width="24%" alt="可调微环滤波器"></a>
+<a href="ROADMAP.md#unit-devices-active" title="2×2 马赫-曾德尔光开关"><img src="assets/device_library/active/mzi_switch.png" width="24%" alt="2×2 马赫-曾德尔光开关"></a>
+</p>
+<p align="center"><img src="assets/device_library/active/legend.png" width="100%" alt="有源器件的配色说明"></p>
+
+### 薄膜铌酸锂电光器件
+
+x 切薄膜铌酸锂（LNOI）上的 8 个电光器件。GSiP 工艺里没有铌酸锂，所以它们需要第二套教学工艺，和 GSiP 一样从公开文献的数值写起。这套工艺目前还没有。
+
+<p align="center">
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="脊形波导和弯曲"><img src="assets/device_library/tfln/waveguide.png" width="24%" alt="脊形波导和弯曲"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="端面耦合器"><img src="assets/device_library/tfln/edge_coupler.png" width="24%" alt="端面耦合器"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="1×2 MMI 分束器"><img src="assets/device_library/tfln/mmi1x2.png" width="24%" alt="1×2 MMI 分束器"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="电光移相器"><img src="assets/device_library/tfln/eo_phase_shifter.png" width="24%" alt="电光移相器"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="马赫-曾德尔调制器"><img src="assets/device_library/tfln/mach_zehnder_modulator.png" width="24%" alt="马赫-曾德尔调制器"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="跑道型微环调制器"><img src="assets/device_library/tfln/racetrack_modulator.png" width="24%" alt="跑道型微环调制器"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="热光移相器"><img src="assets/device_library/tfln/thermo_optic_phase_shifter.png" width="24%" alt="热光移相器"></a>
+<a href="ROADMAP.md#unit-devices-thin-film-lithium-niobate" title="2×2 电光开关"><img src="assets/device_library/tfln/eo_switch.png" width="24%" alt="2×2 电光开关"></a>
+</p>
+<p align="center"><img src="assets/device_library/tfln/legend.png" width="100%" alt="铌酸锂器件的配色说明"></p>
+
 ## 路线图
 
-先做单元器件，再做由它们组成的电路和链路。完整表格见 [ROADMAP.md](ROADMAP.md)。
+先做器件库里的单元器件，再做由它们组成的电路和链路。完整表格见 [ROADMAP.md](ROADMAP.md)。
 
 | 方向 | 计划 |
 |---|---|
-| 无源器件 | 条形波导、耦合器与分束器、交叉波导、光栅耦合器和端面耦合器、微环滤波器、马赫-曾德尔干涉仪、氮化硅波导 |
-| 有源器件 | 热光、PN 和 PIN 移相器，可变光衰减器，马赫-曾德尔调制器，锗光电探测器，可调滤波器 |
 | 光计算 | 马赫-曾德尔干涉仪网格、微环权重阵列（weight bank）：版图与链路仿真 |
-| 光交换 | 开关单元和 N×N 开关阵列：版图、损耗与串扰 |
+| 光交换 | N×N 开关阵列：版图、损耗与串扰 |
 | 光互联 | 波分复用发射端、解复用器和接收端：版图、链路预算、眼图 |
+
+## 网站
+
+教程还有一个网站版（英文）：<https://q3430468220-tech.github.io/photonics-layout-cookbook/>。网站展示的章节和结果与本仓库相同。
 
 ## 仓库结构
 
@@ -206,12 +275,15 @@ loadprocessfile("gsip_process_file_py/gsip_process.lbr");
 photonics-layout-cookbook/
 ├── gsip_technology.py        PDK：图层、膜层堆叠、截面、设计规则
 ├── gsip_drc.py               设计规则检查
-├── rm_builder.py             微环调制器，输出 rm_ring.gds
+├── devices/                  每个器件一个 builder，以及它们输出的版图（gds/）
 ├── gsip_process_file_py/     工艺表格（CSV）、编译脚本、编译好的 gsip_process.lbr
 ├── lumerical_simulations/
-│   └── ring_modulator/       scripts/、每一步的结果文件夹、figures/
+│   ├── flow.py               所有仿真共用的部分：路径和 Layer Builder 的搭建
+│   ├── solvers.py            MODE、EME、FDTD 的求解器配方
+│   ├── panels.py             多个器件共用的绘图面板
+│   └── <器件>/               scripts/、每一步的结果文件夹、figures/、README.md
 ├── docs/                     第 1、2、5 章
-├── assets/                   本页的图片
+├── assets/                   本页的图片；器件库的图块
 ├── tests/                    PDK、版图、DRC、连通性、工艺表格、图片
 ├── more_processes/           同一套流程在 CORNERSTONE SOI220A 上的实现
 ├── figstyle.py               统一的绘图风格
@@ -223,7 +295,7 @@ photonics-layout-cookbook/
 
 欢迎贡献，见 [CONTRIBUTING.md](CONTRIBUTING.md)。如果这份教程对你的研究或教学有帮助，请按 [CITATION.cff](CITATION.cff) 引用。代码采用 [MIT 许可](LICENSE)。
 
-设计流程图里有三个图标取自研讨会幻灯片，不在 MIT 许可范围内。本项目与 Ansys、Tower Semiconductor、CORNERSTONE、教材作者及 gdsfactory 团队均无隶属或背书关系。“Ansys”和“Lumerical”是 ANSYS, Inc. 的商标。
+设计流程图里有三个图标取自研讨会幻灯片，不在 MIT 许可范围内。网站的设计、DARK MODE 这个名称及其标志也不在此列，它们不属于本仓库。本项目与 Ansys、Tower Semiconductor、CORNERSTONE、教材作者及 gdsfactory 团队均无隶属或背书关系。“Ansys”和“Lumerical”是 ANSYS, Inc. 的商标。
 
 ## 参考资料
 

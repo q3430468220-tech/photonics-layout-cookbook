@@ -1,7 +1,7 @@
 """Step 3 - CHARGE: carriers in the PN section versus bias, junction capacitance and series resistance.
 
 Model: a straight piece of the PDK cross-section ``rib_pn`` with the two rows of contact vias of
-rm_builder, written to GDS and loaded into a Layer Builder with gsip_process.lbr.  All doping comes
+ring_modulator_builder, written to GDS and loaded into a Layer Builder with gsip_process.lbr.  All doping comes
 from the process file.  The process file splits the contact via by the implant below it, so the two
 rows are separate solids and each can carry its own contact:
 

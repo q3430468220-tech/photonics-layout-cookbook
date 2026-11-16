@@ -226,14 +226,14 @@ seven building blocks: deep trench and strip waveguide, grating coupler, PN modu
 and metals, thermal phase shifter with its heater, germanium on silicon, silicon nitride, and bond
 pad. (b) The front end of the same blocks, z stretched five times. Layer names and GDS numbers are the
 ones in the layer map. Drawn from the constants of this file and of
-`rm_builder.py`; no simulation data is used. Only the blocks in ink are used by the ring modulator of
+`devices/ring_modulator_builder.py`; no simulation data is used. Only the blocks in ink are used by the ring modulator of
 chapter 2.
 
 ### How the figure reads the PDK
 
 The script that draws the figure does not read the `STACK` table. It reads constants such as `T_SI`,
 `T_SLAB90`, `Z_M1`, `T_M1`, `Z_HEATER`, and more, the names of the layers for the labels, the rules for the
-via and pad enclosures, and the sizes of the device from `rm_builder.py`. The positions of the
+via and pad enclosures, and the sizes of the device from `devices/ring_modulator_builder.py`. The positions of the
 blocks along the horizontal axis are placed by hand, so
 that they do not overlap. Because of this, a changed constant changes the figure, but a changed
 `STACK` row does not. No test compares the figure with the stack, so a mismatch between the two is
@@ -382,7 +382,7 @@ round numbers of the size a 248 nm process offers, chosen so that the examples m
 | `grid` | 0.001 | the 1 nm grid |
 
 Each entry of `DESIGN_RULES` names where it is enforced: by `gsip_drc.py`, by the builder
-(`rm_builder.py`), or by construction. The comment next to each value in the file says which.
+(`devices/ring_modulator_builder.py`), or by construction. The comment next to each value in the file says which.
 The heater clearance of 0.5 µm is a `[T]` value. The simulations do not use it. The 10 µm rib bend radius is a choice with margin too: step 2 shows
 that the bend loss falls below the solver floor from 6 µm up.
 
@@ -430,7 +430,7 @@ python gsip_drc.py chip.gds          # writes chip_drc.lyrdb for KLayout's marke
 python gsip_drc.py --demo            # self-test on a layout with planted violations
 ```
 
-The demo also writes a KLayout marker file, `gsip_drc_demo.lyrdb`, into the repository root. Its console
+The demo also writes a KLayout marker file, `gsip_drc_demo.lyrdb`, into `build/drc/`. Its console
 output lists seven error rules and one warning, and the self-test expects at least seven errors.
 
 ## 8. Cells, connectivity and the PDK object
@@ -574,7 +574,7 @@ uv run pytest tests/test_technology.py
 ```
 
 The file has eleven test functions, which run as twelve cases (the cross-section test has two).
-The full suite of the repository has 82 tests, and all of them pass.
+The full suite of the repository has 115 tests, and all of them pass.
 
 | test | what it asserts |
 |---|---|

@@ -1,8 +1,10 @@
 # Chapter 4. The simulations: seven steps from the layout to the circuit
 
-<p align="center">
+<div align="center">
+
 [Previous: Chapter 3, the process file](../../gsip_process_file_py/README.md) · [Course map](../../README.md) · [Next: Chapter 5, your foundry](../../docs/your_foundry.md)
-</p>
+
+</div>
 
 Chapter 2 drew the ring modulator. This chapter simulates it. The simulation is split into seven
 steps, and each step answers one question about the device with one solver. A step passes its result
@@ -10,8 +12,8 @@ on to the next one, so that at the end the seven answers combine into the spectr
 modulator. The whole chain runs from one layout and one process file. No script contains a thickness,
 a material or a doping level.
 
-Read the chapter in order. Each step needs the results of the steps before it, and the numbers in later
-steps are only meaningful once the earlier ones have been checked.
+Read the chapter in order. The later steps need results of the earlier ones (section 4.1 shows which),
+and their numbers are only meaningful once the earlier ones have been checked.
 
 ---
 
@@ -26,7 +28,8 @@ small GDS drawn with the PDK   +   gsip_process.lbr   ->   Layer Builder object
 The small GDS is a piece of the device, drawn with the layers of the PDK (chapter 1,
 [`docs/pdk.md`](../../docs/pdk.md)). The file `gsip_process.lbr` is the process file (chapter 3). The
 Layer Builder reads both and makes the 3D structure that the solver meshes. The helper that does this is
-`add_layer_builder` in `lumerical_simulations/ring_modulator/scripts/common.py`. Its last two steps are:
+`add_layer_builder` in `lumerical_simulations/flow.py`, which the devices of the library share. The step
+scripts reach it through the `common.py` next to them. Its last two steps are:
 
 ```python
     app.loadgdsfile(gds.as_posix())
@@ -55,34 +58,19 @@ steps 5 and 6 supply its numbers, and the circuit reads them from the result fil
 
 ### Data flow
 
-```
-                 rm_ring.gds + gsip_process.lbr
-                               |
-                        step 0 (check only)
+<p align="center"><img src="figures/fig_data_flow.png" width="100%" alt="The seven steps in one column. Results of steps 2, 3 and 4 are read by step 5; results of steps 1, 2, 3 and 5 are read by step 6"></p>
 
-step 1 FDTD ---- kappa^2(gap) ----------------------------------------------+
-                                                                             |
-step 2 MODE ---- n_eff, n_g, bend loss, FSR -------------------------------+ |
-     |                                                                     | |
-     +-- bend orientation ----------------+                                | |
-                                          |                                | |
-step 3 CHARGE -- carriers (.mat) ---+     |                                | |
-            |                       |     |                                | |
-            +-- C, R_s, f_RC -------------------------------------------+   | |
-                                    |     |                            |   | |
-step 4 HEAT --- temperature (.mat) -+     |                            |   | |
-            |                             |                            |   | |
-            +-- K/mW, tau                 v                            v   v v
-                               step 5 MODE: dn_eff(V), loss(V), per mW of heat
-                                          |
-                                          v
-                               step 6 INTERCONNECT: ring element, spectra,
-                               extinction, Q, bandwidth, heater tuning
-```
+**Figure.** What each step reads from the steps before it. The steps stand in the order they run. A result
+that a later step reads leaves its step sideways and joins a line: the line on the left ends in step 5, the
+line on the right ends in step 6. The shaded group holds the steps whose structure the Layer Builder makes.
 
 In words: step 5 needs the carriers of step 3, the temperature of step 4, and the bend orientation and
 group index of step 2. Step 6 needs the coupling of step 1, the waveguide of step 2, the loss and index
-change of step 5, and the bandwidth of step 3.
+change of step 5, and the bandwidth of step 3. Steps 0 to 4 read nothing from each other.
+
+The figure is drawn from a table in `figures/fig_data_flow.py`, and a test compares that table with the
+folders the step scripts read. If a script starts to read another step, the test fails until the figure
+shows it.
 
 ---
 
@@ -108,9 +96,9 @@ change of step 5, and the bandwidth of step 3.
 
    Check it with `uv run python lumerical_env.py`. The command prints the installation and the path of
    `lumapi`.
-4. The layout `rm_ring.gds` and the process file `gsip_process_file_py/gsip_process.lbr`. Both are kept
+4. The layout `devices/gds/ring_modulator.gds` and the process file `gsip_process_file_py/gsip_process.lbr`. Both are kept
    in the repository, so the compiler of chapter 3 need not run again. If you change the device, run
-   `uv run python rm_builder.py` first.
+   `uv run python devices/ring_modulator_builder.py` first.
 
 Before any licence is used, run the tests. They need no Lumerical:
 
@@ -118,7 +106,7 @@ Before any licence is used, run the tests. They need no Lumerical:
 uv run pytest
 ```
 
-The 82 tests check the PDK, the layout, the design rules, the process tables, the device's nets and the
+The 115 tests check the PDK, the layout, the design rules, the process tables, the device's nets and the
 figures redrawn from the kept data.
 
 ### The commands, in order
@@ -217,6 +205,8 @@ The figures need matplotlib, numpy and klayout. The arrays they read are kept in
 purpose. The arrays are about 7 MB in total, which is the price of being able to read every number in
 every panel without a licence.
 
+One more script, `fig_data_flow.py`, draws the diagram of section 4.1. It reads no data.
+
 ---
 
 ## 4.4 What is kept and what is rebuilt
@@ -236,7 +226,7 @@ them, and the result tables below repeat them.
 ## 4.5 The device
 
 The device is the one of chapter 2 ([`docs/device.md`](../../docs/device.md)). Its defaults are the
-defaults of `rm_builder.ring_modulator`, and the scripts read them from its signature, so the simulations
+defaults of `ring_modulator_builder.ring_modulator`, and the scripts read them from its signature, so the simulations
 always match the layout.
 
 | quantity | value |
@@ -254,7 +244,7 @@ always match the layout.
 | heater resistance | 280 Ω |
 | metal 2 and pads | metal 2 to five metal 3 pads, 80 µm wide on a 100 µm pitch: G S G in the north for the junction, H H in the south for the heater |
 | ports | o1, o2, G1, S, G2, H1, H2 |
-| design rules | 0 errors, 0 warnings, 16 layers used (`rm_builder.py` output) |
+| design rules | 0 errors, 0 warnings, 16 layers used (`devices/ring_modulator_builder.py` output) |
 
 ---
 
@@ -262,7 +252,7 @@ always match the layout.
 
 **The question.** Does the Layer Builder make the structure that the layout describes?
 
-**The model.** The whole device, `rm_ring.gds`, is loaded with the process file into a Layer Builder object
+**The model.** The whole device, `devices/gds/ring_modulator.gds`, is loaded with the process file into a Layer Builder object
 36 µm wide. The mode solver is used only as a probe. It meshes a plane, and it reports the refractive index
 that it sees on every mesh point. Two vertical cuts and four horizontal cuts are taken:
 
@@ -331,12 +321,12 @@ file, so a mistake in the process file cannot hide in both columns.
 
 - *A shape is missing from a panel.* The layer expression in `gsip_process.lbr` does not match the layer in the
   GDS. Check the process tables (chapter 3). Then rerun step 0, which takes about half a minute.
-- *The script stops with "rm_ring.gds is missing".* Run `uv run python rm_builder.py` from the repository root,
+- *The script stops with "devices/gds/ring_modulator.gds is missing".* Run `uv run python devices/ring_modulator_builder.py` from the repository root,
   then step 0 again.
 - *The probe shows silicon where the heater should be.* The Layer Builder is not centred on the origin of the
   GDS. The script sets "Centered at origin" for this reason: GDS coordinates equal simulation coordinates.
 
-**Try it.** Open `rm_ring.gds` in KLayout with `klayout_tech/tech.lyt`, and compare the layout of metal 1 with
+**Try it.** Open `devices/gds/ring_modulator.gds` in KLayout with `klayout_tech/tech.lyt`, and compare the layout of metal 1 with
 panel e of figure 0. Both show the same disc, arc and heater landings.
 
 ---
@@ -513,6 +503,9 @@ from 0.5 µm upwards.
 **Check.** The group index from the wavelength slope, 3.916, agrees with the solver's value, 3.936, to 0.5 %. This is
 the independent check of n_g. The analytic slab line in panel e checks the solver at the cut-off of TE1.
 
+The [rib waveguide chapter](../rib_waveguide/README.md) of the device library treats this cross-section by
+itself, and splits the loss of a bend into radiation and the mismatch at its two ends.
+
 ### The mesh, and why it decides the answer
 
 This is the most instructive pitfall of the course. The effective index depends on the mesh of the mode solver,
@@ -535,7 +528,7 @@ A difference of 0.007 in n_eff is larger than the effect of 10 mW of heater powe
 simulation whose window had been placed differently would have given a different waveguide. The rule that follows
 is this: force a mesh line on every interface that matters, and check that two windows give the same answer.
 
-The script does that in the function `add_rib_mesh` of `scripts/common.py`. It adds two mesh overrides whose faces
+The script does that in the function `add_rib_mesh` of `lumerical_simulations/solvers.py`. It adds two mesh overrides whose faces
 lie on the silicon surfaces: a core box of width W, from the top of the slab to the top of the core, and a slab box
 0.3 µm wider on each side, from the bottom of the slab to its top. Inside the boxes the mesh is 10 nm. Every face of
 an override becomes a mesh line.
@@ -702,7 +695,7 @@ Panel d then shows the cuts at 0 V and 4 V only. Compare the widths of the deple
 **The question.** How many kelvin does one milliwatt of heater power add to the waveguide core, and how fast does the
 core warm up?
 
-**The model.** A straight piece of the ring cross-section, drawn exactly as `rm_builder` draws it: the rib, the contact
+**The model.** A straight piece of the ring cross-section, drawn exactly as `ring_modulator_builder` draws it: the rib, the contact
 vias, metal 1 on both sides, and the TiN film above the core. The stack and the thermal material models come from the
 process file. Metal 1 and the vias are in the model on purpose. Aluminium next to the heater spreads its heat, and the
 vias lead it down into the slab. The inner disc of metal 1 is drawn from 1.6 µm to the ring centre. The simulation is a

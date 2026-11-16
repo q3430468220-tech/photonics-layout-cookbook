@@ -26,7 +26,7 @@ rules are the part that belongs to the foundry.
 | stays the same | changes with the foundry |
 |---|---|
 | the flow: technology file, device builder, process tables, compiler, Layer Builder, simulations | the layer numbers and names |
-| the scripts `rm_builder.py`, `gsip_drc.py` and the step scripts | the stack heights and the materials |
+| the scripts `devices/ring_modulator_builder.py`, `gsip_drc.py` and the step scripts | the stack heights and the materials |
 | the tests, which check that the two descriptions agree | the cross-sections: widths, slabs, implant masks |
 | the structure of the device: ring, junction, heater, pads | the design rules |
 | the checks of chapter 4: the compiler QA, the doping check, the energy balance of the heat step | the doping, the implant profiles, the heater film |
@@ -39,21 +39,16 @@ the scripts do name process layers. They are listed in section 4, step 6.
 
 The layout and the simulation need different things from the same process.
 
-```
-            the foundry's design manual (NDA)
-                  |                    |
-                  v                    v
-    <foundry>_technology.py     <foundry>_csv/*.csv
-    layers, rules, stack,        the same stack, doping and materials
-    cross-sections, cells        as tables, with the column names of
-                  |              the Layer Builder template
-                  v                    v
-    device layout (.gds)     compiler -> <process>.lbr
-                  |                    |
-                  +---------+----------+
-                            v
-          Layer Builder: FDTD, MODE, CHARGE, HEAT, INTERCONNECT
-```
+| | for the layout | for the simulator |
+|---|---|---|
+| written from | the foundry's design manual (NDA) | the same manual |
+| file | `<foundry>_technology.py` | `<foundry>_csv/*.csv` |
+| what it holds | layers, rules, stack, cross-sections, cells | the same stack, doping and materials as tables, with the column names of the Layer Builder template |
+| what is made from it | the device layout (`.gds`) | `<process>.lbr`, by the compiler |
+
+The two results meet in the Layer Builder. It takes the `.gds` and the `.lbr`, and builds the structure
+for FDTD, MODE, CHARGE and HEAT. INTERCONNECT builds no structure: it works with the numbers that those
+solvers computed.
 
 The layout needs layer numbers, rules and cross-sections, so that the masks are drawn right. The
 simulator needs heights, materials and doping, so that the structure is right. A number that is in
@@ -131,7 +126,7 @@ repository, and read section 8 before the first commit.
 4. **Cross-sections.** Write the waveguide cross-sections (strip, rib, the doped rib), the heater
    and the metal cross-sections from the manual's passive and back-end sections. Keep the
    cross-section names that your device builder uses, or change the builder with them. Then run
-   `uv run python rm_builder.py`. A wrong name shows up here as an error from the cell.
+   `uv run python devices/ring_modulator_builder.py`. A wrong name shows up here as an error from the cell.
 
 5. **Design rules.** Fill `MIN_WIDTH_SPACE` and `DESIGN_RULES` from the DRC deck. Run
    `uv run python gsip_drc.py --demo`: the checker finds the violations that the demo plants. Then
@@ -194,7 +189,7 @@ says what a mismatch usually means, and which check in this repository already l
 | B. stack | the cross-section drawing or a TEM image in the manual | a thickness or height typed in one place only | `test_stack_heights_equal_the_technology_file` |
 | C. structure | the material you expect at a point of the structure | a layer with the wrong material or height; stale probe heights | step 0, `layer_builder_check.py`: ten probe points |
 | D. waveguide | the foundry's stated effective or group index, loss, bend loss | a wrong core width, etch depth or slab; wrong silicon data; a mesh without a line on every interface | step 2, `passive_mode_fde.py` with `common.add_rib_mesh` |
-| E. rules and nets | the DRC deck, the foundry's own DRC on your layout, and the connections you intend | a unit slip (µm for nm), a rule taken from the wrong section, a via on one level only, a pad on the wrong net | `gsip_drc.py --demo`, `run_drc` on `rm_ring.gds`; the nets test `tests/test_connectivity.py` |
+| E. rules and nets | the DRC deck, the foundry's own DRC on your layout, and the connections you intend | a unit slip (µm for nm), a rule taken from the wrong section, a via on one level only, a pad on the wrong net | `gsip_drc.py --demo`, `run_drc` on `devices/gds/ring_modulator.gds`; the nets test `tests/test_connectivity.py` |
 | F. doping | the implant table, and any reference profile | a net dose taken as a gross dose; nested masks that add up differently from the table | step 3, the doping check (within 0.5 % in this repository) |
 | G. junction | a reference modulator: capacitance against bias, V_π·L | the junction at the wrong place, a wrong doping, a missing contact | step 3 (C against V), step 5 (V_π·L) |
 | H. heater | a reference heater: kelvin or picometres per milliwatt | the film thickness or resistivity is wrong, the electrodes are missing from the model, or the heat source or sink is set up wrong | step 4, energy balance (`P_sink_mW`) |
@@ -255,7 +250,7 @@ Some foundries give you a `.lbr` file with the process already built, or compact
 devices. Then use theirs. Do not replace it with the file your compiler makes.
 
 - Load their file in the Layer Builder. The simulation scripts do not change, because they read the
-  process only through `LBR` in `common.py`. The names they use for solids and contacts (section 4,
+  process only through `LBR` in `lumerical_simulations/flow.py`. The names they use for solids and contacts (section 4,
   step 6) must exist in that file.
 - Keep your technology file consistent with their file: the same layer numbers, the same heights,
   the same materials. Their file is the reference, and your tables become a cross-check.

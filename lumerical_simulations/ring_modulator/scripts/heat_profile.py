@@ -1,6 +1,6 @@
 """Step 4 - HEAT: the TiN heater above the ring: temperature rise of the waveguide per unit of power.
 
-Model: a straight piece of the ring's cross-section exactly as rm_builder draws it: rib waveguide,
+Model: a straight piece of the ring's cross-section exactly as ring_modulator_builder draws it: rib waveguide,
 contact vias, metal 1 on both sides, and the TiN film above the core.  It is written to GDS and loaded
 into a Layer Builder with gsip_process.lbr; the stack and the thermal material models come from the
 process file.  Metal 1 and the vias are part of the model on purpose: aluminium next to the heater

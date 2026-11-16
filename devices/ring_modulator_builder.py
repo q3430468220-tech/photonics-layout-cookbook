@@ -25,7 +25,8 @@ Three conductor levels are used, which is what a real active process offers:
 
 All cross-sections, layers and design rules come from gsip_technology.py.
 
-    python rm_builder.py     ->  rm_ring.gds (flat, for the Layer Builder), DRC report, preview images
+    python devices/ring_modulator_builder.py     ->  devices/gds/ring_modulator.gds (flat, for the Layer Builder),
+                                                     the DRC report and two preview images in build/
 """
 
 from __future__ import annotations
@@ -37,7 +38,7 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # the repository root: gsip_technology, devices
 import gdsfactory as gf
 
 import gsip_technology as t
@@ -422,41 +423,10 @@ def ring_modulator(
     return c
 
 
-# =====================================================================================
-# preview images (headless KLayout, colours of the PDK's layers.lyp)
-# =====================================================================================
-def render_png(
-    gds_path: Path, png_path: Path, box: tuple[float, float, float, float] | None = None, size: tuple[int, int] = (1600, 1200)
-) -> Path:
-    import klayout.lay as lay
-
-    lyp = Path(__file__).resolve().parent / "klayout_tech" / "layers.lyp"
-    if not lyp.exists():
-        t.write_klayout_tech(lyp.parent)
-    view = lay.LayoutView()
-    view.load_layout(str(gds_path), True)
-    view.load_layer_props(str(lyp))
-    view.max_hier()
-    view.zoom_box(gf.kdb.DBox(*box)) if box else view.zoom_fit()
-    view.save_image(str(png_path), *size)
-    return png_path
-
-
 if __name__ == "__main__":
-    from gsip_drc import run_drc
+    from devices import write_device
 
-    here = Path(__file__).resolve().parent
     device = ring_modulator()
-    gds = t.write_gds_for_lumerical(device, here / "rm_ring.gds", cellname="rm_ring")
     info = device.info
-    print(
-        f"GDS -> {gds.name}   ring {info['length_ring']} um, PN section {info['length_pn']} um, "
-        f"heater {info['length_heater']} um   ports: {[p.name for p in device.ports]}"
-    )
-    result = run_drc(device, rdb_path=here / "rm_ring_drc.lyrdb")
-    print(result.summary())
-    build = here / "build"
-    build.mkdir(exist_ok=True)
-    render_png(gds, build / "rm_ring_klayout.png")
-    render_png(gds, build / "rm_ring_klayout_zoom.png", box=(-22, -18, 22, 20))
-    sys.exit(0 if result.passed else 1)
+    print(f"ring {info['length_ring']} um, PN section {info['length_pn']} um, heater {info['length_heater']} um")
+    sys.exit(write_device(device, "ring_modulator", zoom=(-22, -18, 22, 20)))

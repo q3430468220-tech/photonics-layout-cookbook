@@ -29,7 +29,7 @@ REPO = ROOT.parents[1]
 sys.path.insert(0, str(REPO))
 import figstyle as fs  # noqa: E402
 import gsip_technology as t  # noqa: E402
-import rm_builder as rm  # noqa: E402
+from devices import ring_modulator_builder as rm  # noqa: E402
 
 DATA = ROOT / "3_charge_profile" / "pn_rib_charge.npz"
 RIB_WIDTH = 0.5  # um, core of the rib waveguide
@@ -183,7 +183,9 @@ def panel_cut(ax, d: dict) -> None:
     zz = np.full_like(yy, CUT_Z)
     idx = [int(np.argmin(np.abs(d["RB"] - f * d["RB_MAX"]))) for f in CUT_FRACTIONS]
     e_cols, h_cols = _sweep(fs.CMAP_N, len(idx)), _sweep(fs.CMAP_P, len(idx))
-    greys = np.linspace(0.72, 0.2, len(idx))
+    greys = (
+        np.linspace(0.45, 0.95, len(idx)) if fs.DARK else np.linspace(0.72, 0.2, len(idx))
+    )  # as the curves: more bias, more ink
     for i, k in enumerate(idx):
         electrons = np.ma.filled(LinearTriInterpolator(d["tri_carrier"], d["n"][:, k].astype(float))(yy, zz), np.nan) / 1e17
         holes = np.ma.filled(LinearTriInterpolator(d["tri_carrier"], d["p"][:, k].astype(float))(yy, zz), np.nan) / 1e17

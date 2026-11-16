@@ -1,0 +1,25 @@
+Linear taper 0.5 um -> 3.0 um, strip, 220 nm silicon in oxide (gsip_process.lbr), TE0, 1.55 um; EME with 30 modes per cell, 20 cells along the taper (CVCS), mesh 20 nm, half structure
+
+the device's taper, 20.0 um: T = 0.9951 (0.021 dB)
+TE0 of the input waveguide as the EME finds it: n_eff = 2.4443 (step 1, mode solver: see strip_modes.txt)
+
+ length (um)  T to TE0  loss dB  reflected
+         1.0    0.4245    3.721    5.0e-05
+         4.0    0.8695    0.607    1.1e-05
+         7.0    0.9485    0.230    8.1e-06
+        10.0    0.9742    0.114    1.4e-06
+        13.0    0.9837    0.072    5.0e-10
+        16.0    0.9892    0.047    4.9e-11
+        19.0    0.9924    0.033    2.8e-15
+        22.0    0.9920    0.035    7.2e-16
+        25.0    0.9973    0.012    8.1e-17
+        28.0    0.9954    0.020    5.2e-18
+        31.0    0.9979    0.009    3.7e-20
+        34.0    0.9967    0.014    6.1e-25
+        37.0    0.9992    0.004    5.5e-27
+        40.0    0.9972    0.012    2.6e-30
+
+T stays at or above 0.99 from a length of 16.5 um (sweep step 0.50 um)
+cross-check: the sweep gives 0.9951 at the device length, the device as drawn 0.9951
+a taper of 3.0 um, simulated as its own layout: T = 0.7753 (the sweep gives 0.7753)
+convergence: with 15 modes instead of 30, T changes by at most 0.0160 over the sweep

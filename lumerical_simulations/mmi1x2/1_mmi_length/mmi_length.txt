@@ -1,0 +1,23 @@
+1x2 MMI, multimode section 2.5 um wide, strip, 220 nm silicon in oxide (gsip_process.lbr), TE0, 1.55 um; EME with 30 modes per cell, 12 cells along each taper (CVCS), mesh 20 nm, whole cross-section
+
+the device, 5.5 um: T = 0.4966 + 0.4966 = 0.9932 (0.030 dB), reflected 1.7e-08
+
+ length (um)  T port 2  T port 3      sum  loss dB  reflected
+        2.00    0.2008    0.2007   0.4015    3.963    1.6e-04
+        3.00    0.2512    0.2510   0.5022    2.991    1.1e-04
+        4.00    0.3487    0.3485   0.6972    1.567    7.3e-05
+        5.00    0.4775    0.4774   0.9549    0.200    3.0e-06
+        6.00    0.4740    0.4741   0.9481    0.232    1.8e-06
+        7.00    0.3645    0.3646   0.7290    1.372    3.2e-05
+        8.00    0.2935    0.2937   0.5872    2.312    5.9e-05
+        9.00    0.2445    0.2447   0.4892    3.105    8.6e-05
+       10.00    0.1329    0.1330   0.2659    5.753    6.6e-04
+       11.00    0.0580    0.0581   0.1161    9.352    8.4e-04
+       12.00    0.0995    0.0994   0.1990    7.012    4.9e-04
+       13.00    0.1590    0.1589   0.3178    4.978    1.9e-04
+       14.00    0.2062    0.2061   0.4123    3.848    1.9e-04
+
+lowest loss at a length of 5.50 um: 0.9932 of the power arrives (0.030 dB), sweep step 0.10 um
+within 0.1 dB of that from 5.20 to 5.80 um
+cross-check: the sweep gives 0.9932 at the device length, the device as drawn 0.9932
+convergence: with 15 modes instead of 30, the summed transmission changes by at most 0.0049 over the sweep, and the best length moves to 5.50 um

@@ -14,10 +14,15 @@ The conventions are those of the Nature journals' figure guide:
     fs.save(fig, "figures/fig1_coupling.png")           # PNG at 400 dpi; add pdf=True for a vector copy
 
 The module needs matplotlib and numpy only.
+
+A second look exists for a dark page: with the environment variable FIGSTYLE_THEME=dark the same scripts draw
+light ink on a dark surface, and with FIGSTYLE_OUT=<folder> they save below that folder instead of next to the
+script.  Without them nothing changes.
 """
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import matplotlib
@@ -34,17 +39,19 @@ MM = 1 / 25.4  # inches per millimetre
 SINGLE, ONE_AND_HALF, DOUBLE = 89.0, 120.0, 183.0  # figure widths in mm
 DPI = 400
 
-# ---- ink ----
-INK = "#0b0b0b"  # text, axes
-SECONDARY = "#52514e"  # annotations
-MUTED = "#898781"  # reference lines, outlines of structures
-HAIRLINE = "#c3c2b7"  # baselines
-SURFACE = "#ffffff"
+DARK = os.environ.get("FIGSTYLE_THEME", "light") == "dark"  # light ink on a dark surface
 
-# ---- categorical: three hues that stay distinct for every pair, in this order (validated for CVD) ----
-BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
+# ---- ink ----
+INK = "#eef1fb" if DARK else "#0b0b0b"  # text, axes
+SECONDARY = "#b3bbd3" if DARK else "#52514e"  # annotations
+MUTED = "#7f89a6" if DARK else "#898781"  # reference lines, outlines of structures
+HAIRLINE = "#2b3256" if DARK else "#c3c2b7"  # baselines
+SURFACE = "#0b0e1c" if DARK else "#ffffff"
+
+# ---- categorical: three hues that stay distinct for every pair, in this order (validated for CVD on each surface) ----
+BLUE, ORANGE, AQUA = ("#3f86e0", "#dc6a35", "#1aa878") if DARK else ("#2a78d6", "#eb6834", "#1baf7a")
 CATEGORICAL = [BLUE, ORANGE, AQUA]
-RED = "#d03b3b"  # reserved for p-type silicon in doping and carrier maps (blue is n-type)
+RED = "#e0605c" if DARK else "#d03b3b"  # reserved for p-type silicon in doping and carrier maps (blue is n-type)
 
 # ---- ordered series (a bias sweep, a gap sweep): one hue, light to dark ----
 _BLUES = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
@@ -54,6 +61,10 @@ _SLATE = ["#f1f3f5", "#cfd6dd", "#a3aebb", "#75849a", "#4f5f78", "#31405a", "#17
 
 
 def _ramp(name: str, colors: list[str], white: bool = False) -> LinearSegmentedColormap:
+    """A ramp from little to much.  On white, more is darker; on the dark surface, more is brighter."""
+    if DARK:
+        steps = colors[::-1]
+        return LinearSegmentedColormap.from_list(name, [SURFACE, *steps] if white else steps[2:])
     return LinearSegmentedColormap.from_list(name, (["#ffffff"] if white else []) + colors)
 
 
@@ -61,7 +72,8 @@ CMAP_FIELD = _ramp("field", _BLUES, white=True)  # optical intensity: white -> d
 CMAP_N = _ramp("electrons", _BLUES, white=True)  # electron density
 CMAP_P = _ramp("holes", _REDS, white=True)  # hole density
 CMAP_HEAT = _ramp("heat", _WARM, white=True)  # temperature rise: the one multi-hue ramp (heat reads as heat)
-CMAP_DOPING = LinearSegmentedColormap.from_list("doping", [*_REDS[::-1], "#f0efec", *_BLUES])  # p <- neutral -> n
+_DOPING = [*_REDS[:5], "#1b2036", *_BLUES[:5][::-1]] if DARK else [*_REDS[::-1], "#f0efec", *_BLUES]
+CMAP_DOPING = LinearSegmentedColormap.from_list("doping", _DOPING)  # p <- neutral -> n
 CMAP_SWEEP = _ramp("sweep", _BLUES[1:])  # line colours of an ordered sweep
 CMAP_SWEEP_WARM = _ramp("sweep_warm", _WARM[2:])  # a second ordered sweep in the same figure (heater power)
 
@@ -80,6 +92,11 @@ MATERIAL_COLORS = {
     "p+": "#fb6a4a",
     "p++": "#cb181d",
 }
+if DARK:  # the same materials on the dark surface: oxide recedes, and a stronger doping is brighter
+    MATERIAL_COLORS.update(
+        {"oxide": "#171b30", "silicon": "#8a96b0", "substrate": "#3a4259", "tin": "#a48cf2", "air": SURFACE,
+         "n": "#1f4e7a", "n+": "#3f86c9", "n++": "#9ecae1", "p": "#7a2f2f", "p+": "#d9584e", "p++": "#fcbba1"}
+    )  # fmt: skip
 
 
 def _font() -> str:
@@ -142,6 +159,7 @@ plt.rcParams.update(
         "mathtext.default": "regular",
         "figure.dpi": 150,
         "figure.facecolor": SURFACE,
+        "axes.facecolor": SURFACE,
         "savefig.dpi": DPI,
         "savefig.facecolor": SURFACE,
         "pdf.fonttype": 42,
@@ -185,6 +203,8 @@ def panel_title(ax, text: str) -> None:
 
 def save(fig, path: str | Path, pdf: bool = False) -> Path:
     path = Path(path)
+    if os.environ.get("FIGSTYLE_OUT"):  # the same tree below another folder
+        path = Path(os.environ["FIGSTYLE_OUT"]) / path.resolve().relative_to(Path(__file__).resolve().parent)
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path)
     if pdf:

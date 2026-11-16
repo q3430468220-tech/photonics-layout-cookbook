@@ -5,7 +5,7 @@
     c  rise of the core and of the heater film versus power, the core without the electrodes, and the energy balance
     d  transient of the core rise after the heater is switched on, normalised to its final value
 
-Reads 4_heat_profile/heater_heat.npz; the geometry comes from gsip_technology and rm_builder.
+Reads 4_heat_profile/heater_heat.npz; the geometry comes from gsip_technology and ring_modulator_builder.
 The transient and the run without electrodes must be in the file (heat_profile.py without --no-transient, --no-bare).
 
     python fig4_heat.py            ->  figures/fig4_heat.png
@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]  # lumerical_simulations/ring_modulat
 sys.path.insert(0, str(ROOT.parents[1]))
 import figstyle as fs  # noqa: E402
 import gsip_technology as t  # noqa: E402
-import rm_builder as rm  # noqa: E402
+from devices import ring_modulator_builder as rm  # noqa: E402
 
 HEAT = ROOT / "4_heat_profile"
 T_AMBIENT = 300.0  # K; the substrate is held at this temperature
@@ -94,8 +94,9 @@ def derived(d: dict) -> dict:
 
 
 def tint(name: str, amount: float) -> tuple:
-    """A material colour mixed into white by ``amount``: the light bands of the layers."""
-    return tuple(1 - amount * (1 - np.array(to_rgb(fs.MATERIAL_COLORS[name]))))
+    """A material colour mixed into the surface of the figure by ``amount``: the faint bands of the layers."""
+    surface = np.array(to_rgb(fs.SURFACE))
+    return tuple(surface + amount * (np.array(to_rgb(fs.MATERIAL_COLORS[name])) - surface))
 
 
 def layers() -> list:

@@ -191,7 +191,7 @@ def panel_width(ax, d: dict, slab_neff: float) -> None:
         ha="left",
         va="top",
         transform=ax.transAxes,
-        bbox=dict(fc="white", ec="none", pad=0.6),
+        bbox=dict(fc=fs.SURFACE, ec="none", pad=0.6),
         zorder=4,
     )
     ax.set_xlabel("core width (nm)")

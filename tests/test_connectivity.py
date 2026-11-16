@@ -10,7 +10,7 @@ import klayout.db as kdb
 import pytest
 
 import gsip_technology as t
-import rm_builder as rm
+from devices import ring_modulator_builder as rm
 
 CONDUCTORS = ("NPP", "PPP", "M1", "HEATER", "M2", "M3")
 
