@@ -41,14 +41,14 @@ them.
 |---|---|---|
 | 1. Process constants | thicknesses, doping, heater film, material names | 47 to 101 |
 | 2. Layers | the `LayerMapGSiP` class, descriptions and colours | 104 to 192 |
-| 3. Design rules | `MIN_WIDTH_SPACE`, `DESIGN_RULES` | 194 to 238 |
-| 4. The stack | the `STACK` table and the gdsfactory `LayerStack` | 241 to 282 |
-| 5. Cross-sections | `strip`, `rib`, `rib_pn`, `nitride`, `heater_metal`, the three metals | 285 to 409 |
-| 6. Cells | `straight`, two bends, `pad` | 412 to 442 |
-| 7. From layout to simulation | `write_gds_for_lumerical` | 445 to 460 |
-| 8. The PDK object and KLayout | connectivity, `PDK`, `write_klayout_tech` | 463 to 524 |
+| 3. Design rules | `MIN_WIDTH_SPACE`, `DESIGN_RULES` | 194 to 247 |
+| 4. The stack | the `STACK` table and the gdsfactory `LayerStack` | 250 to 291 |
+| 5. Cross-sections | `strip`, `rib`, `rib_pn`, `nitride`, `heater_metal`, the three metals | 294 to 418 |
+| 6. Cells | `straight`, two bends, `pad` | 421 to 451 |
+| 7. From layout to simulation | `write_gds_for_lumerical` | 454 to 469 |
+| 8. The PDK object and KLayout | connectivity, `PDK`, `write_klayout_tech` | 472 to 533 |
 
-Importing the file runs `activate_pdk()` (line 527). Section 8 explains why that matters.
+Importing the file runs `activate_pdk()` (line 536). Section 8 explains why that matters.
 
 Run it from the repository root:
 
@@ -244,7 +244,7 @@ not caught automatically.
 Look at the heater in Figure 1, row a. Via 1 starts on the heater film, at the film top (1.25 µm),
 and not at the metal 1 top (1.80 µm). The table above lists one `via1` row, from 1.80 µm. A stack has
 one height for each GDS layer, and via 1 is one GDS layer (44/0), but it has two bottoms: metal 1 and
-the heater. The comment on the `via1` row of `STACK` in `gsip_technology.py` (lines 257 and 258) says
+the heater. The comment on the `via1` row of `STACK` in `gsip_technology.py` (lines 266 and 267) says
 so and points to the second case.
 
 The process table in `gsip_process_file_py/gsip_csv/process_layers.csv` has both cases as separate
@@ -346,7 +346,7 @@ You can check the geometry without a viewer. The test
 The design rules are the limits a layout must keep. A rule has a value, a reason and a check. The
 file keeps them in two tables.
 
-`MIN_WIDTH_SPACE` gives, for each of 19 layers, the minimum width and the minimum space between two
+`MIN_WIDTH_SPACE` gives, for each of 20 layers, the minimum width and the minimum space between two
 shapes of that layer, in µm:
 
 | layer | min width (µm) | min space (µm) |
@@ -354,6 +354,7 @@ shapes of that layer, in µm:
 | `WG` | 0.20 | 0.20 |
 | `SLAB150`, `SLAB90` | 0.30 | 0.30 |
 | `GE` | 1.00 | 1.00 |
+| `DEEPTRENCH` | 5.00 | 4.00 |
 | `WGN` | 0.40 | 0.40 |
 | `N`, `P`, `NP`, `PP`, `NPP`, `PPP` | 0.30 | 0.30 |
 | `VIAC` | 0.40 | 0.40 |
@@ -380,20 +381,26 @@ round numbers of the size a 248 nm process offers, chosen so that the examples m
 | `padopen_enclosure_by_m3` | 2.00 | metal 3 beyond the pad opening |
 | `m1_to_heater` | 0.60 | metal 1 and the heater film keep this distance (same plane) |
 | `contact_implant_to_core` | 0.40 | N++ or P++ edge to the edge of a core |
+| `trench_to_heater` | 1.00 | edge of a deep trench to the heater film; no trench under the film (teaching value) |
+| `trench_to_metal` | 2.00 | deep trench to metal 1, 2 and 3; no trench under a metal (teaching value) |
+| `trench_to_waveguide` | 1.50 | deep trench to the edge of a core, a warning (teaching value) |
 | `heater_to_waveguide` | 0.50 | lowest point of the heater to the top of the bus core (checked by `ring_modulator`) |
 | `rib_bend_radius` | 10.0 | minimum bend radius of a rib; `ring_modulator` refuses a tighter ring |
 | `strip_bend_radius` | 5.0 | minimum bend radius of a strip |
 | `grid` | 0.001 | the 1 nm grid |
 
-Each entry of `DESIGN_RULES` names where it is enforced: by `gsip_drc.py`, by the builder
-(`devices/ring_modulator_builder.py`), or by construction. The comment next to each value in the file says which.
+Each entry of `DESIGN_RULES` names where it is enforced: by `gsip_drc.py`, by a device builder in
+`devices/`, or by construction. The comment next to each value in the file says which.
+The three `trench_to_*` rules keep a deep trench a fixed distance from the heater, the metals and the
+core, so that a trench does not cut into a wire or a core by accident. They are teaching values (`[T]`),
+not foundry rules.
 The heater clearance of 0.5 µm is a `[T]` value. The simulations do not use it. The 10 µm rib bend radius is a choice with margin too: step 2 shows
 that the bend loss falls below the solver floor from 6 µm up.
 
-Not every entry is checked by a tool. `gsip_drc.py` checks nine of the thirteen values. The builder
-checks two more: the rib bend radius (a ring below 10 µm is refused) and the heater clearance (a
-heater that comes closer than 0.5 µm to the bus core is refused, with the measured clearance in the
-error message). `strip_bend_radius` and `grid` are not checked by any tool. A rule that is not
+Not every entry is checked by a tool. `gsip_drc.py` checks 12 of the 16 values. The builders check three
+more: the rib bend radius (a ring below 10 µm is refused), the heater clearance (a heater that comes closer
+than 0.5 µm to the bus core is refused, with the measured clearance in the error message), and the strip
+bend radius (a strip bend below 5 µm is refused). `grid` is not checked by any tool. A rule that is not
 checked is still a rule for the designer, but nothing will tell you when it is broken. Keep that
 difference in mind when you read a foundry's rule deck.
 
@@ -404,7 +411,7 @@ enforces these rule families:
 
 | check | rules used | severity |
 |---|---|---|
-| minimum width and space of each layer | all 19 entries of `MIN_WIDTH_SPACE` | error |
+| minimum width and space of each layer | all 20 entries of `MIN_WIDTH_SPACE` | error |
 | enclosure of a contact via in N++ / P++ and in metal 1 | `viac_enclosure_by_contact_implant`, `viac_enclosure_by_m1` | error |
 | enclosure of via 1 in metal 1 or the heater, and in metal 2 | `via1_enclosure_by_lower`, `via1_enclosure_by_m2` | error |
 | enclosure of via 2 in metal 2 and metal 3 | `via2_enclosure_by_m2`, `via2_enclosure_by_m3` | error |
@@ -414,6 +421,9 @@ enforces these rule families:
 | N and P meet along the junction; an overlap wider than 2 nm is an error | none (1 nm tolerance on each side) | error |
 | implant drawn with no silicon below it | none (5 nm tolerance) | warning |
 | N++ or P++ closer than 0.4 µm to a core | `contact_implant_to_core` | warning |
+| no deep trench under the heater film or under a metal | none | error |
+| heater film closer than 1 µm, or metal closer than 2 µm, to a deep trench | `trench_to_heater`, `trench_to_metal` | error |
+| deep trench closer than 1.5 µm to a core (the facet trench of an edge coupler meets a core on purpose) | `trench_to_waveguide` | warning |
 
 A warning does not fail the check. `run_drc` returns a result whose `passed` is true when there are no
 errors. Run the check on a component directly:
@@ -435,7 +445,7 @@ python gsip_drc.py --demo            # self-test on a layout with planted violat
 ```
 
 The demo also writes a KLayout marker file, `gsip_drc_demo.lyrdb`, into `build/drc/`. Its console
-output lists seven error rules and one warning, and the self-test expects at least seven errors.
+output lists fourteen error rules and two warnings, and the self-test expects at least fourteen errors.
 
 ## 8. Cells, connectivity and the PDK object
 
@@ -558,8 +568,8 @@ Every number in this file has one of the sources of section 3. Two of them stand
 
 A real foundry PDK adds at least four things this file does not have:
 
-1. A rule deck with hundreds of rules, each with a measured or qualified value. This file has 19 width and space pairs and
-   13 values in `DESIGN_RULES`; `gsip_drc.py` checks all 19 pairs and 9 of the 13 values.
+1. A rule deck with hundreds of rules, each with a measured or qualified value. This file has 20 width and space pairs and
+   16 values in `DESIGN_RULES`; `gsip_drc.py` checks all 20 pairs and 12 of the 16 values.
 2. Qualified cells with measured data, such as a grating coupler whose loss has been characterised on
    the wafer.
 3. Compact models for each device, so that circuit simulators can use them.
@@ -578,7 +588,7 @@ uv run pytest tests/test_technology.py
 ```
 
 The file has eleven test functions, which run as twelve cases (the cross-section test has two).
-The full suite of the repository has 115 tests, and all of them pass.
+The full suite of the repository has 146 tests, and all of them pass.
 
 | test | what it asserts |
 |---|---|

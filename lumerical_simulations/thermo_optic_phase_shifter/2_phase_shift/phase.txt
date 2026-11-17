@@ -1,0 +1,60 @@
+MODE (FDE), Lumerical 2025 R1: TE0 at 1.55 um, mesh 20 nm with 10 nm on the surfaces of the core, window 3.4 x 1.8 um with PML; temperature maps of step 1 (100 um of film)
+answer: the device as drawn needs 10.26 mW for pi and 20.51 mW for 2 pi; without trenches it would need 22.00 and 44.00 mW.  The trenches lower the power by a factor 2.15.
+
+a. effective index of TE0 at 1.55 um, cold and with the temperature map of step 1
+      case  P (mW)      n_eff      change      per mW
+    device     0.0   2.444493
+    device    10.0   2.452215  +7.722e-03   7.722e-04
+    device    20.0   2.459945  +1.545e-02   7.726e-04
+ reference     0.0   2.444493
+ reference    10.0   2.448016  +3.523e-03   3.523e-04
+device, slope through the origin: 7.7252e-04 per mW; the two powers differ from it by 0.045 %
+P_pi = lambda / (2 L dn_eff/dP), with L = 100 um:
+  fully isolated cross-section: 10.03 mW for pi, 20.06 mW for 2 pi
+  reference without trenches:   22.00 mW for pi, 44.00 mW for 2 pi
+  P_pi does not depend on L: a film twice as long needs half the rise for the same phase, and reaches it with the same power.  What L sets is the temperature (c).
+
+change of n_eff per kelvin of mean core temperature: 1.994e-04 /K (device), 1.992e-04 /K (reference); the silicon of the process file has dn/dT = 1.870e-04 /K
+  the core rises by 3.8743 K/mW (device) and 1.7681 K/mW (reference) in step 1
+  estimate (n_g / n_Si) x (share of the electric energy in silicon) x dn/dT = (4.239 / 3.476) x 0.920 x 1.87e-04 = 2.099e-04 /K (+5.3 % against the simulation; the estimate neglects the dispersion of silicon)
+  92 % of the electric energy of the mode is in silicon, and the light is slow (n_g = 4.24 against n_Si = 3.48), so it stays longer in the heated silicon.
+  The second effect outweighs the first: the effective index changes 7 % more per kelvin than the index of silicon itself.
+
+b. the device as drawn: the trenches run beside 96 of the 100 um of film (f = 0.96)
+  dn_eff/dP = f x 7.7252e-04 + (1 - f) x 3.5229e-04 = 7.5571e-04 per mW
+  P_pi = 10.26 mW, P_2pi = 20.51 mW.  This is the number of the device; it averages two two-dimensional results along the film and does not solve the ends in three dimensions.
+
+c. what the phase asks of the heater (R = 500 ohm for the free film, from the sheet resistance)
+      case  phase   P (mW)  core rise K  film rise K      V  I (mA)
+    device     pi    10.03         38.9         58.7   2.24    4.48
+    device    2pi    20.06         77.7        117.5   3.17    6.33
+     drawn     pi    10.26         38.9         58.8   2.26    4.53
+     drawn    2pi    20.51         77.7        117.7   3.20    6.40
+ reference     pi    22.00         38.9         64.7   3.32    6.63
+ reference    2pi    44.00         77.8        129.4   4.69    9.38
+  rises are means over the core and over the film, above the substrate; 'drawn' is the device, with f of its film beside trenches
+
+d. the wall of the trench and the light: TE0 cold, window 5.0 x 1.8 um, against the same guide without trenches
+  wall to core edge (um)  change of n_eff  added loss dB/cm
+                    1.75        -1.07e-14          -1.9e-12
+                    1.25        -4.18e-11          -4.0e-09
+                    1.00        -2.49e-09          -1.5e-07
+                    0.75        -1.52e-07          -3.6e-06
+                    0.50        -9.60e-06          -6.9e-05
+  the device has its wall 1.75 um from the edge of the core; the rule trench_to_waveguide asks for 1.50 um
+  Air has a lower index than oxide, so a wall cannot make the mode leak: the model has no loss from it at any distance.
+  (In this low window the guide without trenches already reports 0.0055 dB/cm: the boundary above and below the core, which stays under the film, absorbs a little of the tail of the mode.  The column is the difference.)
+  A real wall is rough and scatters the light that reaches it; the change of n_eff shows how much light reaches it.
+
+e. the film and the light: TE0 cold, window 3.4 um wide from z = -1.0 to 1.75 um
+  with the film 0.00853 dB/cm, without it -9e-09 dB/cm: the film adds 0.00853 dB/cm, 8.5e-05 dB over the 100 um of the device
+  the value without the film, 9e-09 dB/cm, is what the solver reports for a guide without loss: its floor
+
+f. checks
+  mesh halved (10 nm, 5 nm on the core): dn_eff/dP = 7.7292e-04 per mW (+0.10 %), cold n_eff 2.445420 (+9.3e-04)
+  window 5.0 um wide instead of 3.4 um (reference): dn_eff/dP = 3.5229e-04 per mW (-0.00 %), cold n_eff 2.444494 (+8.6e-07)
+  the strip waveguide chapter has n_eff = 2.44448 and n_g = 4.2387 for the same guide in a 5.0 x 2.4 um window; here 2.44449 and 4.2387
+
+limits: the temperature is that of a two-dimensional cross-section, so the ends of the film are not solved; the oxide
+  has no thermo-optic coefficient in the process file (it is about a twentieth of that of silicon); the phase is that of
+  TE0 at 1.55 um only.

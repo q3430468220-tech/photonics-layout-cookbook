@@ -159,7 +159,7 @@ The same trick gives the via 1 that lands on the heater:
 
 Via 1 is drawn once, on layer 44. Where it overlaps metal 1 it starts at 1800 nm. Where it
 overlaps the heater it starts at 1250 nm, the top of the thin film. Two solids, two heights.
-`gsip_technology.py` states the same rule in `STACK` (lines 257 and 258): on the heater, via 1
+`gsip_technology.py` states the same rule in `STACK` (lines 266 and 267): on the heater, via 1
 "starts at the top of the heater film". The `STACK` table has one height per GDS layer, so the
 second height is listed in the process table only, and a test checks it there.
 

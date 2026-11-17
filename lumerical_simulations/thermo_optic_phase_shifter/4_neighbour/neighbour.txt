@@ -1,0 +1,62 @@
+HEAT, two-dimensional steady state, Lumerical 2025 R1: mesh 0.02 to 0.5 um, region 120 um wide, norm length 100 um; run time 2.5 min
+answer: through the oxide a neighbour 20 um away takes 1.04 % of the phase without trenches and nothing with them.  The trenches cannot stop the path through the substrate; for a wafer 725 um thick it is estimated at 0.44 % of the phase 50 um away.
+
+a. the substrate held at 300 K: the path through the oxide
+  heated core: 3.8743 K/mW with trenches, 1.7680 K/mW without (step 1 has the same cross-sections in a region 40 um wide)
+ distance (um)  no trenches K/mW  share of phase  trenches K/mW  share of phase
+           5.0         4.907e-01       27.7537 %  in the trench               -
+          10.0         1.525e-01        8.6261 %           none            none
+          15.0         5.268e-02        2.9798 %           none            none
+          20.0         1.845e-02        1.0435 %           none            none
+          30.0         2.270e-03        0.1284 %           none            none
+          40.0         2.798e-04        0.0158 %           none            none
+          50.0         3.496e-05        0.0020 %           none            none
+  share of phase: the rise of the neighbouring core divided by the rise of the heated core.  A neighbour that is as long
+  as the heater and lies beside it takes that share of the phase of the heated arm.
+  Without trenches the rise falls by a factor e every 4.78 um (fitted from 15 to 50 um).  By hand: a layer of oxide h = 7.5 um high,
+  cold at its foot and insulated on top, passes a rise sideways as exp(-pi d / (2 h)): a factor e every 2 h / pi = 4.77 um (+0.1 %).
+  With trenches the device has air from 2 to 8 um.  Beyond it the oxide stays at the temperature of the substrate, which this run holds at 300 K ('none': below 1e-09 K/mW, the rounding of the solver).
+  the buried oxide conducts 1.380 W/m/K in this run (from the flux between z = -0.5 and -1.5 um)
+
+b. the substrate in the model: 9.5 um of silicon, the bottom of the region held at 300 K
+  heated core: 3.9980 K/mW with trenches (+3.19 % against a) and 1.7963 K/mW without (+1.60 %): what steps 1 to 3 leave out by holding the substrate at 300 K
+ distance (um)  no trenches K/mW  share of phase  trenches K/mW  share of phase
+           5.0         5.131e-01       28.5650 %  in the trench               -
+          10.0         1.658e-01        9.2272 %      8.360e-04        0.0209 %
+          15.0         5.977e-02        3.3276 %      5.610e-04        0.0140 %
+          20.0         2.210e-02        1.2301 %      3.035e-04        0.0076 %
+          30.0         3.156e-03        0.1757 %      7.275e-05        0.0018 %
+          40.0         4.778e-04        0.0266 %      1.584e-05        0.0004 %
+          50.0         7.903e-05        0.0044 %      3.425e-06        0.0001 %
+  the substrate conducts 148.0 W/m/K in this run (from the flux between z = -8.5 and -10.5 um; the run with trenches gives 148.0)
+  Beyond the trenches the device is no longer cold: heat that went down into the substrate has passed under them.
+  A layer of 9.5 um with a cold bottom carries heat sideways over a few micrometres only.  A real wafer is far thicker: see c.
+
+c. estimate by formula, not a simulation: the path through the substrate of a wafer 725 um thick
+  check of the method on run b (no trenches).  A line source on the surface of a slab of thickness H with a cold bottom
+  warms the surface at the distance d by  (P / L) / (pi k) x ln coth(pi d / (4 H)).  The oxide hands its heat to the
+  substrate over a strip some micrometres wide; the formula, summed over that strip, against the simulated surface:
+ distance (um)  simulated K/mW  formula K/mW  difference
+          10.0       1.189e-02     1.189e-02       -0.0%
+          20.0       2.795e-03     2.794e-03       -0.0%
+          30.0       6.057e-04     6.054e-04       -0.1%
+          40.0       1.260e-04     1.258e-04       -0.2%
+  the flux into the substrate carries 10.003 of the 10 mW; the closed form against the sum over its image sources, for H = 725 um and the difference between 25 and 250 um: 2.278790 and 2.278790
+
+  the wafer.  A heater 100 um long is short against 725 um of silicon, so its heat spreads in three dimensions:
+  a point source on a thick wafer warms the surface at the distance r by  P / (2 pi k r).  Summed over the heater and
+  averaged over a neighbour of the same length beside it, at the distance d, with the cold back to first order:
+      mean rise = P / (pi k) x { [asinh(L / d) - sqrt(1 + (d / L)^2) + d / L] / L - ln 2 / (2 H) }
+  with L = 100 um, H = 725 um, k = 148.0 W/m/K, and the core of the device rising 3.790 K/mW:
+ distance (um)  neighbour K/mW  share of phase
+          25.0       2.723e-02           0.72%
+          50.0       1.673e-02           0.44%
+         100.0       9.019e-03           0.24%
+         250.0       3.219e-03           0.08%
+  At P_pi = 10.26 mW a neighbour 50 um away warms by 0.17 K and takes 0.44 % of pi.
+  The share falls slowly, about as 1 / d: this path sets the floor of the crosstalk, with or without trenches.
+  The estimate assumes a perfect heat sink under the wafer and one heater.  The three-dimensional formula is not checked
+  by a simulation here: the runs of this step are two-dimensional.
+
+limits: runs a and b are two-dimensional and have no ends.  Run b has 9.5 um of substrate, not a wafer.  A design
+  needs a three-dimensional model of the chip on its carrier; c gives the order of magnitude.

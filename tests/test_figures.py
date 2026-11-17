@@ -28,6 +28,7 @@ EXPECTED = {
     "rib_waveguide": {"fig1_modes"},
     "directional_coupler": {"fig1_supermodes", "fig2_coupling_length", "fig3_coupler"},
     "mmi1x2": {"fig1_mmi_length", "fig2_mmi_fdtd"},
+    "thermo_optic_phase_shifter": {"fig1_heat", "fig2_phase", "fig3_switching", "fig4_neighbour"},
 }
 
 

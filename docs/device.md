@@ -126,9 +126,12 @@ Helpers that you will reuse in your own builder:
 
 - `_arc_points(radius, a0, a1)` returns points on a circle, at 0.5° steps.
 - `_sector(r0, r1, a0, a1)` returns an annular sector, the shape of a heater arc.
-- `_box(centre, radial, tangential, angle)` returns a rectangle that points along an angle.
 - `_via_row(c, layer, radius, a0, a1, size, pitch)` places squares along an arc (section 5).
-- `_wire(c, points, start_reach, end_reach=0.0, width=6.0)` draws a metal 2 wire through a list of
+
+Two more are in `devices/wiring.py`, which the builders of the library share:
+
+- `box(centre, radial, tangential, angle)` returns a rectangle that points along an angle.
+- `wire(c, points, start_reach, end_reach=0.0, width=6.0)` draws a metal 2 wire through a list of
   points (section 5).
 
 ## 4. The layers, in the order of the figure
@@ -214,7 +217,7 @@ The third line centres the row on the arc. The via centres are at 7.85 µm and 1
 ring centre. Their near edges are 1.9 µm from the core centre line at 10 µm. The test
 `test_a_contact_via_sits_on_the_symmetry_axis` checks that both rows have a via at x = 0.
 
-**Constant-width Manhattan wires on metal 2.** `_wire` draws each segment as a rectangle of the
+**Constant-width Manhattan wires on metal 2.** `wire` draws each segment as a rectangle of the
 same width, with square corners. A diagonal segment is refused with an error. A wire of one width
 along its whole length is easy to check, and its width matches the width of the port.
 
@@ -226,7 +229,7 @@ if abs(x1 - x0) > 1e-9 and abs(y1 - y0) > 1e-9:
 The two free ends of a wire need care. A wire that ran half its width past its last via 1 can
 come too close to a neighbour. In one tested variant with a 120° junction, such a wire came to
 0.83 µm from its neighbour, below the 1.0 µm metal 2 space. So each free end stops where the
-enclosure rule needs it to stop, plus 0.1 µm. The function `_reach_beyond` measures that distance
+enclosure rule needs it to stop, plus 0.1 µm. The function `reach_beyond` measures that distance
 from the corners of the via 1 squares, rotated squares included.
 
 **One more lesson in the ring itself.** The ring is extruded as one closed path, from 269.5° to

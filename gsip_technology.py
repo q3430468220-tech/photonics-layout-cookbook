@@ -192,8 +192,8 @@ VIAC, M1, HEATER, VIA1, M2, VIA2, M3, PADOPEN = (
 )  # fmt: skip
 
 # =====================================================================================
-# 3. Design rules (um).  Each value says where its rule is enforced: [DRC] gsip_drc.py, [builder] devices/ring_modulator_builder.py,
-#    or [construction].  [T] marks a teaching value.
+# 3. Design rules (um).  Each value says where its rule is enforced: [DRC] gsip_drc.py, [builder] a device builder
+#    in devices/, or [construction].  [T] marks a teaching value.
 #    [B Listing 10.4] gives one example rule: silicon width and space 0.2 um.  Everything else is [T]:
 #    round numbers of the size a 248 nm process offers, so that the layout exercises make sense.
 # =====================================================================================
@@ -203,6 +203,9 @@ MIN_WIDTH_SPACE = {
     "SLAB150": (0.30, 0.30),
     "SLAB90": (0.30, 0.30),
     "GE": (1.00, 1.00),
+    # [T] teaching values, not foundry rules: a thermal or facet trench is at least 5 um wide, and the wall of
+    # oxide and silicon left standing between two trenches is at least 4 um wide
+    "DEEPTRENCH": (5.00, 4.00),
     "WGN": (0.40, 0.40),
     "N": (0.30, 0.30),
     "P": (0.30, 0.30),
@@ -230,11 +233,17 @@ DESIGN_RULES = {
     "padopen_enclosure_by_m3": 2.00,  # [DRC] passivation opening inside the pad metal; pad() draws it with this margin
     "m1_to_heater": 0.60,  # [DRC] metal 1 and the heater lie in the same plane and keep this distance
     "contact_implant_to_core": 0.40,  # [DRC, warning] N++ / P++ edge to the edge of a waveguide core
+    # [T] teaching values for the deep trenches, not foundry rules: they keep a trench away from the heater, the metal
+    # and the core, so that the heat it stops does not reach a wire by accident.
+    "trench_to_heater": 1.00,  # [T][DRC] edge of a deep trench to the heater film, and no trench under the film
+    "trench_to_metal": 2.00,  # [T][DRC] deep trench to metal 1, metal 2 and metal 3, and no trench under a metal
+    "trench_to_waveguide": 1.50,  # [T][DRC, warning] deep trench to the edge of a core; the facet trench of an edge coupler
+    # meets a waveguide on purpose, which is why this is a warning and not an error
     # [T] teaching values, not foundry rules.  The simulations do not set them: step 2 only shows that the bend
     # loss is below the solver floor from 6 um up, so 10 um is a choice with margin.
     "heater_to_waveguide": 0.50,  # [T][builder] clearance from the lowest point of the heater to the top of the bus core
     "rib_bend_radius": 10.0,  # [T][builder] smallest ring radius: ring_modulator refuses a tighter ring
-    "strip_bend_radius": 5.0,  # [T] not enforced: the device has no strip bend
+    "strip_bend_radius": 5.0,  # [T][builder] strip_waveguide_builder refuses a tighter bend
 }
 
 

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[Previous: directional coupler](../directional_coupler/README.md) · [Device library](../../README.md#device-library)
+[Previous: directional coupler](../directional_coupler/README.md) · [Device library](../../README.md#device-library) · [Next: thermo-optic phase shifter](../thermo_optic_phase_shifter/README.md)
 
 </div>
 

@@ -6,8 +6,10 @@ It applies the rules collected in gsip_technology.py:
     * enclosures: a contact via inside N++ / P++ and inside metal 1; via 1 inside metal 1 or the
       heater and inside metal 2; via 2 inside metal 2 and metal 3; a pad opening inside metal 3
     * metal 1 and the heater film lie in the same plane and keep a distance
+    * deep trenches: no trench under the heater film or a metal, and a distance of 1 um to the heater and 2 um to a metal
     * N++ and P++ never overlap, N and P never overlap
-    * warnings: an implant drawn where there is no silicon; a contact implant close to a waveguide core
+    * warnings: an implant drawn where there is no silicon; a contact implant close to a waveguide core; a deep
+      trench close to a waveguide core (the facet trench of an edge coupler is the exception)
 
 A foundry's rule deck has hundreds of rules.  This one has the handful that a device builder trips
 over first, so that "the layout passes DRC" means something in the exercises.
@@ -145,6 +147,16 @@ def run_drc(source, rdb_path: str | Path | None = None) -> DrcResult:
     # an overlap of 2 nm or less passes, a wider one is an error
     record("N overlaps P", (region("N") & region("P")).sized(-1))
 
+    # ---- deep trenches: a trench is air, so it must not carry a film or a metal, and it keeps a distance from them ----
+    trench = region("DEEPTRENCH")
+    gap = RULES["trench_to_heater"]
+    record("deep trench under the heater film", trench & region("HEATER"))
+    record(f"heater film closer than {gap} um to a deep trench", region("HEATER").separation_check(trench, um(gap)))
+    gap = RULES["trench_to_metal"]
+    for layer, text in (("M1", "metal 1"), ("M2", "metal 2"), ("M3", "metal 3")):
+        record(f"deep trench under {text}", trench & region(layer))
+        record(f"{text} closer than {gap} um to a deep trench", region(layer).separation_check(trench, um(gap)))
+
     # ---- warnings ----
     # 5 nm of tolerance: merged and smoothed slab outlines move by a nanometre or two
     record("implant drawn where there is no silicon", union(IMPLANTS) - union(SILICON).sized(um(0.005)), "warning")
@@ -152,6 +164,13 @@ def run_drc(source, rdb_path: str | Path | None = None) -> DrcResult:
     contact = union(("NPP", "PPP"))
     close = contact.separation_check(region("WG"), um(gap)).polygons(1) + (contact & region("WG"))
     record(f"N++ / P++ closer than {gap} um to a waveguide core (optical loss)", close, "warning")
+    gap = RULES["trench_to_waveguide"]
+    close = trench.separation_check(region("WG"), um(gap)).polygons(1) + (trench & region("WG"))
+    record(
+        f"deep trench closer than {gap} um to a waveguide core (the facet trench of an edge coupler is the exception)",
+        close,
+        "warning",
+    )
 
     if rdb_path is not None:
         report.save(str(rdb_path))
@@ -176,6 +195,18 @@ def demo_component():
     c.add_polygon(rect(7.2, 6, 9, 9), layer=t.HEATER)  # 0.2 um from metal 1
     c.add_polygon(rect(8, 7, 9.5, 8.5), layer=t.VIA1)  # sticks out of the heater, no metal 2 above
     c.add_polygon(rect(30, 0, 40, 5), layer=t.N)  # implant with no silicon below
+    # deep trenches: one planted violation per rule
+    c.add_polygon(rect(50, 0, 53, 20), layer=t.LAYER.DEEPTRENCH)  # 3 um wide, narrower than 5
+    c.add_polygon(rect(54, 0, 57, 20), layer=t.LAYER.DEEPTRENCH)  # 1 um from the trench before: space below 4
+    c.add_polygon(rect(60, 0, 70, 10), layer=t.LAYER.DEEPTRENCH)  # a trench of 10 x 10 um for the rules below
+    c.add_polygon(rect(62, 2, 64, 4), layer=t.HEATER)  # a heater film lying wholly over the trench
+    c.add_polygon(rect(65, 5, 67, 7), layer=t.M2)  # metal 2 lying wholly over the trench
+    c.add_polygon(rect(71.5, -2, 73, 2), layer=t.M1)  # metal 1 1.5 um from the trench edge, below 2
+    c.add_polygon(rect(71, 10.5, 80, 14), layer=t.M3)  # metal 3 1.1 um from the trench corner, below 2
+    c.add_polygon(rect(82.2, 0, 90, 10), layer=t.LAYER.DEEPTRENCH)  # a trench 0.2 um from the heater film below
+    c.add_polygon(rect(80, 0, 82, 2), layer=t.HEATER)
+    c.add_polygon(rect(120, 0, 130, 0.5), layer=t.WG)  # a core 0.5 um from a trench: a warning
+    c.add_polygon(rect(120, 1.0, 130, 10), layer=t.LAYER.DEEPTRENCH)
     return c
 
 
@@ -187,7 +218,7 @@ def main(argv: list[str]) -> int:
     if argv[0] == "--demo":
         result = run_drc(demo_component(), rdb_path=here / "build" / "drc" / "gsip_drc_demo.lyrdb")
         print(result.summary())
-        expected = 7
+        expected = 14  # seven planted violations of the first rules and seven of the deep-trench rules
         print(f"self-test: {len(result.errors)} error rules triggered, expected at least {expected}")
         return 0 if len(result.errors) >= expected and result.warnings else 1
     gds = Path(argv[0])

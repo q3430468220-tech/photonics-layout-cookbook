@@ -1,0 +1,36 @@
+HEAT, two-dimensional transient, Lumerical 2025 R1: mesh 0.02 to 0.5 um, time step 2e-08 to 2e-06 s, 10 mW switched on at t = 0 for 400 us; run time 10.6 min
+answer: the device has a time constant of 18.0 us and rises from 10 to 90 % in 49.9 us; without trenches 6.1 and 26.9 us.  The trenches make it 2.9 times slower and lower the power for pi 2.19 times (the cross-section with a trench on each side; step 2 has the device as drawn).
+
+a. rise and fall of the mean core temperature
+      case   tau us  10-90 % us  t_rise/tau   final K  steady K  diff %
+    device    18.00       49.92        2.77    38.742    38.743   -0.00
+ reference     6.12       26.91        4.39    17.681    17.681   -0.00
+  tau: the rise reaches 1 - 1/e = 63 % of its final value; a single exponential would give t_rise / tau = ln 9 = 2.20.  The response is not one exponential, because heat diffuses: it starts fast and ends slowly.
+  fall of the device after 400 us of power: tau 18.69 us, 90 to 10 % in 49.66 us (rise: 18.00 and 49.92 us).  The model is linear, so the fall must mirror the rise.
+  It does within 0.5 % in the 10 to 90 % time; the time constant of the fall is +3.8 % off, because the solver starts the rise with its smallest time step and meets the switch-off with its largest (see c).
+  0.35 / t_rise = 7.0 kHz for the device and 13.0 kHz for the reference: a rule of thumb for the bandwidth, not a simulated 3 dB point
+
+b. trench gap: time against power
+ gap (um)   tau us  10-90 % us  P_pi mW  P_pi x tau (mW us)
+        2    18.00       49.92    10.03               180.6
+        3    16.13       48.51    13.84               223.2
+        4    13.52       46.05    16.54               223.7
+        6     8.85       40.25    19.57               173.2
+     none     6.12       26.91    21.98               134.6
+  P_pi of a gap = 10.03 mW (step 2, fully isolated cross-section) x eta of the device / eta of that gap (step 1): a scaling
+  the scaling gives 21.98 mW without trenches; step 2 solved that case and found 22.00 mW (-0.07 %)
+  The product is smallest without trenches (135 mW us) and largest at 4 um (224); the device has 181.  Its trenches save power by a factor 2.19 and cost a factor 2.94 in time.
+  A trench does not only keep the heat in: the heat now has to warm the whole wall of oxide before the core settles.
+  With a trench the product is 1.29 to 1.66 times that of the guide without trenches: every trench of this table costs more time than it saves power.
+
+c. checks
+  time step halved (1e-08 to 1e-06 s, 904 steps against 539): tau 18.00 us (+0.02 %), 10-90 % 49.93 us (+0.02 %); time constant of the fall 18.35 us against 18.69 us: with the smaller step it lies +1.9 % from that of the rise
+  run twice as long (800 us): final rise 38.735 K against 38.742 K (-0.020 %), tau 18.00 us (+0.01 %)
+  final value against the steady state of step 1: device -0.00 %, reference -0.00 %; the last tenth of the rise still adds 0.001 % (device)
+  by hand: between the trenches the oxide is a column h = 7.5 um high (the region of the model ends 0.2 um below the top of the cladding), cold at its foot and insulated on top and at its sides.
+    Its slowest mode decays with 4 h^2 / (pi^2 alpha) = 25.8 us, with alpha = k / (rho c) = 1.38 / 1.56e+06 = 8.84e-07 m^2/s (textbook values of fused silica; the solver uses the values of the process file)
+    the late part of the simulated rise, from 60 to 150 us, decays with 25.3 us (-1.9 %); the other gaps give 25.4 to 25.6 us: the same column, whatever its width; without trenches 24.1 us, and there the fit depends on its window: a layer has no slowest mode
+    The time constant of the device, 18.0 us, is shorter than that: the rise is a sum of the modes of the column, and the faster ones carry part of it.
+
+limits: a two-dimensional cross-section; the ends of the film, the metal wires and the air above the chip are not in
+  the model.  The times are those of the temperature of the core; the phase follows it without delay.

@@ -43,8 +43,8 @@ Five chapters, meant to be read in order. The first two need no Lumerical.
 | 5 | [Your own foundry](docs/your_foundry.md) | moving the flow to a real PDK without leaking NDA data |
 
 The ring modulator is the first device treated this way. The [device library](#device-library)
-further down has the others: four passive devices so far, each with its own chapter, and those that
-are planned.
+further down has the others: four passive devices and a thermo-optic phase shifter so far, each
+with its own chapter, and those that are planned.
 
 ## Quick start
 
@@ -60,7 +60,7 @@ uv sync
 
 uv run python gsip_technology.py                  # list the layers and the stack, write the layer colours for KLayout
 uv run python devices/ring_modulator_builder.py   # draw the ring modulator, run the DRC, write its layout
-uv run pytest                                     # 115 tests
+uv run pytest                                     # 146 tests
 ```
 
 The builder ends with `DRC passed: 0 errors, 0 warnings` and writes `devices/gds/ring_modulator.gds`.
@@ -115,7 +115,7 @@ processes of commercial foundries are under NDA, so a tutorial has to define a p
 | germanium, nitride | `GE` 5/0, `GEN` 26/0, `GEP` 27/0, `WGN` 34/0 | 500 nm Ge, 350 nm SiN |
 | contacts and metals | `VIAC` 40/0, `M1` 41/0, `VIA1` 44/0, `M2` 45/0, `VIA2` 43/0, `M3` 49/0, `PADOPEN` 46/0 | aluminium, three levels |
 | heater | `HEATER` 47/0 | 150 nm titanium nitride (TiN), 10 Ω/sq |
-| trenches | `DEEPTRENCH` 4/0, `UNDERCUT` 6/0 | facet trench, undercut for thermal isolation |
+| trenches | `DEEPTRENCH` 4/0, `UNDERCUT` 6/0 | facet trench and thermal isolation trench; substrate undercut |
 
 The process numbers in [gsip_technology.py](gsip_technology.py) carry a source tag: [B] the
 textbook, [BJ] the paper by Baehr-Jones et al. that the textbook's process is based on, [GF] the
@@ -312,10 +312,11 @@ their tutorials; the table below the cards gives the main result of each.
 ### Active devices
 
 Eight devices that use the implants, the germanium, the heater and the metals of the same
-process. The ring modulator is the one this page describes.
+process. The ring modulator is the one this page describes. The thermo-optic phase shifter has its
+tutorial too; the table below the cards gives the main result of both.
 
 <p align="center">
-<a href="ROADMAP.md#unit-devices-active" title="Thermo-optic phase shifter"><img src="assets/device_library/active/thermo_optic_phase_shifter.png" width="24%" alt="Thermo-optic phase shifter"></a>
+<a href="lumerical_simulations/thermo_optic_phase_shifter/README.md" title="Thermo-optic phase shifter"><img src="assets/device_library/active/thermo_optic_phase_shifter.png" width="24%" alt="Thermo-optic phase shifter"></a>
 <a href="ROADMAP.md#unit-devices-active" title="PN phase shifter"><img src="assets/device_library/active/pn_phase_shifter.png" width="24%" alt="PN phase shifter"></a>
 <a href="ROADMAP.md#unit-devices-active" title="PIN phase shifter and VOA"><img src="assets/device_library/active/pin_phase_shifter.png" width="24%" alt="PIN phase shifter and VOA"></a>
 <a href="lumerical_simulations/ring_modulator/README.md" title="Microring modulator"><img src="assets/device_library/active/ring_modulator.png" width="24%" alt="Microring modulator"></a>
@@ -325,6 +326,11 @@ process. The ring modulator is the one this page describes.
 <a href="ROADMAP.md#unit-devices-active" title="2×2 Mach-Zehnder switch"><img src="assets/device_library/active/mzi_switch.png" width="24%" alt="2×2 Mach-Zehnder switch"></a>
 </p>
 <p align="center"><img src="assets/device_library/active/legend.png" width="100%" alt="Colour key of the active devices"></p>
+
+| device | solvers | result at 1.55 µm, TE |
+|---|---|---|
+| [Thermo-optic phase shifter](lumerical_simulations/thermo_optic_phase_shifter/README.md) | HEAT, MODE | a phase shift of π for 10.3 mW with isolation trenches, 22.0 mW without; time constant 18 µs against 6 µs; beyond the trenches no heat reaches a neighbour through the oxide |
+| [Microring modulator](lumerical_simulations/ring_modulator/README.md) | FDTD, MODE, CHARGE, HEAT, INTERCONNECT | critically coupled at a gap of 371 nm, with a loaded Q of 31 000 and 46 dB extinction; V_π·L 1.8 V·cm; the heater tunes by 124 pm/mW |
 
 ### Thin-film lithium niobate
 
@@ -370,7 +376,7 @@ photonics-layout-cookbook/
 ├── gsip_process_file_py/     process tables (CSV), the compiler, and the compiled gsip_process.lbr
 ├── lumerical_simulations/
 │   ├── flow.py               what every simulation shares: paths and the Layer Builder set-up
-│   ├── solvers.py            solver recipes for MODE, EME and FDTD
+│   ├── solvers.py            solver recipes for MODE, EME, FDTD and HEAT
 │   ├── panels.py             figure panels that several devices use
 │   └── <device>/             scripts/, one folder of results per step, figures/, README.md
 ├── docs/                     chapters 1, 2 and 5

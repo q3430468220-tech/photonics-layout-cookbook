@@ -1,0 +1,54 @@
+HEAT, two-dimensional steady state, Lumerical 2025 R1: mesh 0.02 to 0.5 um, norm length 100 um, Si_Substrate held at 300 K, uniform heat on Heater; run time 12.0 min
+device: TiN film 2 um wide, 150 nm thick, 0.88 um above the core; trenches from 2 to 8 um from the centre line, beside 96 of the 100 um of film (f = 0.96)
+answer: the core of the fully isolated cross-section gains 3.874 K/mW (387.4 K um/mW); the device as drawn gains 3.790 K/mW (379.0 K um/mW); without trenches the core gains 1.768 K/mW (176.8 K um/mW).  The trenches multiply the rise by 2.19 (fully isolated) or 2.14 (as drawn).
+
+a. device and reference against the power (rises in K above the substrate, sink in mW)
+ P (mW)   core dev   film dev   core ref   film ref   sink dev   sink ref
+    5.0     19.371     29.274      8.841     14.710      5.001      5.001
+   10.0     38.743     58.547     17.681     29.421     10.002     10.001
+   20.0     77.486    117.095     35.363     58.841     20.005     20.005
+   40.0    154.972    234.190     70.725    117.682     40.009     39.998
+slope through the origin, device: core 3.8743 K/mW, film 5.8547 K/mW, film/core 1.511, eta core 387.43 K um/mW
+slope through the origin, reference: core 1.7681 K/mW, film 2.9421 K/mW, film/core 1.664, eta core 176.81 K um/mW
+linearity: the largest deviation of rise/P from the slope over 5 to 40 mW: device 0.000 %, reference 0.001 %
+
+device as drawn: the film is trenched along 96 of 100 um, so the effective eta = f eta_iso + (1 - f) eta_ref = 0.96 x 387.43 + 0.04 x 176.81 = 379.01 K um/mW
+  K/mW as drawn = eta / L = 379.01 / 100 = 3.7901 K/mW.  The formula averages two two-dimensional results along the film; the ends are not solved in three dimensions.
+
+b. trench gap, heater 2 um, 10 mW; closest gap the rules allow: 2 um
+ gap (um)         rule  core K/mW       eta  film K/mW  film/core   eta 1D  eta/1D  balance %
+     1.75   below rule     4.3696     437.0     6.5257      1.493    414.1   1.055      0.025
+        2           ok     3.8743     387.4     5.8547      1.511    362.3   1.069      0.024
+      2.5           ok     3.2165     321.6     4.9555      1.541    289.9   1.110      0.028
+        3           ok     2.8089     280.9     4.3962      1.565    241.5   1.163      0.015
+        4           ok     2.3498     235.0     3.7646      1.602    181.2   1.297      0.021
+        6           ok     1.9863     198.6     3.2502      1.636    120.8   1.645      0.017
+       10           ok     1.8043     180.4     2.9944      1.660     72.5   2.490      0.018
+     none    no trench     1.7681     176.8     2.9421      1.664        -       -      0.010
+eta 1D: one-dimensional ridge between the trenches, eta = 1e3 t / (k W), with t = 2 um of buried oxide, k = 1.38 W/m/K and W = 2 gap.
+  eta/1D above 1 is the cost of the constriction: the heat enters the ridge at the core, in its middle, and has to spread sideways across the ridge, which the one-dimensional model assumes has already happened.
+
+c. heater width, 10 mW; each width with the closest gap the rules allow, and without trenches
+  width  gap (um)  core K/mW  core none   ratio  film/core  film/core none
+   1.00      2.00     3.9524     1.8860   2.096      1.618           1.889
+   1.50      2.00     3.9149     1.8303   2.139      1.551           1.752
+   3.00      2.50     3.1265     1.6380   1.909      1.487           1.562
+   2.00      2.00     3.8743     1.7681   2.191      1.511           1.664
+
+electrical, the free filament at 10 mW: R = Rs L / w = 10.0 ohm/sq x 100 um / 2 um = 500 ohm (builder: 500 ohm); V = 2.24 V; I = 4.47 mA
+  R, V and I are those of the free filament: the landings and the current spreading into them add a few per cent
+
+d. checks
+energy balance at 10 mW (power that reaches the sink against the power set): device 10.002 mW (+0.02 %), reference 10.001 mW (+0.01 %); worst of all 22 runs 0.03 % (gap_2.5)
+region width (eta, K um/mW): device 387.43 at 20 um, 387.43 at 40 um, 387.43 at 80 um (-0.00 % and -0.00 %); reference 180.43, 176.81, 176.76 (+2.05 % and -0.03 %)
+mesh (edges halved, 0.01 and 0.25 um): device eta 388.34 (+0.234 %) with 19842 nodes against 5123; reference 177.25 (+0.249 %)
+trench width (device, gap 2 um): eta 387.43 K um/mW at 4 um, 387.43 at 6 um, 387.43 at 10 um; rise 2 um beyond the outer edge of the trench, at z = -1 um: -0.000, -0.000, -0.000 K
+  The trench is air from the top of the cladding down to 5 um inside the substrate, and its walls are adiabatic.  The heat of the core goes down into the substrate, which is held at 300 K, and cannot cross the trench in the oxide.
+  So the oxide beyond the trench stays near the sink whatever the trench width; the width does not enter the answer.
+one-dimensional ridge (device): eta 1D = 362.3 K um/mW from t = 2 um, k = 1.38 W/m/K, W = 2 x 2 um = 4 um, against 387.4 simulated (+6.9 %)
+linearity: 0.000 % device and 0.001 % reference over the powers of a
+
+limits: a two-dimensional cross-section, with no ends, no metal over the film, no convection, and the top of the
+  oxide insulating.  The undercut is not in the model: in two dimensions it has no solid path to the sink, and the
+  solver does not converge (see the probe notes in the chapter).  Step 2 gives the phase; this step gives only heat.
+maps kept at 10 mW: device and reference (heat.npz arrays device_map_* and reference_map_*); exported for step 2: device_T_10mW.mat, device_T_20mW.mat, reference_T_10mW.mat

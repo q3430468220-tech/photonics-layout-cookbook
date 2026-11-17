@@ -629,3 +629,299 @@ __all__ = [
     "slab_te0_index",
     "solve_fdtd",
 ]
+
+
+# =====================================================================================
+# HEAT: steady temperature rise of a two-dimensional cross-section (thermal)
+# =====================================================================================
+T_AMBIENT = 300.0  # K: the heat sink.  The solid that is the sink is held at this temperature and is not meshed.
+HEAT_NAME, SINK_NAME, MONITOR_NAME = "heat", "sink", "T"  # the names of the HEAT objects that the recipe adds
+
+
+def add_heat_cross_section(app, gds: Path, norm_length: float, y_span: float, z_min: float, z_max: float,
+                           heat_solid: str, sink_solid: str, min_edge: float = 0.02, max_edge: float = 0.5,
+                           x_span: float = 6.0) -> None:  # fmt: skip
+    """HEAT project on a cross-section normal to x: steady state, heat in one solid, a fixed temperature on another.
+
+    The structure comes from ``gds`` and the process file (flow.add_layer_builder), so no material or thickness is
+    typed here.  The region is ``y_span`` wide and runs from ``z_min`` to ``z_max`` (um); both must lie inside the
+    layers of the process file, or the solver stops with "No thermal material properties defined for domain".
+    The heat is a uniform heat source in the volume of ``heat_solid``, which the solid then conducts.  A boundary
+    power on the same solid would cut the solid out of the thermal domain (see the ring modulator's step 4).
+    The sink is a temperature boundary condition on the solid ``sink_solid``.
+
+    norm_length (um): the length that the 2D run stands for.  With "use solver norm length" the power that is set
+    is the total power of a piece that long, so pass the heated length of the device.
+    The monitor "T" records the temperature.  Set the power with set_heat_power, and run with run_checked.
+    """
+    from flow import add_layer_builder
+
+    app.switchtolayout()
+    add_layer_builder(app, gds, x_span, y_span + 2.0)
+    app.select("simulation region")
+    app.set("dimension", "2D X-Normal")
+    app.set("x", 0)
+    app.set("y", 0)
+    app.set("y span", y_span * um)
+    app.set("z", (z_min + z_max) / 2 * um)
+    app.set("z span", (z_max - z_min) * um)
+
+    app.addheatsolver()
+    app.select("HEAT")
+    app.set("solver mode", "steady state")
+    app.set("norm length", norm_length * um)
+    app.set("min edge length", min_edge * um)
+    app.set("max edge length", max_edge * um)
+
+    app.addtemperaturebc()
+    app.set("name", SINK_NAME)
+    app.set("surface type", "solid")
+    app.set("solid", sink_solid)
+    app.set("temperature", T_AMBIENT)
+
+    app.adduniformheat()  # Joule heat, generated in the volume of the solid
+    app.set("name", HEAT_NAME)
+    app.set("geometry type", "volume")
+    app.set("volume type", "solid")
+    app.set("volume solid", heat_solid)
+    app.set("use solver norm length", 1)  # the power that is set belongs to a piece norm_length long
+    app.set("total power", 0.0)
+
+    app.addtemperaturemonitor()
+    app.set("name", MONITOR_NAME)
+    app.set("monitor type", "2D x-normal")
+    app.set("x", 0)
+    app.set("y", 0)
+    app.set("y span", y_span * um)
+    app.set("z", (z_min + z_max) / 2 * um)
+    app.set("z span", (z_max - z_min) * um)
+
+
+def set_heat_power(app, power_mW: float) -> None:
+    """Total power (mW) of the heat source of add_heat_cross_section; the next run uses it."""
+    app.switchtolayout()
+    app.select(f"HEAT::{HEAT_NAME}")
+    app.set("total power", power_mW * 1e-3)
+
+
+def export_temperature(app, path: Path | None) -> None:
+    """Save the temperature map of the next run to ``path``, a .mat file that the MODE solver imports as a grid
+    attribute (importdataset).  None switches the saving off."""
+    app.select(f"HEAT::{MONITOR_NAME}")
+    app.set("save data", 0 if path is None else 1)
+    if path is not None:
+        app.set("filename", str(path))
+
+
+def run_checked(app, project: Path) -> None:
+    """Run the HEAT project and stop unless its solver log says that the run completed.
+
+    The API does not raise when the solver fails: a run that does not converge keeps a partial result, and only
+    the log says so ("failed to converge").  The log of a project is <project>_p0.log, beside the project file.
+    The old log is removed first, so a run that writes no log cannot pass for an earlier one.  On failure the log is
+    kept, for reading.
+    """
+    log = project.with_name(project.stem + "_p0.log")
+    log.unlink(missing_ok=True)
+    app.run()
+    text = log.read_text(encoding="utf-8", errors="replace") if log.exists() else ""
+    if "Simulation completed successfully" not in text or "failed to converge" in text:
+        why = "it wrote no solver log" if not text else "its solver log does not say that the run completed"
+        raise RuntimeError(f"the HEAT run of {project.name} failed: {why}; see {log}")
+
+
+def read_temperature(app) -> dict:
+    """Temperature of the last HEAT run: T (K) at each node, node positions y, z (um), and the mesh.
+
+    ``elements`` holds the triangles of the mesh as zero-based node numbers (Lumerical numbers the nodes from 1).
+    Averages over the mesh must weight each triangle by its area (area_weights), since the mesh is uneven.
+    """
+    raw = app.getresult(f"HEAT::{MONITOR_NAME}", "temperature")
+    out = dict(T=np.real(np.squeeze(raw["T"])), y=np.squeeze(raw["y"]) / um, z=np.squeeze(raw["z"]) / um)
+    for key in ("connectivity", "elements"):
+        if key in raw:
+            out["elements"] = np.asarray(raw[key], dtype=int) - 1
+            break
+    if "elements" not in out:
+        raise RuntimeError("the temperature result has no mesh elements; the averages cannot be area-weighted")
+    return out
+
+
+def area_weights(r: dict, box: tuple[float, float, float, float]) -> np.ndarray:
+    """Weights that give the area-weighted mean of the nodal values over box = (y0, y1, z0, z1) in um: weights @ T.
+
+    A triangle belongs to the box when its centroid lies in it, and it counts by its area, because the mesh is uneven:
+    a plain mean of the nodes would give a small cell the weight of a large one.  Each triangle gives a third of its
+    area to each of its three corners.
+    """
+    y0, y1, z0, z1 = box
+    tri = r["elements"]
+    py, pz = r["y"][tri], r["z"][tri]
+    area = 0.5 * np.abs((py[:, 1] - py[:, 0]) * (pz[:, 2] - pz[:, 0]) - (py[:, 2] - py[:, 0]) * (pz[:, 1] - pz[:, 0]))
+    cy, cz = py.mean(axis=1), pz.mean(axis=1)
+    inside = (cy >= y0) & (cy <= y1) & (cz >= z0) & (cz <= z1)
+    if not inside.any():
+        raise ValueError(f"no mesh triangles with their centroid in the box {box}")
+    w = np.bincount(tri[inside].ravel(), weights=np.repeat(area[inside] / 3, 3), minlength=len(r["y"]))
+    return w / w.sum()
+
+
+def area_mean(r: dict, box: tuple[float, float, float, float], field: str = "T") -> float:
+    """Area-weighted mean of a nodal field (K) over the rectangle box (um); see area_weights."""
+    return float(area_weights(r, box) @ r[field])
+
+
+def temperature_at(r: dict, y: float, z: float) -> float:
+    """Temperature (K) at a point (um), interpolated linearly on the mesh.  nan where there is no mesh (a trench)."""
+    from matplotlib.tri import LinearTriInterpolator, Triangulation
+
+    tri = Triangulation(r["y"], r["z"], triangles=r["elements"])
+    value = LinearTriInterpolator(tri, r["T"])(y, z)
+    return float("nan") if np.ma.is_masked(value) else float(value)
+
+
+def slope_through_origin(x, y) -> float:
+    """Least-squares slope of y = s x with no offset: sum(x y) / sum(x x).
+
+    A temperature rise is proportional to the power in these models, so the line goes through the origin.
+    """
+    x, y = np.asarray(x, dtype=float), np.asarray(y, dtype=float)
+    return float(np.sum(x * y) / np.sum(x * x))
+
+
+def heat_sink_power(r: dict, y_span: float, z_plane: float, z_sink: float, k: float, sink_T: float,
+                    norm_length: float) -> float:  # fmt: skip
+    """Heat (mW) that crosses the plane z = z_plane and goes on into the heat sink, from the map of one run.
+
+    Just above the sink the flux is k (T - sink_T) / (z_plane - z_sink), a one-sided difference, in W/m^2; z_sink is
+    the top of the sink (um).  Integrated along y over the region and along norm_length, it is the power that reaches
+    the sink, which must equal the power set: this is the energy-balance check.  The plane must cross a solid that
+    conducts into the sink.  Where the mesh has a hole (a trench, air) the interpolator returns nothing, and that
+    part of the plane carries no flux, as the walls of a trench are adiabatic.
+    """
+    from matplotlib.tri import LinearTriInterpolator, Triangulation
+
+    tri = Triangulation(r["y"], r["z"], triangles=r["elements"])
+    y = np.linspace(-y_span / 2, y_span / 2, 4000)  # um
+    dT = LinearTriInterpolator(tri, r["T"] - sink_T)(y, np.full_like(y, z_plane))
+    ok = ~np.ma.getmaskarray(dT)
+    flux = k * np.ma.getdata(dT)[ok] / ((z_plane - z_sink) * um)  # W/m^2
+    dy = (y[1] - y[0]) * um
+    return float(np.sum(flux) * dy * norm_length * um * 1e3)
+
+
+def run_heat_transient(app, project: Path, power_mW: float, t_on: float, t_high: float, t_low: float = 0.0,
+                       min_step: float = 2e-8, max_step: float = 2e-6, slew: float = 2e-8) -> dict:  # fmt: skip
+    """Transient run of a project made by add_heat_cross_section: the heat source is switched on, and off again.
+
+    The run starts cold.  At t_on the source goes on with ``power_mW`` and stays on for t_high; with t_low > 0 it
+    then goes off and the run lasts t_low longer (all in s).  The shutter of the solver gates the heat source, and a
+    temperature boundary condition with a time table sets the length of the run: the table is constant, the sink
+    stays at T_AMBIENT.  The solver chooses its time steps between min_step and max_step.
+
+    Returns t (s, counted from the moment the source goes on), T (K, nodes x times), the node positions y, z (um)
+    and the mesh ``elements``, as read_temperature does for a steady run.  The solver log is checked as in
+    run_checked.  The project is left in transient mode.
+    """
+    app.switchtolayout()
+    app.select("HEAT")
+    app.set("solver mode", "transient")
+    app.set("transient min time step", min_step)
+    app.set("transient max time step", max_step)
+    app.set("shutter mode", "pulse on" if t_low > 0 else "step on")
+    app.set("shutter ton", t_on)
+    if t_low > 0:
+        app.set("shutter toff", t_on + t_high)
+    app.set("shutter tslew", slew)
+    times = [0.0, t_on, t_on + t_high] + ([t_on + t_high + t_low] if t_low > 0 else [])
+    app.select(f"HEAT::boundary conditions::{SINK_NAME}")
+    app.set("bc mode", "transient")
+    app.set("transient time steps", np.array(times))
+    app.set("transient value table", np.full(len(times), T_AMBIENT))
+    set_heat_power(app, power_mW)
+    export_temperature(app, None)
+    run_checked(app, project)
+    raw = app.getresult(f"HEAT::{MONITOR_NAME}", "temperature")
+    out = dict(
+        t=np.ravel(np.squeeze(raw["t"])) - t_on,
+        T=np.real(np.squeeze(raw["T"])),
+        y=np.squeeze(raw["y"]) / um,
+        z=np.squeeze(raw["z"]) / um,
+    )
+    for key in ("connectivity", "elements"):
+        if key in raw:
+            out["elements"] = np.asarray(raw[key], dtype=int) - 1
+            break
+    if "elements" not in out:
+        raise RuntimeError("the temperature result has no mesh elements; the averages cannot be area-weighted")
+    if out["T"].ndim != 2 or out["T"].shape[1] != len(out["t"]):
+        raise RuntimeError(f"expected a temperature of nodes x times, got an array of shape {out['T'].shape}")
+    return out
+
+
+def area_trace(r: dict, box: tuple[float, float, float, float]) -> np.ndarray:
+    """Area-weighted mean over the rectangle box (um) at every time of a transient result: one value per time."""
+    return area_weights(r, box) @ r["T"]
+
+
+def crossing_time(t: np.ndarray, x: np.ndarray, level: float) -> float:
+    """The time at which a trace that rises from 0 first reaches ``level``, by linear interpolation between its
+    two neighbouring points; nan when it never does."""
+    above = np.nonzero(x >= level)[0]
+    if not len(above):
+        return float("nan")
+    i = int(above[0])
+    if i == 0:
+        return float(t[0])
+    return float(t[i - 1] + (level - x[i - 1]) * (t[i] - t[i - 1]) / (x[i] - x[i - 1]))
+
+
+def temperature_along(r: dict, y, z: float) -> np.ndarray:
+    """Temperature (K) at the points (y, z) of a horizontal line (um), interpolated linearly on the mesh of a steady
+    result; nan where there is no mesh (a trench).  One interpolator for all the points."""
+    from matplotlib.tri import LinearTriInterpolator, Triangulation
+
+    y = np.asarray(y, dtype=float)
+    tri = Triangulation(r["y"], r["z"], triangles=r["elements"])
+    value = LinearTriInterpolator(tri, r["T"])(y, np.full_like(y, z))
+    return np.where(np.ma.getmaskarray(value), np.nan, np.ma.getdata(value))
+
+
+def conductivity_from_flux(r: dict, y_span: float, z_upper: float, z_lower: float, power_mW: float,
+                           norm_length: float) -> float:  # fmt: skip
+    """The thermal conductivity (W/m/K) of the layer between two horizontal planes, from the map of a steady run.
+
+    All the power that is set crosses every horizontal plane below the source.  Between two planes in one material the
+    flux is k (T_upper - T_lower) / (z_upper - z_lower), so k = power / (norm_length x the integral over y of that
+    temperature gradient).  The planes must lie in the same material over the whole region, and where the heat flows
+    down: this reads the conductivity that the solver uses, without asking its material database.
+    """
+    y = np.linspace(-y_span / 2, y_span / 2, 8000)  # um
+    drop = temperature_along(r, y, z_upper) - temperature_along(r, y, z_lower)
+    if np.isnan(drop).any():
+        raise ValueError("the two planes do not lie in the mesh over the whole region")
+    gradient = np.sum(drop) * (y[1] - y[0]) * um / ((z_upper - z_lower) * um)  # K: the integral over y of dT/dz
+    return float(power_mW * 1e-3 / (norm_length * um * gradient))
+
+
+__all__ += [
+    "HEAT_NAME",
+    "MONITOR_NAME",
+    "SINK_NAME",
+    "T_AMBIENT",
+    "add_heat_cross_section",
+    "area_mean",
+    "area_trace",
+    "area_weights",
+    "conductivity_from_flux",
+    "crossing_time",
+    "export_temperature",
+    "heat_sink_power",
+    "read_temperature",
+    "run_checked",
+    "run_heat_transient",
+    "set_heat_power",
+    "slope_through_origin",
+    "temperature_along",
+    "temperature_at",
+]

@@ -30,7 +30,7 @@
 | 4 | [仿真](lumerical_simulations/ring_modulator/README.md) | 从耦合器到电路共七步，以及每一步的易错点 |
 | 5 | [换成自己的工艺](docs/your_foundry.md) | 把流程搬到真实的代工厂 PDK 上，同时不泄露保密数据 |
 
-微环调制器是按这套流程做完的第一个器件。其余的器件见下文的[器件库](#器件库)：目前有四个无源器件，各有一章教程，另外还有计划中的器件。
+微环调制器是按这套流程做完的第一个器件。其余的器件见下文的[器件库](#器件库)：目前有四个无源器件和一个热光移相器，各有一章教程，另外还有计划中的器件。
 
 ## 快速开始
 
@@ -45,7 +45,7 @@ uv sync
 
 uv run python gsip_technology.py                  # 列出图层和膜层堆叠，生成 KLayout 用的图层配色
 uv run python devices/ring_modulator_builder.py   # 画微环调制器，跑 DRC，输出版图
-uv run pytest                                     # 115 项测试
+uv run pytest                                     # 146 项测试
 ```
 
 builder 最后会打印 `DRC passed: 0 errors, 0 warnings`，并输出 `devices/gds/ring_modulator.gds`。这个文件可以用免费的版图软件 [KLayout](https://www.klayout.de) 打开，图层配色在 `klayout_tech/layers.lyp`。[器件库](#器件库)里的每个器件在 `devices/` 下都有一个这样的 builder。
@@ -87,7 +87,7 @@ uv run python ring_modulator_interconnect.py     # 第 6 步，不到 1 分钟
 | 锗、氮化硅 | `GE` 5/0、`GEN` 26/0、`GEP` 27/0、`WGN` 34/0 | 500 nm 锗，350 nm 氮化硅 |
 | 接触孔与金属 | `VIAC` 40/0、`M1` 41/0、`VIA1` 44/0、`M2` 45/0、`VIA2` 43/0、`M3` 49/0、`PADOPEN` 46/0 | 铝，三层金属 |
 | 加热器 | `HEATER` 47/0 | 150 nm 氮化钛（TiN），10 Ω/sq |
-| 沟槽 | `DEEPTRENCH` 4/0、`UNDERCUT` 6/0 | 端面深槽，用于隔热的衬底底切 |
+| 沟槽 | `DEEPTRENCH` 4/0、`UNDERCUT` 6/0 | 端面深槽和隔热深槽；衬底底切 |
 
 [gsip_technology.py](gsip_technology.py) 里的工艺数值都标了出处：[B] 教材，[BJ] 教材工艺所依据的 Baehr-Jones 等人的论文，[GF] gdsfactory 通用 PDK，[T] 本仓库自定的教学取值，旁边写了理由。
 
@@ -225,10 +225,10 @@ GSiP 工艺的硅层和氮化硅层上的 12 个器件。前四个的教程已�
 
 ### 有源器件
 
-用到同一套工艺里的注入、锗、加热器和金属的 8 个器件。本页讲的微环调制器是其中之一。
+用到同一套工艺里的注入、锗、加热器和金属的 8 个器件。本页讲的微环调制器是其中之一。热光移相器的教程也已经写好，卡片下方的表格列出了这两个器件的主要结果。
 
 <p align="center">
-<a href="ROADMAP.md#unit-devices-active" title="热光移相器"><img src="assets/device_library/active/thermo_optic_phase_shifter.png" width="24%" alt="热光移相器"></a>
+<a href="lumerical_simulations/thermo_optic_phase_shifter/README.md" title="热光移相器"><img src="assets/device_library/active/thermo_optic_phase_shifter.png" width="24%" alt="热光移相器"></a>
 <a href="ROADMAP.md#unit-devices-active" title="PN 移相器"><img src="assets/device_library/active/pn_phase_shifter.png" width="24%" alt="PN 移相器"></a>
 <a href="ROADMAP.md#unit-devices-active" title="PIN 移相器和可变光衰减器"><img src="assets/device_library/active/pin_phase_shifter.png" width="24%" alt="PIN 移相器和可变光衰减器"></a>
 <a href="lumerical_simulations/ring_modulator/README.md" title="微环调制器"><img src="assets/device_library/active/ring_modulator.png" width="24%" alt="微环调制器"></a>
@@ -238,6 +238,11 @@ GSiP 工艺的硅层和氮化硅层上的 12 个器件。前四个的教程已�
 <a href="ROADMAP.md#unit-devices-active" title="2×2 马赫-曾德尔光开关"><img src="assets/device_library/active/mzi_switch.png" width="24%" alt="2×2 马赫-曾德尔光开关"></a>
 </p>
 <p align="center"><img src="assets/device_library/active/legend.png" width="100%" alt="有源器件的配色说明"></p>
+
+| 器件 | 求解器 | 1.55 µm、TE 光下的结果 |
+|---|---|---|
+| [热光移相器](lumerical_simulations/thermo_optic_phase_shifter/README.md) | HEAT、MODE | 带隔热槽时 π 相移需要 10.3 mW，不带槽时 22.0 mW；时间常数 18 µs，不带槽时 6 µs；槽外的相邻波导不再经氧化层受热 |
+| [微环调制器](lumerical_simulations/ring_modulator/README.md) | FDTD、MODE、CHARGE、HEAT、INTERCONNECT | 间隙 371 nm 时临界耦合，有载 Q 为 31 000，消光比 46 dB；V_π·L 为 1.8 V·cm；加热器调谐 124 pm/mW |
 
 ### 薄膜铌酸锂电光器件
 
@@ -279,7 +284,7 @@ photonics-layout-cookbook/
 ├── gsip_process_file_py/     工艺表格（CSV）、编译脚本、编译好的 gsip_process.lbr
 ├── lumerical_simulations/
 │   ├── flow.py               所有仿真共用的部分：路径和 Layer Builder 的搭建
-│   ├── solvers.py            MODE、EME、FDTD 的求解器配方
+│   ├── solvers.py            MODE、EME、FDTD、HEAT 的求解器配方
 │   ├── panels.py             多个器件共用的绘图面板
 │   └── <器件>/               scripts/、每一步的结果文件夹、figures/、README.md
 ├── docs/                     第 1、2、5 章

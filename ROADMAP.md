@@ -20,7 +20,7 @@ dot and a link to that chapter. Nothing below has a date.
 | v0.1 | a first package: a generated PDK and a bridge that wrote Lumerical scripts (removed from the tree, still in the git history) |
 | v0.2 | the foundry-compatible flow on CORNERSTONE SOI220A, now in [more_processes/cornerstone_soi220a/](more_processes/cornerstone_soi220a/README.md) |
 | v0.3 | the GSiP teaching PDK with a full back end, the heater-tuned ring modulator, seven simulation steps and five chapters |
-| since v0.3 | the device library: builders in `devices/`, shared solver recipes, and the first four passive devices |
+| since v0.3 | the device library: builders in `devices/`, shared solver recipes, the first four passive devices and the thermo-optic phase shifter |
 
 ## Unit devices: passive
 
@@ -44,7 +44,7 @@ dot and a link to that chapter. Nothing below has a date.
 | device | main PDK layers | simulation | status |
 |---|---|---|---|
 | Microring modulator with a heater | `WG`, `SLAB90`, `N`, `P`, `NP`, `PP`, `NPP`, `PPP`, `VIAC`, `M1`, `VIA1`, `M2`, `VIA2`, `M3`, `PADOPEN`, `HEATER` | FDTD, MODE, CHARGE, HEAT, INTERCONNECT | done (v0.3) |
-| Thermo-optic phase shifter, with and without undercut | `WG`, `HEATER`, `VIA1`, `M2`, `UNDERCUT` | HEAT for the temperature and the time constant, MODE for the phase: power per π | planned |
+| Thermo-optic phase shifter with isolation trenches | `WG`, `HEATER`, `DEEPTRENCH`, `VIA1`, `M2`, `VIA2`, `M3`, `PADOPEN` | HEAT for the temperature, the time constant and the heat that reaches a neighbour, MODE for the phase: power per π | [done](lumerical_simulations/thermo_optic_phase_shifter/README.md) |
 | PN phase shifter and travelling-wave Mach-Zehnder modulator | `WG`, `SLAB90`, `N`, `P`, `NP`, `PP`, `NPP`, `PPP`, `VIAC`, `M1`, `VIA1`, `M2`, `VIA2`, `M3` | CHARGE and MODE for the phase shifter; INTERCONNECT for the modulator, with the electrode as a transmission line | planned |
 | PIN phase shifter and variable optical attenuator | `WG`, `SLAB90`, `NPP`, `PPP`, `VIAC`, `M1` | CHARGE in forward bias, MODE | planned |
 | Germanium photodetector | `WG`, `GE`, `GEN`, `GEP`, `VIAC`, `M1` | FDTD for the absorption and the generation rate, then CHARGE for responsivity, dark current and bandwidth | planned |
@@ -94,6 +94,7 @@ models of the unit devices above.
 |---|---|
 | Port the v0.3 corrections to the CORNERSTONE example | mesh lines on the silicon surfaces, the volume heat source, the series-RC extraction, refined resonances |
 | Rerun the FDTD coupler with a 10 nm mesh | κ² moves by 2 % between a 20 nm and a 10 nm mesh, see chapter 4 |
+| An undercut for the thermo-optic phase shifter | needs a three-dimensional HEAT model: in a cross-section the wall between the trenches has no path left to the heat sink, see its chapter |
 | More open processes | only processes whose data is public qualify |
 | Comparison with measured devices | needs published data or a tape-out |
 

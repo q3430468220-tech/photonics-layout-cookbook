@@ -106,7 +106,7 @@ Before any licence is used, run the tests. They need no Lumerical:
 uv run pytest
 ```
 
-The 115 tests check the PDK, the layout, the design rules, the process tables, the device's nets and the
+The 146 tests check the PDK, the layout, the design rules, the process tables, the device's nets and the
 figures redrawn from the kept data.
 
 ### The commands, in order

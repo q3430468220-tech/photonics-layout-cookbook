@@ -36,7 +36,7 @@ jobs:
       - name: Device layouts with DRC
         shell: bash
         run: |
-          for device in ring_modulator strip_waveguide rib_waveguide directional_coupler mmi1x2; do
+          for device in ring_modulator strip_waveguide rib_waveguide directional_coupler mmi1x2 thermo_optic_phase_shifter; do
             uv run python devices/${device}_builder.py
           done
       - uses: actions/upload-artifact@v4

@@ -31,7 +31,6 @@ All cross-sections, layers and design rules come from gsip_technology.py.
 
 from __future__ import annotations
 
-import itertools
 import math
 import sys
 from pathlib import Path
@@ -42,6 +41,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # the repository r
 import gdsfactory as gf
 
 import gsip_technology as t
+from devices.wiring import (  # the metal 2 wires and the pads, shared with the thermo-optic phase shifter
+    TAB,
+    TRACE,
+    VIA1_SIZE,
+    box,
+    pad_with_tab,
+    polar,
+    reach_beyond,
+    square,
+    unit,
+    wire,
+)
 
 # ---- dimensions (um).  Radial distances are measured from the centre line of the ring waveguide. ----
 SLAB_WIDTH = t.RIB_SLAB_WIDTH  # 6.0: slab of ring and bus
@@ -53,15 +64,9 @@ M1_WIDTH = 2.00  # outer electrode arc
 HEATER_WIDTH = 1.60  # TiN film above the core (rule: >= 0.8)
 LANDING = 2.40  # tangential width of a heater landing
 LANDING_REACH = 2.40  # a landing extends this far outside the centre line
-VIA1_SIZE = 1.00  # rule: >= 0.5
-VIA2_SIZE = 2.00  # rule: >= 1.0
-VIA2_PITCH = 6.00
 ARC_MARGIN = 1.00  # vias stay this far from the ends of the doped arc
-TRACE = 6.00  # metal 2 wire width
-TAB = 8.00  # metal 3 tab at a pad: metal 2 ends below it, joined by a row of via 2
 SLAB_NOTCH = 0.70  # the wedge between ring slab and bus slab is filled up to this width (rule: space >= 0.3)
 ARC_STEP_DEG = 0.5  # polygon resolution of every arc
-ENCLOSURE_MARGIN = 0.10  # metal 2 beyond the via 1 enclosure rule, so that no wire end lies exactly on the limit
 DISC_VIAS = [(x, y) for x in (-2.0, 0.0, 2.0) for y in (-2.0, 0.0, 2.0)]  # via 1 on the inner disc: 3 x 3, 2 um pitch
 ELECTRODE_ANGLES = {"G1": 135.0, "G2": 45.0}  # outer electrode: the ports and the via 1 row sit at these angles
 
@@ -79,23 +84,6 @@ def _arc_points(radius: float, a0: float, a1: float) -> np.ndarray:
 def _sector(r0: float, r1: float, a0: float, a1: float) -> np.ndarray:
     """Annular sector between radii r0 < r1 and angles a0 < a1."""
     return np.vstack([_arc_points(r1, a0, a1), _arc_points(r0, a1, a0)])
-
-
-def _polar(radius: float, angle: float) -> np.ndarray:
-    return radius * np.array([math.cos(math.radians(angle)), math.sin(math.radians(angle))])
-
-
-def _square(centre, size: float, angle: float = 0.0) -> list[tuple[float, float]]:
-    """Square of edge ``size`` centred on ``centre``, rotated by ``angle`` degrees."""
-    return _box(centre, size, size, angle)
-
-
-def _box(centre, radial: float, tangential: float, angle: float = 0.0) -> list[tuple[float, float]]:
-    """Rectangle centred on ``centre``: ``radial`` long along the direction ``angle``, ``tangential`` wide across it."""
-    u = _polar(1.0, angle)
-    v = np.array([-u[1], u[0]])
-    c = np.asarray(centre, dtype=float)
-    return [tuple(c + sx * u * radial / 2 + sy * v * tangential / 2) for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
 
 
 def _slab_fillets(radius: float, y_bus: float) -> list[list[tuple[float, float]]]:
@@ -144,7 +132,7 @@ def _via_row(c: gf.Component, layer, radius: float, a0: float, a1: float, size: 
     start = (length - (count - 1) * pitch) / 2  # centre the row on the arc
     for k in range(count):
         angle = a0 + math.degrees((start + k * pitch) / radius)
-        c.add_polygon(_square(_polar(radius, angle), size, angle), layer=layer)
+        c.add_polygon(square(polar(radius, angle), size, angle), layer=layer)
     return count
 
 
@@ -152,7 +140,7 @@ def _electrode_vias(radius: float, angle: float) -> list[tuple[tuple[float, floa
     """Centre and rotation of the three via 1 of an outer electrode centred on angle: a row along the arc."""
     r_mid = radius + M1_GAP + M1_WIDTH / 2
     step = math.degrees(2.0 / r_mid)
-    return [(tuple(_polar(r_mid, angle + k * step)), angle + k * step) for k in (-1, 0, 1)]
+    return [(tuple(polar(r_mid, angle + k * step)), angle + k * step) for k in (-1, 0, 1)]
 
 
 # =====================================================================================
@@ -213,13 +201,13 @@ def pn_contacts(radius: float = 10.0, pn_angle: float = 240.0) -> gf.Component:
     c.add_polygon(_sector(radius + M1_GAP, radius + M1_GAP + M1_WIDTH, a0, a1), layer=t.M1)  # outer arc
 
     for centre in DISC_VIAS:  # via 1 on the disc: 3 x 3
-        c.add_polygon(_square(centre, VIA1_SIZE), layer=t.VIA1)
+        c.add_polygon(square(centre, VIA1_SIZE), layer=t.VIA1)
     c.add_port("S", center=(0, 0), width=TRACE, orientation=90, layer=t.M2, port_type="electrical")
     r_mid = radius + M1_GAP + M1_WIDTH / 2
     for name, angle in ELECTRODE_ANGLES.items():
         for centre, rotation in _electrode_vias(radius, angle):  # via 1 on the arc: a row of three
-            c.add_polygon(_square(centre, VIA1_SIZE, rotation), layer=t.VIA1)
-        c.add_port(name, center=tuple(_polar(r_mid, angle)), width=TRACE, orientation=90, layer=t.M2, port_type="electrical")
+            c.add_polygon(square(centre, VIA1_SIZE, rotation), layer=t.VIA1)
+        c.add_port(name, center=tuple(polar(r_mid, angle)), width=TRACE, orientation=90, layer=t.M2, port_type="electrical")
     return c
 
 
@@ -236,74 +224,10 @@ def heater(radius: float = 10.0, heater_angle: float = 270.0) -> gf.Component:
     r0, r1 = radius - HEATER_WIDTH / 2, radius + LANDING_REACH
     r_via = r1 - 0.4 - VIA1_SIZE / 2  # 0.4 um of heater film beyond the via
     for name, angle in (("H1", h1), ("H2", h0)):
-        c.add_polygon(_box(_polar((r0 + r1) / 2, angle), r1 - r0, LANDING, angle), layer=t.HEATER)
-        c.add_polygon(_square(_polar(r_via, angle), VIA1_SIZE, angle), layer=t.VIA1)
-        c.add_port(name, center=tuple(_polar(r_via, angle)), width=TRACE, orientation=270, layer=t.M2, port_type="electrical")
+        c.add_polygon(box(polar((r0 + r1) / 2, angle), r1 - r0, LANDING, angle), layer=t.HEATER)
+        c.add_polygon(square(polar(r_via, angle), VIA1_SIZE, angle), layer=t.VIA1)
+        c.add_port(name, center=tuple(polar(r_via, angle)), width=TRACE, orientation=270, layer=t.M2, port_type="electrical")
     return c
-
-
-def _pad(c: gf.Component, xy: tuple[float, float], size: float) -> tuple[float, float]:
-    """Pad (metal 3 + opening) with a tab on the side that faces the ring, where metal 2 comes up through a row of via 2.
-
-    Returns the point in the middle of the tab, where the metal 2 wire ends.
-    """
-    px, py = xy
-    (c << t.pad(size=size)).dmove(xy)
-    side = -1.0 if py > 0 else 1.0  # the tab points towards y = 0
-    y_edge = py + side * size / 2
-    y_tab = y_edge + side * TAB
-    tab = [(px - size / 2, y_edge), (px + size / 2, y_edge), (px + size / 2, y_tab), (px - size / 2, y_tab)]
-    c.add_polygon(tab, layer=t.M3)
-    c.add_polygon(tab, layer=t.M2)
-    count = int((size - 2 * VIA2_SIZE) // VIA2_PITCH) + 1
-    x0 = px - (count - 1) * VIA2_PITCH / 2
-    for k in range(count):
-        c.add_polygon(_square((x0 + k * VIA2_PITCH, (y_edge + y_tab) / 2), VIA2_SIZE), layer=t.VIA2)
-    return px, (y_edge + y_tab) / 2
-
-
-def _unit(p: tuple[float, float], q: tuple[float, float]) -> tuple[float, float]:
-    """Unit step (sign of each component) from p to q, for a horizontal or vertical segment."""
-    return float(np.sign(q[0] - p[0])), float(np.sign(q[1] - p[1]))
-
-
-def _reach_beyond(start: tuple[float, float], travel: tuple[float, float], squares: list) -> float:
-    """How far metal 2 must run beyond start, backwards from travel, to enclose every via 1 square.
-
-    squares: the corner points of each via 1 (rotated squares included).  The farthest corner behind the
-    start sets the reach: the metal must extend past it by via1_enclosure_by_m2 plus ENCLOSURE_MARGIN.
-    Corners ahead of the start lie on the wire itself.
-    """
-    behind = [-((x - start[0]) * travel[0] + (y - start[1]) * travel[1]) for square in squares for x, y in square]
-    return max([0.0, *behind]) + t.DESIGN_RULES["via1_enclosure_by_m2"] + ENCLOSURE_MARGIN
-
-
-def _wire(
-    c: gf.Component, points: list[tuple[float, float]], start_reach: float, end_reach: float = 0.0, width: float = TRACE
-) -> None:
-    """Metal 2 wire through points: one path of constant width with square corners.
-
-    Each segment is a rectangle.  At a corner both segments run width / 2 past the corner, which makes the
-    outer corner square and leaves no notch.  The two free ends do not run past the width: start_reach and
-    end_reach say how far the metal goes beyond the first and the last point (see _reach_beyond).
-    """
-    h = width / 2
-    last = len(points) - 2
-    for i, ((x0, y0), (x1, y1)) in enumerate(itertools.pairwise(points)):
-        if abs(x1 - x0) > 1e-9 and abs(y1 - y0) > 1e-9:
-            raise ValueError("a wire segment must be horizontal or vertical")
-        if abs(x1 - x0) < 1e-9 and abs(y1 - y0) < 1e-9:
-            raise ValueError("a wire segment must have a length")
-        ux, uy = _unit((x0, y0), (x1, y1))
-        before = start_reach if i == 0 else h
-        after = end_reach if i == last else h
-        ax, ay = x0 - ux * before, y0 - uy * before  # the segment, extended backwards at its start
-        bx, by = x1 + ux * after, y1 + uy * after  # and forwards at its end
-        if uy == 0:  # horizontal
-            left, bottom, right, top = min(ax, bx), y0 - h, max(ax, bx), y0 + h
-        else:  # vertical
-            left, bottom, right, top = x0 - h, min(ay, by), x0 + h, max(ay, by)
-        c.add_polygon([(left, bottom), (right, bottom), (right, top), (left, top)], layer=t.M2)
 
 
 # =====================================================================================
@@ -387,20 +311,20 @@ def ring_modulator(
     }
     y_jog = (y_bus - pad_distance + pad_size / 2 + TAB) / 2  # half-way between the bus and the heater pads
     for name, xy in pads.items():
-        end = _pad(c, xy, pad_size)
+        end = pad_with_tab(c, xy, pad_size)
         x, y = (e if name in e.ports else h).ports[name].center
         if name == "S":  # straight up from the middle of the disc; it crosses heater and metal 1 on metal 2
             points = [(x, y), end]
-            vias = [_square(centre, VIA1_SIZE) for centre in DISC_VIAS]
+            vias = [square(centre, VIA1_SIZE) for centre in DISC_VIAS]
         elif name in ELECTRODE_ANGLES:  # sideways above the outer electrode, then up
             points = [(x, y), (end[0], y), end]
-            vias = [_square(centre, VIA1_SIZE, rot) for centre, rot in _electrode_vias(radius, ELECTRODE_ANGLES[name])]
+            vias = [square(centre, VIA1_SIZE, rot) for centre, rot in _electrode_vias(radius, ELECTRODE_ANGLES[name])]
         else:  # heater: straight down across the bus, sideways, then down to the pad
             points = [(x, y), (x, y_jog), (end[0], y_jog), end]
-            vias = [_square((x, y), VIA1_SIZE, math.degrees(math.atan2(y, x)))]  # the via turns with its landing
+            vias = [square((x, y), VIA1_SIZE, math.degrees(math.atan2(y, x)))]  # the via turns with its landing
         # the wire leaves its via 1 (or the row of them) with just enough metal to enclose it; the pad end
         # stops in the middle of the pad tab, where the row of via 2 sits
-        _wire(c, points, start_reach=_reach_beyond((x, y), _unit(points[0], points[1]), vias))
+        wire(c, points, start_reach=reach_beyond((x, y), unit(points[0], points[1]), vias))
         c.add_port(name, center=xy, width=pad_size, orientation=90 if xy[1] > 0 else 270, layer=t.M3, port_type="electrical")
     c.add_ports(b.ports)
 
