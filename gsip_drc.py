@@ -173,6 +173,7 @@ def run_drc(source, rdb_path: str | Path | None = None) -> DrcResult:
     )
 
     if rdb_path is not None:
+        Path(rdb_path).parent.mkdir(parents=True, exist_ok=True)  # build/drc/ does not exist in a fresh clone
         report.save(str(rdb_path))
     return result
 

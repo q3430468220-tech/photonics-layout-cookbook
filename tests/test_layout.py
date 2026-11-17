@@ -17,10 +17,11 @@ from gsip_drc import demo_component, run_drc
 
 def test_default_ring_modulator_is_drc_clean(tmp_path: Path):
     device = rm.ring_modulator()
-    result = run_drc(device, rdb_path=tmp_path / "drc.lyrdb")
+    report = tmp_path / "reports" / "drc.lyrdb"  # a folder that does not exist yet, as build/drc/ in a fresh clone
+    result = run_drc(device, rdb_path=report)
     assert result.passed, result.summary()
     assert not result.warnings, result.summary()
-    assert (tmp_path / "drc.lyrdb").exists()
+    assert report.exists()
 
 
 def test_ports_and_info():
