@@ -337,14 +337,14 @@ panel e of figure 0. Both show the same disc, arc and heater landings.
 
 **The model.** Only the coupling region is simulated. The ring arc is kept for 35° on either side of the
 coupling point. Beyond that the arc bends back, so that it leaves the window parallel to the bus and all four
-ports are normal to x:
+ports are normal to x. Panel a of figure 1 below shows the window. The ports are:
 
-```
-port 3 ______                               ______ port 4      ring arm (radius R near the bus)
-             `--..                       ..--'
-                   `--..__     __..--'
-port 1 ====================`==='==================== port 2      bus
-```
+| port | where | what it is for |
+|---|---|---|
+| 1 | bus, left end | the light enters here |
+| 2 | bus, right end | the light that stays in the bus |
+| 3 | ring arm, left end | input of the reference run of the arm alone |
+| 4 | ring arm, right end | the light that has crossed into the ring |
 
 Light enters at port 1. The transmission t² = |S21|² stays in the bus. The coupling κ² = |S41|² is the power
 that crosses into the ring. Two settings matter.

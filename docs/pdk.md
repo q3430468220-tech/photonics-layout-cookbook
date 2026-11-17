@@ -285,20 +285,24 @@ decorator `@xsection` registers the function, so that its arguments can be given
 A PN phase shifter changes the refractive index by moving carriers in and out of a junction. The
 junction is a line between an n-doped side and a p-doped side. The contacts need heavy doping, so
 each side has a light implant next to the junction and a heavy one at the outer edge. The implants are
-nested: the heavy one covers the outer part of the lighter one. Here is the cross-section as the
-docstring of `rib_pn` draws it (distances in µm from the core centre):
+nested: the heavy one covers the outer part of the lighter one. With the defaults of `rib_pn`, this
+is what the slab holds from one edge to the other (distances in µm from the core centre, negative on
+the left of the path):
 
-```
-     N++   |  N+  |   N    |core|    P   |  P+  |  P++
-    -------+------+--------+####+--------+------+-------
-          -1.25  -0.65              0.65   1.25
-```
+| from | to | implants drawn there | doping |
+|---|---|---|---|
+| −3.00 | −1.25 | `N`, `N+`, `N++` | n, heavy: the contact lands here |
+| −1.25 | −0.65 | `N`, `N+` | n, medium |
+| −0.65 | 0 | `N` | n, light; the core begins at −0.25 |
+| 0 | 0.65 | `P` | p, light; the core ends at 0.25 |
+| 0.65 | 1.25 | `P`, `P+` | p, medium |
+| 1.25 | 3.00 | `P`, `P+`, `P++` | p, heavy: the contact lands here |
 
-Read it from left to right. The n side is on the left of the path; the p side is on the right. Each
-implant is a band from its inner edge to the slab edge. `N` covers the whole n side from the junction
-out to the slab edge. `N+` covers from 0.65 µm out. `N++` covers from 1.25 µm out. The same holds for
-the p side. The layers are not drawn one above the other: they are the same slab, with a higher
-concentration further out.
+Read it from top to bottom, which is from left to right across the waveguide. The n side is on the
+left of the path; the p side is on the right. Each implant is a band from its inner edge to the slab
+edge. `N` covers the whole n side from the junction out to the slab edge. `N+` covers from 0.65 µm
+out. `N++` covers from 1.25 µm out. The same holds for the p side. The layers are not drawn one above
+the other: they are the same slab, with a higher concentration further out.
 
 The parameters that set this are:
 
