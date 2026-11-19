@@ -350,6 +350,20 @@ was. That process does not exist yet.
 </p>
 <p align="center"><img src="assets/device_library/tfln/legend.png" width="100%" alt="Colour key of the lithium niobate devices"></p>
 
+## Circuits
+
+Circuits are built from the devices of the library, with the kept results of their chapters, and
+run in INTERCONNECT. They come in four directions: programmable photonics, optical computing,
+optical interconnects and optical switching. The first is a programmable mesh; a real matrix
+multiplier for optical computing is built on it next, then a WDM ring link and a switch fabric
+([ROADMAP.md](ROADMAP.md#circuits-and-links)).
+
+<p align="center"><img src="lumerical_simulations/clements_mesh/figures/fig0_layout.png" width="100%" alt="Layout of the 4 by 4 Clements mesh: six interferometers in four columns, sixteen heaters with trenches and thirty-two pads"></p>
+
+| circuit | built from | tools | result at 1.55 µm, TE |
+|---|---|---|---|
+| [Clements mesh, 4 × 4](lumerical_simulations/clements_mesh/README.md) | directional coupler, thermo-optic phase shifter | INTERCONNECT, Python | any unitary matrix to 1 − F below 10⁻⁶, about 160 mW of heaters; F > 0.99 over 13 nm; the heat of the neighbours costs 10⁻³ and a fit takes it back; with the coupler gaps off by σ = 5 nm a fit still holds every matrix tried |
+
 ## Roadmap
 
 The unit devices of the library come first, then the circuits and links built from them.
@@ -357,7 +371,8 @@ The unit devices of the library come first, then the circuits and links built fr
 
 | area | planned |
 |---|---|
-| optical computing | Mach-Zehnder meshes and microring weight banks: layout and link simulation |
+| programmable photonics | the 4×4 Clements mesh is [done](lumerical_simulations/clements_mesh/README.md) |
+| optical computing | a real matrix multiplier built on the mesh; a microring weight bank |
 | optical switching | N×N switch fabrics: layout, loss and crosstalk |
 | optical interconnects | WDM transmitters, demultiplexers and receivers: layout, link budget, eye diagram |
 
@@ -372,13 +387,13 @@ repository.
 photonics-layout-cookbook/
 ├── gsip_technology.py        the PDK: layers, stack, cross-sections, design rules
 ├── gsip_drc.py               design-rule check
-├── devices/                  one builder per device, and the layouts they write (gds/)
+├── devices/                  one builder per device or circuit, and the layouts they write (gds/)
 ├── gsip_process_file_py/     process tables (CSV), the compiler, and the compiled gsip_process.lbr
 ├── lumerical_simulations/
 │   ├── flow.py               what every simulation shares: paths and the Layer Builder set-up
 │   ├── solvers.py            solver recipes for MODE, EME, FDTD and HEAT
 │   ├── panels.py             figure panels that several devices use
-│   └── <device>/             scripts/, one folder of results per step, figures/, README.md
+│   └── <device or circuit>/  scripts/, one folder of results per step, figures/, README.md
 ├── docs/                     chapters 1, 2 and 5
 ├── assets/                   figures of this page; the drawings of the device library
 ├── tests/                    PDK, layouts, DRC, nets, process tables, figures

@@ -260,13 +260,24 @@ x 切薄膜铌酸锂（LNOI）上的 8 个电光器件。GSiP 工艺里没有铌
 </p>
 <p align="center"><img src="assets/device_library/tfln/legend.png" width="100%" alt="铌酸锂器件的配色说明"></p>
 
+## 电路
+
+电路由器件库里的器件搭成，用的是各器件章节保存下来的仿真结果，在 INTERCONNECT 里运行。电路分四个方向：可编程光子学、光计算、光互连和光交换。第一个电路是可编程干涉仪网格；接下来在它的基础上做光计算用的实数矩阵乘法器，然后是波分复用微环链路和光开关阵列（见 [ROADMAP.md](ROADMAP.md#circuits-and-links)）。
+
+<p align="center"><img src="lumerical_simulations/clements_mesh/figures/fig0_layout.png" width="100%" alt="4×4 Clements 网格的版图：四列共六个干涉仪，十六个带隔热槽的加热器，三十二个焊盘"></p>
+
+| 电路 | 由哪些器件组成 | 工具 | 1.55 µm、TE 光下的结果 |
+|---|---|---|---|
+| [Clements 网格，4×4](lumerical_simulations/clements_mesh/README.md) | 定向耦合器、热光移相器 | INTERCONNECT、Python | 任意幺正矩阵的保真度误差 1 − F 低于 10⁻⁶，加热器总功率约 160 mW；F > 0.99 的带宽 13 nm；相邻加热器的热串扰带来约 10⁻³ 的误差，拟合标定后可消除；耦合器间隙随机偏差 σ = 5 nm 时，拟合后所试的矩阵全部能实现 |
+
 ## 路线图
 
 先做器件库里的单元器件，再做由它们组成的电路和链路。完整表格见 [ROADMAP.md](ROADMAP.md)。
 
 | 方向 | 计划 |
 |---|---|
-| 光计算 | 马赫-曾德尔干涉仪网格、微环权重阵列（weight bank）：版图与链路仿真 |
+| 可编程光子学 | 4×4 Clements 网格已[完成](lumerical_simulations/clements_mesh/README.md) |
+| 光计算 | 基于该网格的实数矩阵乘法器；微环权重阵列（weight bank） |
 | 光交换 | N×N 开关阵列：版图、损耗与串扰 |
 | 光互联 | 波分复用发射端、解复用器和接收端：版图、链路预算、眼图 |
 
@@ -280,13 +291,13 @@ x 切薄膜铌酸锂（LNOI）上的 8 个电光器件。GSiP 工艺里没有铌
 photonics-layout-cookbook/
 ├── gsip_technology.py        PDK：图层、膜层堆叠、截面、设计规则
 ├── gsip_drc.py               设计规则检查
-├── devices/                  每个器件一个 builder，以及它们输出的版图（gds/）
+├── devices/                  每个器件或电路一个 builder，以及它们输出的版图（gds/）
 ├── gsip_process_file_py/     工艺表格（CSV）、编译脚本、编译好的 gsip_process.lbr
 ├── lumerical_simulations/
 │   ├── flow.py               所有仿真共用的部分：路径和 Layer Builder 的搭建
 │   ├── solvers.py            MODE、EME、FDTD、HEAT 的求解器配方
 │   ├── panels.py             多个器件共用的绘图面板
-│   └── <器件>/               scripts/、每一步的结果文件夹、figures/、README.md
+│   └── <器件或电路>/         scripts/、每一步的结果文件夹、figures/、README.md
 ├── docs/                     第 1、2、5 章
 ├── assets/                   本页的图片；器件库的图块
 ├── tests/                    PDK、版图、DRC、连通性、工艺表格、图片

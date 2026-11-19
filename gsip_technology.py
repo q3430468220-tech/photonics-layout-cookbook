@@ -454,15 +454,29 @@ CELLS = {"straight": straight, "bend_euler": bend_euler, "bend_circular": bend_c
 # =====================================================================================
 # 7. From layout to simulation
 # =====================================================================================
+MAX_POINTS = 4000  # points of one polygon in a GDS record: 8 bytes a point, and a record holds at most 32 kB
+
+
 def write_gds_for_lumerical(component: gf.Component, gdspath: str | Path, cellname: str | None = None) -> Path:
     """Write a flat GDS with a single named cell and no gdsfactory metadata cell.
 
     The Layer Builder loads one cell of one GDS file; a flat, single-cell file leaves nothing to choose.
-    The mask layers are written unchanged.
+    The mask layers are written unchanged.  Flattening merges the shapes of each layer; a merged polygon with
+    more points than one GDS record holds (MAX_POINTS) is cut into pieces that cover the same area, which only
+    a long chain of bends, as in a mesh, reaches.
     """
     flat = gf.Component()
     flat << component
     flat.flatten()
+    for layer in flat.kcl.layout.layer_indexes():
+        shapes = flat.kdb_cell.shapes(layer)
+        if any(s.is_polygon() and s.polygon.num_points() > MAX_POINTS for s in shapes.each()):
+            region = gf.kdb.Region(shapes)
+            region.break_(MAX_POINTS, 0.0)
+            texts = gf.kdb.Texts(shapes)
+            flat.kdb_cell.clear(layer)
+            shapes.insert(region)
+            shapes.insert(texts)
     flat.name = cellname or component.name
     gdspath = Path(gdspath)
     gdspath.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,52 @@
+INTERCONNECT, Lumerical 2025 R1, and the Python model: the 4 x 4 mesh with the heat that every heater gives every site
+  the substrate path estimated as in the phase shifter chapter, step 4c: k = 148.0 W/m/K, wafer 725 um,
+  heaters 100 um long, own rise 3.790 K/mW; run time 4.5 min
+
+answer: the heat of the neighbours lowers the fidelity of the DFT to 1 - F = 1.1e-03 and of the random unitaries to a median of 1.1e-03.  A linear calibration of the heated waveguides brings the median to 2.8e-03: worse, because it undoes the heat that both arms of a block share.  A fit with every warmed waveguide in the model brings the median back to 3.0e-07 (largest 9.0e-07); without the heat it is 3.3e-07.
+
+a. the shares: the rise of a waveguide per mW of another heater, over the rise of that heater's own waveguide
+  largest: 0.64 %: P0 on the waveguide 30 um beside it (row 1, same x)
+  summed over all heaters, for the site that collects most: 1.70 %
+  heater   own row  nearest waveguide that it warms (share)
+  P0            0  row 1 at x = 77 um (0.640 %)
+  T0            0  row 1 at x = 306 um (0.640 %)
+  P1            2  row 1 at x = 77 um (0.640 %)
+  T1            2  row 1 at x = 306 um (0.640 %)
+  P2            1  row 0 at x = 535 um (0.640 %)
+  T2            1  row 0 at x = 764 um (0.640 %)
+  P3            0  row 1 at x = 993 um (0.640 %)
+  T3            0  row 1 at x = 1222 um (0.640 %)
+  P4            2  row 1 at x = 993 um (0.640 %)
+  T4            2  row 1 at x = 1222 um (0.640 %)
+  P5            1  row 0 at x = 1451 um (0.640 %)
+  T5            1  row 0 at x = 1680 um (0.640 %)
+  D0            0  row 1 at x = 1909 um (0.640 %)
+  D1            1  row 0 at x = 2138 um (0.640 %)
+  D2            2  row 1 at x = 2138 um (0.640 %)
+  D3            3  row 2 at x = 1909 um (0.640 %)
+  at the powers of the DFT (139.2 mW in all) the neighbours warm a waveguide by up to 0.95 K (0.077 rad over the 100 um of a site).
+
+b. the fidelity at 1.55 um
+  target      without the heat   as programmed   linear calibration   fitted
+  DFT                 3.5e-07         1.1e-03              3.8e-03  4.4e-07
+  random 1            3.8e-07         7.1e-04              1.5e-03  3.8e-07
+  random 2            1.4e-07         7.6e-04              2.9e-03  1.4e-07
+  random 3            5.5e-08         1.8e-03              5.5e-03  5.5e-08
+  random 4            2.6e-07         6.7e-04              2.2e-03  2.6e-07
+  random 5            1.1e-07         1.0e-03              2.8e-03  1.1e-07
+  random 6            5.7e-07         7.8e-04              2.8e-03  5.0e-07
+  random 7            1.8e-07         1.2e-03              3.2e-03  1.8e-07
+  all 41 targets, 1 - F, median (largest): without the heat 3.3e-07 (9.1e-07); as programmed 1.1e-03 (2.2e-03); linear 2.9e-03 (6.4e-03); fitted 3.0e-07 (9.0e-07)
+  The linear calibration sets the phase of the 16 heated waveguides.  It leaves the 24 sites without a heater warm.
+  A heater warms both arms of a block beside it by about as much, and what both arms gain cancels in the block: the
+  heat as programmed does less harm than its size suggests.  The linear calibration takes the heat out of the heated
+  arm only, and so leaves the difference.  The fit puts every site into the model and moves every heater a little.
+
+c. the power: DFT 139.20 mW as programmed, 158.65 mW linear, 143.31 mW fitted; random, mean change by the fit -2.05 mW
+  heaters that the fit leaves at the bottom of their range (below 0.05 mW), where they would need less than no power: DFT: P1 (0.01 mW as programmed)
+
+d. INTERCONNECT, DFT at 1.55 um: as programmed F = 0.99892016, linear F = 0.99617198, fitted F = 0.99999952; the model: 0.99892362, 0.99617880, 0.99999956
+
+limits: the substrate path is the estimate of a formula (a point source on a wafer with a perfect heat sink below), not a
+  three-dimensional simulation; the carrier below the chip and the metal of the pads are not in it.  The path through
+  the oxide is left out: beyond the trenches the phase shifter chapter found 0.02 % at 10 um, with a thin substrate.

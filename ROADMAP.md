@@ -4,8 +4,8 @@ The cookbook is built bottom-up. First come the unit devices, the single compone
 made of. The [device library](README.md#device-library) in the README shows each of them as a
 drawing. The silicon devices, passive and active, are drawn on the same teaching PDK and simulated
 with the same process file; the lithium niobate devices need a process of their own. Then come
-the circuits that use them, in three directions: optical computing,
-optical switching and optical interconnects. For those the deliverable is a layout plus a
+the circuits that use them, in four directions: programmable photonics, optical computing,
+optical interconnects and optical switching. For those the deliverable is a layout plus a
 link-level simulation in INTERCONNECT.
 
 A device counts as done when it has a builder that passes the DRC, simulation scripts that load
@@ -21,6 +21,7 @@ dot and a link to that chapter. Nothing below has a date.
 | v0.2 | the foundry-compatible flow on CORNERSTONE SOI220A, now in [more_processes/cornerstone_soi220a/](more_processes/cornerstone_soi220a/README.md) |
 | v0.3 | the GSiP teaching PDK with a full back end, the heater-tuned ring modulator, seven simulation steps and five chapters |
 | since v0.3 | the device library: builders in `devices/`, shared solver recipes, the first four passive devices and the thermo-optic phase shifter |
+| since v0.3 | the first circuit: a 4×4 Clements mesh, built from the coupler and the phase shifter and run in INTERCONNECT |
 
 ## Unit devices: passive
 
@@ -82,9 +83,18 @@ The solver named for each step is a first plan. It will be checked when the chap
 Each direction ends in a layout that passes the DRC and a link simulation built from the compact
 models of the unit devices above.
 
+The circuits come in four directions. Programmable photonics comes first, because optical
+computing is built on it.
+
+Done: the [4×4 Clements mesh](lumerical_simulations/clements_mesh/README.md) of programmable
+photonics, with its layout, the programming of a matrix, the heat of the neighbours and the errors
+of the couplers. Next: a real matrix multiplier for optical computing, made of two such meshes and
+a column of attenuators. Then a WDM microring link, then a switch fabric.
+
 | direction | layout | what the link simulation reports | unit devices it needs |
 |---|---|---|---|
-| Optical computing | an N×N Mach-Zehnder mesh (Reck and Clements arrangements); a microring weight bank | matrix fidelity under phase errors and loss; thermal crosstalk between heaters; phase calibration | Mach-Zehnder interferometers, splitters, thermo-optic phase shifters, ring filters, photodetectors |
+| Programmable photonics | an N×N Mach-Zehnder mesh in the Clements arrangement ([done](lumerical_simulations/clements_mesh/README.md) for 4×4) | matrix fidelity, band, thermal crosstalk between heaters and its calibration, coupler errors | directional couplers, thermo-optic phase shifters |
+| Optical computing | a real matrix multiplier: two meshes and a column of attenuators, by the singular value decomposition; a microring weight bank | the matrix-vector product against its target; the precision in bits; power and speed per operation | the mesh above, variable optical attenuators, photodetectors, ring filters |
 | Optical switching | N×N fabrics built from the 2×2 switch (Beneš and path-independent-loss arrangements); a ring-based switch | insertion loss and crosstalk per path; extinction; switching time and power | 2×2 Mach-Zehnder switches, splitters, crossings, thermo-optic and PIN phase shifters, ring filters |
 | Optical interconnects | a WDM transmitter with several ring modulators on one bus; a ring or Mach-Zehnder demultiplexer; a germanium receiver; a Mach-Zehnder modulator link | link budget; eye diagram; bit error rate against received power; crosstalk between channels; locking of the rings with their heaters | ring modulator, Mach-Zehnder modulator, photodetector, ring filters, splitters, grating or edge couplers |
 

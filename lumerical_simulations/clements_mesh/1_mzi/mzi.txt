@@ -1,0 +1,44 @@
+INTERCONNECT, Lumerical 2025 R1: one block of the mesh (the 2 x 2 mesh of devices/clements_mesh_builder.py), built from
+  the FDTD S-parameters of the coupler, the strip of the strip waveguide chapter and the heater of the phase shifter chapter
+  coupler at 1.55 um: |S31|^2 = 0.4986, |S41|^2 = 0.5007 (moved 1.0 um inwards at each port)
+  strip n_eff = 2.44448, n_g = 4.2387; heater dn_eff/dP = 7.5571e-04 per mW over 100 um -> P_pi = 10.26 mW; propagation loss 2.2 dB/cm (assumed)
+  analyser 1.5035 to 1.5995 um, 101 points, centred on 1.55 um in frequency; run time 1.4 min
+
+answer: the cross port is dark at theta = P_pi = 10.26 mW; the bar port is dark at 0 mW only down to -53.4 dB, set by the split of the coupler.  The block holds 20 dB of extinction in the cross state from 1535 to 1565 nm.
+
+a. theta swept at 1.55 um, light into the upper input
+  cross |U21|^2 smallest at 10.26 mW in the sweep (step 0.51 mW): exactly zero: no light reached the analyser, the two paths cancel
+  bar at 0 mW, over all that passes: 4.560e-06 (-53.4 dB); ((tau^2 - kappa^2) / (tau^2 + kappa^2))^2 = 4.273e-06 (-53.7 dB)
+  through the block, cross state: 0.9710 (0.128 dB over 553 um of strip and two couplers)
+  heater power (P_pi)   cross     bar
+               0.00   0.9710   0.0000
+               0.20   0.8783   0.0926
+               0.40   0.6355   0.3353
+               0.60   0.3355   0.6353
+               0.80   0.0927   0.8781
+               1.00   0.0000   0.9709
+               1.20   0.0927   0.8782
+               1.40   0.3354   0.6357
+               1.60   0.6355   0.3357
+               1.80   0.8783   0.0929
+               2.00   0.9710   0.0000
+               2.20   0.8783   0.0926
+
+b. the three states against the wavelength (upper input)
+  lambda (um)  kappa^2 of the coupler  extinction, cross state (dB)  formula (dB)  bar state (dB)  split, half state
+       1.5035                  0.3603                          10.7          10.7         no leak             0.4610
+       1.5126                  0.3851                          12.5          12.5         no leak             0.4736
+       1.5217                  0.4112                          14.9          14.9         no leak             0.4843
+       1.5311                  0.4389                          18.2          18.2         no leak             0.4925
+       1.5405                  0.4682                          23.9          23.9         no leak             0.4980
+       1.5500                  0.4990                          53.4          53.7         no leak             0.5001
+       1.5597                  0.5310                          24.1          24.1         no leak             0.4983
+       1.5694                  0.5644                          17.7          17.7         no leak             0.4919
+       1.5793                  0.5991                          13.9          13.9         no leak             0.4804
+       1.5893                  0.6351                          11.0          11.0         no leak             0.4635
+       1.5995                  0.6719                           8.7           8.7         no leak             0.4408
+  extinction of the cross state: wanted (lower output) over leak (upper output); formula 4 k^2 (1 - k^2) / (1 - 2 k^2)^2
+  with the split k^2 of the FDTD coupler at each wavelength.  In the bar state the lower output gets no light at any
+  wavelength ('no leak'): its null needs no 50:50 coupler, only two equal ones.
+
+c. the Python model of mesh_model.py against INTERCONNECT, all 45 powers and 101 wavelengths: largest difference of an entry 2.1e-04 (entries up to 1).  The difference is the reflection of the couplers (-43 dB), which INTERCONNECT includes and the model leaves out.

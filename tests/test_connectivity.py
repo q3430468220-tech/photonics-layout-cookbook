@@ -42,7 +42,7 @@ def pad_nets(device) -> dict[str, set[str]]:
     dbu = device.kcl.dbu
     out = {}
     for port in device.ports:
-        if port.name[0] not in "GSH":
+        if port.name[0] not in "GSH" and port.port_type != "electrical":
             continue
         x, y = (round(v / dbu) for v in port.dcenter)
         probe = kdb.Region(kdb.Box(x - 5, y - 5, x + 5, y + 5))

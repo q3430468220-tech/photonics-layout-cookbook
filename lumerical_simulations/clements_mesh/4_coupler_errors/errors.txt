@@ -1,0 +1,32 @@
+The Python model of the mesh (mesh_model.py), checked by INTERCONNECT, Lumerical 2025 R1: the 4 x 4 mesh with couplers
+  whose gap is off by dg; L_pi = l0 exp(gap / 115.7 nm) from the supermodes of the directional coupler chapter;
+  split at 1.55 um without error 0.4990; run time 27.4 min
+
+answer: a gap off by 1 nm moves the split by -0.68 percentage points, as much as 2.1 nm of wavelength does.  With random errors of sigma = 5 nm the matrix as programmed keeps a median 1 - F of 5.5e-03; fitted to the mesh as it came out, 3.1e-07.  At sigma = 20 nm the fit still brings the median to 6.0e-07, and its worst case is 5.5e-02.
+
+a. every gap off by the same dg; the DFT and 10 random unitaries of step 2
+  dg (nm)   split   1 - F as programmed: DFT, median of random   fitted: DFT, median, worst
+    -20.0  0.6449     1.6e-01    1.7e-01            3.2e-07    2.0e-03    1.8e-02
+    -15.0  0.6067     9.1e-02    9.2e-02            3.7e-07    2.3e-04    5.5e-03
+    -10.0  0.5695     4.0e-02    3.9e-02            3.3e-07    2.3e-07    1.0e-03
+     -5.0  0.5336     9.6e-03    9.4e-03            3.4e-07    2.0e-07    6.5e-07
+     +0.0  0.4990     3.5e-07    2.4e-07            3.5e-07    2.4e-07    5.7e-07
+     +5.0  0.4658     8.8e-03    8.4e-03            3.5e-07    2.7e-07    5.0e-07
+    +10.0  0.4342     3.3e-02    3.1e-02            3.4e-07    2.7e-07    7.6e-04
+    +15.0  0.4042     7.1e-02    6.6e-02            2.0e-07    5.4e-05    3.8e-03
+    +20.0  0.3758     1.2e-01    1.1e-01            3.7e-07    7.8e-04    8.8e-03
+  A block with couplers of cross power f passes at most 4 f (1 - f) across.  With every coupler at 0.40 that is 0.96:
+  a matrix that needs a block near full crossing is out of reach, and no setting of the phases brings it back.
+
+b. every gap off by its own dg, normal with width sigma; 30 meshes, each with its own random unitary
+  sigma (nm)   1 - F as programmed: median, 90 %   fitted: median, 90 %, worst   fitted F > 0.999
+        2.5     1.6e-03    2.6e-03         3.3e-07    6.7e-07    7.7e-07     100 %
+        5.0     5.5e-03    1.3e-02         3.1e-07    7.1e-07    8.4e-07     100 %
+       10.0     2.5e-02    4.2e-02         4.0e-07    7.9e-04    7.6e-03      90 %
+       20.0     1.1e-01    1.7e-01         6.0e-07    2.6e-02    5.5e-02      67 %
+
+c. INTERCONNECT, the first mesh of sigma = 10.0 nm, 12 coupler files: as programmed F = 0.983448 (model 0.983432); fitted F = 0.999999 (model 0.999999)
+
+limits: the error changes the split only.  A real error of the gap also moves the mean index of the coupled section, and so
+  the phase of the block; the phases of a fitted mesh take that up as well.  The width of the waveguide, which a real
+  process also gets wrong, is not varied.  The fit assumes that the errors are known: a real mesh has to measure them first.

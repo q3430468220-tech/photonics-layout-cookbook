@@ -1,0 +1,57 @@
+INTERCONNECT, Lumerical 2025 R1, and the Python model of the same circuit (mesh_model.py): the 4 x 4 mesh of
+  devices/clements_mesh_builder.py, 12 couplers, 16 heaters, 40 sites under heater positions;
+  P_pi = 10.26 mW, propagation loss 2.2 dB/cm (assumed); analyser 1.5035 to 1.5995 um, 101 points; run time 7.9 min
+
+answer: the drawn mesh holds the DFT with 1 - F = 3.5e-07 at 1.55 um, and every one of 40 random unitaries with 1 - F <= 9.1e-07.  What is left is mostly light lost unevenly along the paths.  The fidelity stays above 0.99 over 13 nm (median of the 41 targets); the couplers set that width.  The first draft of the layout, with straight edge rows, held it over 2 nm.
+
+a. the decomposition of the paper, for an ideal mesh
+  largest difference between the ideal mesh with these phases and its target, over all 41 targets: 3.6e-15
+  DFT:  theta / pi = 0.500 0.500 0.392 0.333 0.333 0.608   phi / pi = 1.500 0.000 0.750 0.946 0.804 0.804   outputs / pi = 1.887 0.529 0.779 0.833
+
+b. the drawn circuit, fitted from the decomposition, at 1.55 um
+  1 - F: DFT 3.47e-07; random median 3.16e-07, largest 9.07e-07
+  the worst of 6 targets: without propagation loss 2.8e-07; with lossless couplers too 7.9e-08; with lossless couplers of exactly 50:50, 4.4e-16.
+  The split of the couplers (49.90 : 50.10 of what passes) leaves a little that the phases cannot take up.  The larger
+  part comes from loss that differs between paths:
+  the paths cross different numbers of couplers (each loses 0.003 dB) and of fan bends (each 2.8 um longer than its
+  run along x).  The waveguide of the rows, with the arms of the dummy paths: row 0 2122 um, row 1 1980 um, row 2 1980 um, row 3 2122 um (and 4 couplers on rows 0 and 3, 8 on rows 1 and 2).
+
+c. the heaters
+  DFT, mW:  P0 15.39  T0 5.13  P1 0.01  T1 5.13  P2 7.69  T2 4.02  P3 11.01  T3 17.09  P4 6.91  T4 17.09  P5 6.95  T5 6.24  D0 2.45  D1 9.03  D2 11.59  D3 13.48
+  total heater power: DFT 139.2 mW; random mean 162.4 mW, from 116.4 to 219.0 mW; the largest single heater 20.49 mW (3.20 V on 500 ohm)
+  every heater is set in [0, 2 P_pi) = [0, 20.51) mW.
+
+d. INTERCONNECT against the model
+  target      F at 1.55 um, INTERCONNECT   model
+  DFT                      0.99999959  0.99999965
+  random 1                 0.99999954  0.99999962
+  random 2                 0.99999982  0.99999986
+  random 3                 0.99999988  0.99999994
+  largest difference of an entry over the band: 6.5e-04: the reflections of the couplers, which only INTERCONNECT has
+
+e. the band (model; the analyser grid is 1 nm)
+  target      F > 0.99 from - to (nm)   width   F > 0.999 width   F at 1.53 um   F at 1.57 um
+  DFT           1543 -    1557            13                4        0.9328        0.9205
+  random 1      1544 -    1556            12                4        0.9007        0.8969
+  random 2      1545 -    1555            10                2        0.8883        0.8753
+  random 3      1540 -    1560            19                6        0.9612        0.9565
+  random 4      1543 -    1557            13                4        0.9177        0.9181
+  random 5      1543 -    1557            13                4        0.9278        0.9234
+  random 6      1544 -    1556            12                2        0.8863        0.8865
+  random 7      1542 -    1558            15                4        0.9433        0.9353
+  all 41 targets, width with F > 0.99: median 13 nm, from 8 to 21 nm
+
+f. what sets the band: the width with F > 0.99 (nm) for the DFT and 10 random unitaries, each case programmed anew
+  case                                 DFT   random: median   from - to
+  the drawn mesh                        13               13     10 - 19
+  first draft: straight edge rows        2                2      2 - 8
+  split held at 1.55 um                 19               20     13 - 43
+  coupler with the delay of the arm     20               21     18 - 32
+  both                                  96               96     96 - 96
+  The first draft ran the edge rows straight through the columns without a block: rows 0 and 3 had 2098 um of waveguide and 4 couplers,
+  rows 1 and 2 1980 um and 8 couplers.  The light that meets again in a later block then arrives
+  with a phase that runs away with the wavelength.  The drawn mesh gives those rows the same fans and one arm of a
+  coupler.  What is left is the coupler itself: its split changes with the wavelength (step 1), and its delay is that
+  of 34.47 um of strip, against 35.38 um for the arm (the light in the coupled section has a lower
+  group index).  A path that spans the coupler's 35 um cannot be shorter than 35 um, so the arm cannot match it.
+  Without both effects the band is the whole range of the analyser.
