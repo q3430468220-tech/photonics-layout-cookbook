@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CORNERSTONE SOI220A · photonics-layout-cookbook</title>
+<meta name="description" content="This folder is a complete, self-contained second example of the flow.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/more/cornerstone-soi220a/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CORNERSTONE SOI220A: the second example">
+<meta property="og:description" content="This folder is a complete, self-contained second example of the flow.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/more/cornerstone-soi220a/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/more-cornerstone-soi220a.jpg?v=2389e8e0">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CORNERSTONE SOI220A, with a wafer whose dies are the devices of the library">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","name":"CORNERSTONE SOI220A: the second example","description":"This folder is a complete, self-contained second example of the flow.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/more/cornerstone-soi220a/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/more-cornerstone-soi220a.jpg?v=2389e8e0"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"CORNERSTONE SOI220A","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/more/cornerstone-soi220a/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course">Course</a>
+      <a href="../../devices/index.html">Devices</a>
+<a href="../../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+
+<header class="page-head">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../../index.html">photonics-layout-cookbook</a>        <i>·</i> CORNERSTONE SOI220A</p>
+      <h1 class="display page-title" data-words aria-label="CORNERSTONE SOI220A"><span class="w" style="--n:0">CORNERSTONE</span> <span class="w" style="--n:1">SOI220A</span></h1>
+<p class="page-sub">The second example</p>      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>10 min read</span>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/README.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#what-cornerstone-soi220a-is"><i aria-hidden="true"></i>What CORNERSTONE SOI220A is</a></li>
+        <li><a href="#why-this-is-the-second-example"><i aria-hidden="true"></i>Why this is the second example</a></li>
+        <li><a href="#the-worked-example"><i aria-hidden="true"></i>The worked example</a></li>
+        <li><a href="#differences-from-the-main-example"><i aria-hidden="true"></i>Differences from the main example</a></li>
+        <li><a href="#the-files-of-this-folder"><i aria-hidden="true"></i>The files of this folder</a></li>
+        <li><a href="#run-it"><i aria-hidden="true"></i>Run it</a></li>
+        <li><a href="#sources"><i aria-hidden="true"></i>Sources</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p><a href="../../index.html">Course front page</a> | <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/lumerical_simulations/ring_modulator/README.md" rel="noopener">Ring modulator simulations</a></p>
+<p>This folder is a complete, self-contained second example of the flow. It takes the same
+steps as the main example: a technology file, a device builder, a <span class="gloss" tabindex="0" data-def="An automatic check that a layout keeps the minimum widths, spaces and overlaps that the process can make.">DRC</span>, a <span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span> for
+the <span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span>, and simulations of a heater-tuned microring modulator. The process is
+different. It is CORNERSTONE SOI220A, a real open foundry process, and its data is public.</p>
+<blockquote>
+<p><strong>Status of this example.</strong> This folder is kept as released in v0.2. The corrections made to the
+main example in v0.3 were not ported to it. Its absolute <span class="gloss" tabindex="0" data-def="The speed of the phase of a guided mode, written as an index: the mode gains a phase of 2π n_eff / λ per unit length.">effective index</span> can be off by several
+10⁻³, because its mode-solver mesh has no line on every interface. Its heat source is the thermal
+power boundary condition, not a uniform source in the film. Its capacitance is read as Im(Y)/ω,
+which is right only when ωR<sub>s</sub>C ≪ 1. Its resonances are read on the simulation grid. Read the
+numbers here as those of v0.2, and use the main example as the reference method.</p>
+</blockquote>
+<h2 id="what-cornerstone-soi220a-is">What CORNERSTONE SOI220A is <a class="here" href="#what-cornerstone-soi220a-is" aria-label="Link to this section">#</a></h2>
+<p><a href="https://www.cornerstone.sotonfab.co.uk/" rel="noopener">CORNERSTONE</a> is an open-source, licence-free silicon
+photonics foundry at the University of Southampton. Its active platform, SOI220A, is a 220 nm
+silicon-on-insulator process with three silicon etches, four implants and one aluminium
+electrode layer. Everything this folder uses comes from two public documents:</p>
+<ul>
+<li>the official <span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span> repository <a href="https://github.com/cornerstone-uos/cornerstone-pdk" rel="noopener">cornerstone-uos/cornerstone-pdk</a>,
+folder <code>SOI220A</code>: layer names and numbers, per-layer rules, cross-sections and building blocks;</li>
+<li>the <a href="https://cornerstone.sotonfab.co.uk/wp-content/uploads/2025/10/CORNERSTONE-47th-Call-Design-Guidelines_final-1.pdf" rel="noopener">design guidelines of the 220 nm SOI active MPW call #47</a>
+(October 2025): process flow, doping, rules between layers and mask processing.</li>
+</ul>
+<p>The source of each number is tagged in the code and in the tables: <code>[YAML]</code> for the PDK
+repository, <code>[DG]</code> for the guidelines, <code>[assumed]</code> for a value that the sources do not give.
+Where the two public documents disagree, the folder keeps both and says which one it follows.
+That is covered in <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/cornerstone_process_file_py/cornerstone_csv/README.md" rel="noopener">the process tables</a>.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th><span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span></th>
+<th>official layer name</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3/0</td>
+<td><code>Si_Etch2_LF_120nm</code></td>
+<td>waveguide core; drawn shapes keep the full 220 nm</td>
+</tr>
+<tr>
+<td>5/0</td>
+<td><code>Si_Etch3_LF_100nm_to_BOX</code></td>
+<td>rib protect; drawn shapes keep a 100 nm slab</td>
+</tr>
+<tr>
+<td>6/0</td>
+<td><code>Si_Etch1_DUV_DF_70nm</code></td>
+<td>grating couplers, etched 70 nm</td>
+</tr>
+<tr>
+<td>7/0, 8/0</td>
+<td><code>P_Implant_Low_DF</code>, <code>N_Implant_Low_DF</code></td>
+<td>low-dose implants that form the junction</td>
+</tr>
+<tr>
+<td>9/0, 11/0</td>
+<td><code>P_Implant_Hi_DF</code>, <code>N_Implant_Hi_DF</code></td>
+<td>high-dose implants for ohmic contacts</td>
+</tr>
+<tr>
+<td>12/0</td>
+<td><code>Via_DF</code></td>
+<td>via through the top cladding</td>
+</tr>
+<tr>
+<td>13/0</td>
+<td><code>Electrode_LF</code></td>
+<td>aluminium electrodes, pads and heater filaments</td>
+</tr>
+</tbody>
+</table></div>
+<p>GDS 3/0 is drawn at the full core width. The foundry etches the silicon around it, so the
+layer name and the drawn shape are not the same thing. The table of the process tables
+explains how each drawn shape becomes a silicon region.</p>
+<h2 id="why-this-is-the-second-example">Why this is the second example <a class="here" href="#why-this-is-the-second-example" aria-label="Link to this section">#</a></h2>
+<p>The main example uses a generic process that is built from public sources and has a full
+back end: three aluminium metals, a titanium-nitride heater, and germanium and nitride
+layers. CORNERSTONE SOI220A has less. It has one metal layer and no heater layer. Two
+consequences follow.</p>
+<ul>
+<li><strong>The heater shares the electrode layer.</strong> The junction electrodes and the heater are both
+drawn in <code>Electrode_LF</code>, so they cannot overlap. The junction takes the upper 240° of the
+ring, and the heater takes the lower 76°. After the two leads are subtracted, 17 % of the
+ring length is heated, against 71 % in the main example.</li>
+<li><strong>There is no full back end to teach.</strong> The main example shows how a process with several
+metals is routed to pads. This process has one metal, so there is no routing to show.</li>
+</ul>
+<p>Why, then, is it a useful second example? Because it teaches what the generic process
+cannot. Three things are specific to a real foundry process.</p>
+<ol>
+<li><strong>Official layer names.</strong> The layers carry the names of the foundry, and the device code
+uses them. A layout that a student draws for this process can be checked against the
+official building blocks.</li>
+<li><strong>Public sources that disagree.</strong> The guidelines and the PDK repository give different
+values for the <span class="gloss" tabindex="0" data-def="The silicon dioxide under the silicon layer of an SOI wafer, 2 µm in GSiP. It keeps the light from leaking into the substrate.">buried oxide</span>, the top cladding and the electrode gap. The folder shows the
+table of the disagreement, and states which value it uses and why. A student who learns
+this habit will need it for every real process.</li>
+<li><strong>Process steps that change the device.</strong> The n implant is self-aligned, so the junction
+sits 110 nm inside the sidewall, not where the mask edge is drawn. The foundry also etches
+trenches around every waveguide. Both are part of the process, and both are modelled in
+the code.</li>
+</ol>
+<h2 id="the-worked-example">The worked example <a class="here" href="#the-worked-example" aria-label="Link to this section">#</a></h2>
+<p align="center">
+  <img src="../../media/more_processes/cornerstone_soi220a/assets/rm_ring.webp" width="49%" alt="Ring modulator layout with GSG pads for the junction and two pads for the heater">
+  <img src="../../media/more_processes/cornerstone_soi220a/assets/rm_ring_zoom.webp" width="49%" alt="Ring, coupler, doped section and heater">
+</p>
+<p><strong>Figure 1.</strong> The ring modulator on CORNERSTONE SOI220A, as drawn by <code>cornerstone_rm_builder.py</code>.
+Left: the whole device, with the three electrode pads of the junction in the north and the
+two heater pads in the south (20 µm scale bar). Right: the ring, the coupler and the doped arc
+(10 µm scale bar).</p>
+<p>The device has a 25 µm radius, a 0.45 µm rib on a 100 nm slab, and a point coupler at the
+bottom of the ring. The junction takes the upper 240° of the ring, and the heater takes the
+lower 76°, above the undoped part next to the coupler.</p>
+<p>The results come from the six simulation steps. Each value below names the step that
+produced it. The method and the limits of each step are in the
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/lumerical_simulations/ring_modulator/README.md" rel="noopener">simulation README</a>.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>result</th>
+<th>value</th>
+<th>from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>power coupling</td>
+<td>κ² = 3.73 · exp(−gap / 101.6 nm)</td>
+<td>step 1, <span class="gloss" tabindex="0" data-def="Finite-difference time domain: Maxwell&#x27;s equations stepped in time on a 3D grid. Close to exact, and the slowest of the solvers.">FDTD</span></td>
+</tr>
+<tr>
+<td>effective and <span class="gloss" tabindex="0" data-def="The index that sets how fast a pulse, or the envelope of the light, travels: n_g = n_eff − λ dn_eff/dλ. It sets delays and the free spectral range.">group index</span></td>
+<td>2.5515 and 3.912</td>
+<td>step 2, MODE</td>
+</tr>
+<tr>
+<td>junction capacitance at 0 V and −4 V</td>
+<td>0.43 and 0.22 fF/µm</td>
+<td>step 3, CHARGE</td>
+</tr>
+<tr>
+<td>heater efficiency</td>
+<td>1.37 K/mW in the heated section</td>
+<td>step 4, HEAT</td>
+</tr>
+<tr>
+<td>modulation efficiency VπL at −2 V</td>
+<td>1.4 V·cm</td>
+<td>step 5, MODE</td>
+</tr>
+<tr>
+<td>gap for critical coupling</td>
+<td>425 nm</td>
+<td>step 6, INTERCONNECT</td>
+</tr>
+<tr>
+<td>loaded Q and <span class="gloss" tabindex="0" data-def="The spacing between two neighbouring resonances of a ring, or fringes of an interferometer: λ² / (n_g L), with L the round trip or the difference of the arms.">free spectral range</span></td>
+<td>20 900 and 3.90 nm</td>
+<td>step 6</td>
+</tr>
+<tr>
+<td>resonance shift at −4 V</td>
+<td>50 pm</td>
+<td>step 6</td>
+</tr>
+<tr>
+<td>thermal tuning</td>
+<td>17.1 pm/mW</td>
+<td>step 6</td>
+</tr>
+</tbody>
+</table></div>
+<p>Step 6 returns the gap for critical coupling. That value is the default gap of
+<code>ring_modulator()</code>, so the layout and the circuit model agree.</p>
+<p>The plots of this folder keep the plain style of v0.2. The main example carries the course's
+figure style, so the figures there are the ones to study first. The plots here are only
+there to show the results.</p>
+<figure class="fig fig-paper fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/more_processes/cornerstone_soi220a/lumerical_simulations/ring_modulator/plots/6_interconnect_ring_modulator/ring_modulator.webp" width="1690" height="468" alt="Extinction versus gap, spectra versus junction bias, spectra versus heater power" loading="lazy" decoding="async"></button><figcaption><strong>Figure 2.</strong> Step 6 of this folder: <span class="gloss" tabindex="0" data-def="The ratio of the most to the least light at an output, usually in dB: how deep a switch or a modulator can turn the light off.">extinction</span> against gap, spectra against junction bias and
+against heater power.</figcaption></figure>
+<h2 id="differences-from-the-main-example">Differences from the main example <a class="here" href="#differences-from-the-main-example" aria-label="Link to this section">#</a></h2>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th></th>
+<th>main example (GSiP teaching PDK)</th>
+<th>this folder (CORNERSTONE SOI220A)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>process</td>
+<td>a teaching process built from the public GSiP data of Chrostowski and Hochberg and of Baehr-Jones et al.</td>
+<td>the official open process of CORNERSTONE, with its official names</td>
+</tr>
+<tr>
+<td>core and slab</td>
+<td>220 nm core on a 90 nm slab, 6 µm wide</td>
+<td>220 nm core on a 100 nm slab, 14 µm wide</td>
+</tr>
+<tr>
+<td>ring radius</td>
+<td>10 µm</td>
+<td>25 µm</td>
+</tr>
+<tr>
+<td>bus and ring width</td>
+<td>0.5 µm rib</td>
+<td>0.45 µm rib</td>
+</tr>
+<tr>
+<td>default gap</td>
+<td>0.37 µm</td>
+<td>0.42 µm</td>
+</tr>
+<tr>
+<td>PN section</td>
+<td>upper 240°, 67 % of the ring</td>
+<td>upper 240°, 67 % of the ring</td>
+</tr>
+<tr>
+<td>implants</td>
+<td>nested N+ / N++ and P+ / P++ masks</td>
+<td>low-dose n self-aligned to the sidewall, high-dose contacts</td>
+</tr>
+<tr>
+<td>metal layers</td>
+<td>three aluminium metals and a TiN heater</td>
+<td>one aluminium layer, which also carries the heater</td>
+</tr>
+<tr>
+<td>heater</td>
+<td>TiN, 1.6 µm wide, 270°, 280 Ω</td>
+<td>aluminium, 2 µm wide, 76°, 0.23 Ω</td>
+</tr>
+<tr>
+<td>heated part of the ring</td>
+<td>71 %</td>
+<td>17 %</td>
+</tr>
+<tr>
+<td>waveguide loss used</td>
+<td>2.2 dB/cm, from [BJ]</td>
+<td>4 dB/cm, the upper bound of [DG] Table 4</td>
+</tr>
+<tr>
+<td>design-rule check</td>
+<td><code>gsip_drc.py</code>, complete for the back end</td>
+<td><code>cornerstone_drc.py</code>, a pre-check; the foundry runs the binding DRC</td>
+</tr>
+<tr>
+<td>simulation steps</td>
+<td>seven, starting with a Layer Builder check</td>
+<td>six, starting with the coupler</td>
+</tr>
+<tr>
+<td>process file</td>
+<td>compiled from tables, reloaded and compared with them</td>
+<td>compiled from tables with the column names of the Ansys template</td>
+</tr>
+</tbody>
+</table></div>
+<p>The two folders follow the same method. The difference is what the process gives you to work
+with. The main example is the place to learn the flow with a full back end. This folder shows
+the same flow on a real process, with its official names and its disagreements.</p>
+<h2 id="the-files-of-this-folder">The files of this folder <a class="here" href="#the-files-of-this-folder" aria-label="Link to this section">#</a></h2>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>file</th>
+<th>what it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/cornerstone_technology.py" rel="noopener">cornerstone_technology.py</a></td>
+<td>The PDK. Layers with the official names, design rules, the layer stack, the cross-sections and the cells. Importing it activates the PDK.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/cornerstone_drc.py" rel="noopener">cornerstone_drc.py</a></td>
+<td>Design-rule check in pure Python (klayout.db). <code>run_drc(component)</code> returns a result with a <code>passed</code> flag.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/cornerstone_rm_builder.py" rel="noopener">cornerstone_rm_builder.py</a></td>
+<td>The device: <code>ring_modulator()</code>, built from the PDK cross-sections. Running it writes the GDS and the preview images.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/rm_ring.gds" rel="noopener">rm_ring.gds</a></td>
+<td>The layout that the builder writes, flat, for the Layer Builder.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/tree/main/more_processes/cornerstone_soi220a/cornerstone_process_file_py" rel="noopener">cornerstone_process_file_py/</a></td>
+<td>The process as CSV tables, the compiler that writes <code>cornerstone_process.lbr</code>, and the compiled file.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/cornerstone_process_file_py/cornerstone_csv/README.md" rel="noopener">cornerstone_process_file_py/cornerstone_csv/README.md</a></td>
+<td>Every table and the source of every number, with the known inconsistencies.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/tree/main/more_processes/cornerstone_soi220a/lumerical_simulations/ring_modulator" rel="noopener">lumerical_simulations/ring_modulator/</a></td>
+<td>The six simulation steps, their results, their plots, and <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/lumerical_simulations/ring_modulator/README.md" rel="noopener">the README</a>.</td>
+</tr>
+<tr>
+<td><code>tests/</code></td>
+<td>pytest: the PDK, the layout with its DRC, and the process tables.</td>
+</tr>
+<tr>
+<td><code>klayout_tech/</code></td>
+<td><code>layers.lyp</code> and <code>tech.lyt</code> for viewing layouts in KLayout.</td>
+</tr>
+<tr>
+<td><code>pytest.ini</code></td>
+<td>the test settings of this folder.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="run-it">Run it <a class="here" href="#run-it" aria-label="Link to this section">#</a></h2>
+<p>The commands run from this folder. The root of the repository holds the Python environment
+(<code>uv sync</code> there, once). The layout, the DRC and the tests need no Lumerical.</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="nb">cd</span><span class="w"> </span>more_processes/cornerstone_soi220a
+
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>cornerstone_technology.py<span class="w">      </span><span class="c1"># list the layers and the cross-sections</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>cornerstone_rm_builder.py<span class="w">      </span><span class="c1"># write rm_ring.gds, the DRC report and the preview images</span>
+uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w">                                </span><span class="c1"># the tests of this folder</span>
+</code></pre></div>
+<p>The simulations need Ansys Lumerical. The commands are in
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/lumerical_simulations/ring_modulator/README.md" rel="noopener">the simulation README</a>, which also says how
+long each step takes. The process file is compiled with
+<code>uv run python cornerstone_process_file_py/cornerstone_process_file_compiler.py</code>.</p>
+<h2 id="sources">Sources <a class="here" href="#sources" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>CORNERSTONE, <a href="https://github.com/cornerstone-uos/cornerstone-pdk" rel="noopener">open PDK repository</a>,
+<code>SOI220A/process_overview.yaml</code> (v1.2.0) and the cross-section file of the same folder.</li>
+<li>CORNERSTONE, <a href="https://cornerstone.sotonfab.co.uk/wp-content/uploads/2025/10/CORNERSTONE-47th-Call-Design-Guidelines_final-1.pdf" rel="noopener">Design Guidelines, 220 nm SOI Active MPW #47</a>
+(October 2025).</li>
+<li>M. Nedeljkovic, R. Soref and G. Z. Mashanovich, &quot;Free-carrier electrorefraction and
+electroabsorption modulation predictions for silicon over the 1–14 µm infrared wavelength
+range&quot;, IEEE Photonics Journal 3, 1171 (2011),
+<a href="https://doi.org/10.1109/JPHOT.2011.2171930" rel="noopener">doi:10.1109/JPHOT.2011.2171930</a>. The Soref-Bennett
+coefficients of the index perturbation.</li>
+<li>Ansys Optics, <a href="https://optics.ansys.com/hc/en-us/articles/360034382394-Layer-builder-Simulation-object" rel="noopener">Layer builder - Simulation object</a>
+and <a href="https://optics.ansys.com/hc/en-us/articles/360042322794-Ring-Modulator" rel="noopener">Ring Modulator</a>.</li>
+<li>gdsfactory, <a href="https://gdsfactory.github.io/gdsfactory/" rel="noopener">documentation</a>.</li>
+</ul>
+<p>The tags used in the code: <code>[YAML]</code>, <code>[DG]</code>, <code>[XS]</code> (the cross-section file of the PDK
+repository), <code>[MZM]</code> and <code>[HTR]</code> (values measured on the official building blocks, MZM and
+heater), and <code>[assumed]</code>.</p>
+<p>This project is not affiliated with or endorsed by CORNERSTONE, the University of Southampton,
+Ansys or the gdsfactory team. &quot;Ansys&quot; and &quot;Lumerical&quot; are trademarks of ANSYS, Inc. The values
+are for teaching and for setting up simulations. Before a tape-out, take every value from the
+design guidelines of the call you submit to, and run the foundry's own DRC.</p>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<span></span><a class="card pager-next" href="../../index.html"><span>Back</span><b>Home</b></a></nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../../course/pdk/index.html">1. The PDK</a><a href="../../course/device/index.html">2. The device</a><a href="../../course/process-file/index.html">3. The process file</a><a href="../../course/simulations/index.html">4. The simulations</a><a href="../../course/your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../../devices/strip-waveguide/index.html">Strip waveguide</a><a href="../../devices/rib-waveguide/index.html">Rib waveguide</a><a href="../../devices/directional-coupler/index.html">Directional coupler</a><a href="../../devices/mmi1x2/index.html">1×2 MMI splitter</a><a href="../../devices/thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../../devices/index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../../circuits/index.html">The chip</a><a href="../../circuits/clements-mesh/index.html">Clements mesh</a><a href="../../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

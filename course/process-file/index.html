@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The process file · photonics-layout-cookbook</title>
+<meta name="description" content="Chapter 1 wrote the process as code. Chapter 2 drew a ring modulator with it. This chapter describes the same process a second time, for the simulator.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/course/process-file/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The process file: the same process for the simulator">
+<meta property="og:description" content="Chapter 1 wrote the process as code. Chapter 2 drew a ring modulator with it. This chapter describes the same process a second time, for the simulator.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/course/process-file/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/course-process-file.jpg?v=7c6cae40">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The process file, with the finished structure cut at four heights">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"The process file: the same process for the simulator","description":"Chapter 1 wrote the process as code. Chapter 2 drew a ring modulator with it. This chapter describes the same process a second time, for the simulator.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/course/process-file/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/course-process-file.jpg?v=7c6cae40"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"The process file","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/course/process-file/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course" aria-current="true">Course</a>
+      <a href="../../devices/index.html">Devices</a>
+<a href="../../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+
+<header class="page-head">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../../index.html#course">Course</a>        <i>·</i> Chapter 3</p>
+      <h1 class="display page-title" data-words aria-label="The process file"><span class="w" style="--n:0">The</span> <span class="w" style="--n:1">process</span> <span class="w" style="--n:2">file</span></h1>
+<p class="page-sub">The same process for the simulator</p>      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>27 min read</span>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/gsip_process_file_py/README.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#1-two-descriptions-of-one-process"><i aria-hidden="true"></i>1. Two descriptions of one process</a></li>
+        <li><a href="#2-what-a-process-file-contains"><i aria-hidden="true"></i>2. What a process file contains</a></li>
+        <li><a href="#3-one-gds-layer-two-solids"><i aria-hidden="true"></i>3. One GDS layer, two solids</a></li>
+        <li><a href="#4-doping-flat-profiles"><i aria-hidden="true"></i>4. Doping: flat profiles</a></li>
+        <li><a href="#5-materials-and-models"><i aria-hidden="true"></i>5. Materials and models</a></li>
+        <li><a href="#6-the-compiler-step-by-step"><i aria-hidden="true"></i>6. The compiler, step by step</a></li>
+        <li><a href="#7-running-the-compiler"><i aria-hidden="true"></i>7. Running the compiler</a></li>
+        <li><a href="#8-loading-the-result"><i aria-hidden="true"></i>8. Loading the result</a></li>
+        <li><a href="#9-step-0-the-structure-check"><i aria-hidden="true"></i>9. Step 0: the structure check</a></li>
+        <li><a href="#10-what-goes-wrong"><i aria-hidden="true"></i>10. What goes wrong</a></li>
+        <li><a href="#check-yourself"><i aria-hidden="true"></i>Check yourself</a></li>
+        <li><a href="#exercises"><i aria-hidden="true"></i>Exercises</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>Chapter 1 wrote the process as code. Chapter 2 drew a ring modulator with it. This chapter
+describes the same process a second time, for the simulator. The second description is a
+Lumerical <strong><span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span></strong> (<code>.lbr</code>). The program that makes it is
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/gsip_process_file_py/gsip_process_file_compiler.py" rel="noopener"><code>gsip_process_file_compiler.py</code></a>.</p>
+<p>Two terms first:</p>
+<ul>
+<li>A <strong>process file</strong> is a text file that tells a simulator how a wafer is built: which layer
+sits at which height, how thick it is, what it is made of, and how it is doped. A foundry
+ships one with its <span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span>, so that simulations use the stack the fab really builds.</li>
+<li>The <strong><span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span></strong> is a Lumerical simulation object. It takes a flat 2D layout (a <span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span>
+file) and a process file, and produces a 3D structure. The layout says where each shape is.
+The process file says how high it stands, out of what, and with which doping.</li>
+</ul>
+<p>Neither file alone gives a device. The GDS file has no heights, and the process file has no
+shapes. Together they give the structure that all seven simulation steps use.</p>
+<p>After this chapter you can:</p>
+<ol>
+<li>say what a process file contains, and why a foundry ships one;</li>
+<li>read each table of the process and find the number it holds;</li>
+<li>compile the process file, and trust it because a read-back check compares it with the tables;</li>
+<li>load a GDS file and the process file into a Layer Builder, by script and in the GUI;</li>
+<li>check with one MODE run that the 3D structure is the one you meant to build.</li>
+</ol>
+<p>Everything below uses the GSiP teaching process of this repository. Its numbers are teaching
+values, not a foundry's. Chapter 1 explains the sources, and
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/gsip_process_file_py/gsip_csv/README.md" rel="noopener"><code>gsip_csv/README.md</code></a> gives the source of each number.</p>
+<hr />
+<h2 id="1-two-descriptions-of-one-process">1. Two descriptions of one process <a class="here" href="#1-two-descriptions-of-one-process" aria-label="Link to this section">#</a></h2>
+<p><strong>The idea.</strong> The layout half of the flow is Python. <code>gsip_technology.py</code> describes the stack,
+and <code>devices/ring_modulator_builder.py</code> draws shapes with it. The simulation half is Lumerical, which needs the same
+stack in its own format. Two descriptions of one process can drift apart. A layout drawn on a
+2.0 µm <span class="gloss" tabindex="0" data-def="The silicon dioxide under the silicon layer of an SOI wafer, 2 µm in GSiP. It keeps the light from leaking into the substrate.">buried oxide</span>, simulated with a 2.5 µm one, would give numbers for a device that does not
+exist. So each number is written in one place, and a test or a check ties each copy to it.</p>
+<p>The table lists a few quantities, where each one lives, and which check keeps the copies equal.</p>
+<div class="table" style="--cols:4"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>in <code>gsip_technology.py</code></th>
+<th>in the process tables</th>
+<th>which check keeps them equal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>silicon core, 220 nm thick</td>
+<td><code>T_SI</code> (line 52)</td>
+<td><code>process_layers.csv</code>, <code>Si_core</code>: start 0, thickness 220</td>
+<td><code>test_stack_heights_equal_the_technology_file</code></td>
+</tr>
+<tr>
+<td>heater film, 150 nm, at 1.10 µm</td>
+<td><code>Z_HEATER</code>, <code>T_HEATER</code> (lines 63 and 64)</td>
+<td><code>Heater</code>: start 1100, thickness 150</td>
+<td>the same test, and <code>test_heater_film_properties</code></td>
+</tr>
+<tr>
+<td>metal 1, 0.70 µm at 1.10 µm</td>
+<td><code>Z_M1</code>, <code>T_M1</code> (line 62)</td>
+<td><code>Metal1</code>: start 1100, thickness 700</td>
+<td>the same test</td>
+</tr>
+<tr>
+<td>buried oxide, 2.0 µm</td>
+<td><code>T_BOX</code> (line 51)</td>
+<td><code>BOX</code>: start −2000, thickness 2000</td>
+<td>the same test</td>
+</tr>
+<tr>
+<td>n implant, 5e17 cm⁻³</td>
+<td><code>DOPING[&quot;N&quot;]</code> (line 73)</td>
+<td><code>doping_process_layers.csv</code>, <code>N</code></td>
+<td><code>test_doping_tables_follow_the_technology_file</code></td>
+</tr>
+<tr>
+<td>TiN resistivity, 1.5 µΩ·m</td>
+<td><code>TIN_RESISTIVITY</code> (line 85)</td>
+<td><code>material_property_overrides.csv</code>: conductivity 666667 S/m</td>
+<td><code>test_heater_film_properties</code></td>
+</tr>
+<tr>
+<td>material names</td>
+<td><code>MATERIALS</code> (line 89)</td>
+<td><code>active_material_models.csv</code></td>
+<td><code>test_materials_exist_and_have_electrical_and_thermal_models</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The tests are in <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/tests/test_process_tables.py" rel="noopener"><code>tests/test_process_tables.py</code></a>. They need
+Python only, not Lumerical. Two more tests go beyond the table. One ties every row of
+<code>process_layers.csv</code> to the PDK: its GDS layer number (plus the layer under a via), its material
+and its sidewall angle must equal those of the technology file. The other ties the heights of the
+rows that the stack table does not list, such as the undercut, which must end at the bottom
+of the buried oxide. The compiler adds a second link: it reads the tables back from the
+process file it wrote, and compares them with the tables (section 6). Step 0 of the simulations adds a third: it looks at
+the 3D structure that the file produces (section 9).</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>link</th>
+<th>what it ties together</th>
+<th>what checks it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>gsip_technology.py</code> and the tables <code>gsip_csv/*.csv</code></td>
+<td>pytest, without a licence</td>
+</tr>
+<tr>
+<td>2</td>
+<td>the tables and <code>gsip_process.lbr</code></td>
+<td>the QA step of the compiler</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>gsip_process.lbr</code> together with the layout <code>devices/gds/ring_modulator.gds</code>, and the 3D structure they give</td>
+<td>step 0, with the Layer Builder</td>
+</tr>
+</tbody>
+</table></div>
+<p>Why two descriptions of one process? The layout must be drawn with the numbers the simulator
+uses. The Python file is the form the layout reads, and the tables are the form Lumerical reads.
+Keeping both costs little, and a mismatch shows up at once in a test.</p>
+<hr />
+<h2 id="2-what-a-process-file-contains">2. What a process file contains <a class="here" href="#2-what-a-process-file-contains" aria-label="Link to this section">#</a></h2>
+<p><strong>The idea.</strong> A process file is a list of layers. Each layer has a height, a material and a GDS
+expression. Doping and material models are added on top. The repository keeps each part in a
+CSV table, so that the numbers can be read, compared and changed without touching code.</p>
+<p>The tables live in <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/tree/main/gsip_process_file_py/gsip_csv" rel="noopener"><code>gsip_csv/</code></a>. Their sources and the reason for each number are in
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/gsip_process_file_py/gsip_csv/README.md" rel="noopener"><code>gsip_csv/README.md</code></a>, which this chapter does not repeat.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>table</th>
+<th class="num">rows</th>
+<th>what one row says</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>process_layers.csv</code></td>
+<td class="num">20</td>
+<td>one layer: where it is in z, what it is made of, which GDS layer defines it</td>
+</tr>
+<tr>
+<td><code>doping_process_layers.csv</code></td>
+<td class="num">9</td>
+<td>one implant: which GDS layer masks it, dopant, concentration, depth profile</td>
+</tr>
+<tr>
+<td><code>active_material_models.csv</code></td>
+<td class="num">8</td>
+<td>for one optical material, the CHARGE (electrical) and HEAT (thermal) model</td>
+</tr>
+<tr>
+<td><code>material_property_overrides.csv</code></td>
+<td class="num">4</td>
+<td>one number changed in a model (the TiN film)</td>
+</tr>
+<tr>
+<td><code>index_perturbation_data.csv</code></td>
+<td class="num">1</td>
+<td>a silicon material whose index responds to carriers and temperature</td>
+</tr>
+<tr>
+<td><code>dielectric_materials.csv</code></td>
+<td class="num">1</td>
+<td>a constant-index material the database lacks (air)</td>
+</tr>
+<tr>
+<td><code>pattern_variations.csv</code></td>
+<td class="num">1</td>
+<td>a statistical variation of a layer pattern (optional)</td>
+</tr>
+<tr>
+<td><code>stack_variations.csv</code></td>
+<td class="num">2</td>
+<td>a statistical variation of a layer height (optional)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Reading <code>process_layers.csv</code>.</strong> Each row has ten columns. Heights are in nm.</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>column</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td>1 to use the layer, 0 to skip it</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>the layer name in the simulator</td>
+</tr>
+<tr>
+<td><code>layer_number</code></td>
+<td>the GDS layer, or an expression of GDS layers (section 3)</td>
+</tr>
+<tr>
+<td><code>start_position</code></td>
+<td>height of the bottom of the layer, in nm above z = 0</td>
+</tr>
+<tr>
+<td><code>thickness</code></td>
+<td>height of the layer, in nm</td>
+</tr>
+<tr>
+<td><code>pattern_material</code></td>
+<td>the material of the shapes drawn on <code>layer_number</code></td>
+</tr>
+<tr>
+<td><code>background_material</code></td>
+<td>the material everywhere else, for background layers</td>
+</tr>
+<tr>
+<td><code>process</code></td>
+<td><code>Grow</code>: a solid made from the drawn shapes; <code>Background</code>: a layer that fills space</td>
+</tr>
+<tr>
+<td><code>sidewall_angle</code></td>
+<td>90 is vertical</td>
+</tr>
+<tr>
+<td><code>pattern_growth_delta</code></td>
+<td>a growth offset of the sidewall in nm; 0 here</td>
+</tr>
+</tbody>
+</table></div>
+<p>A worked row, the heater:</p>
+<div class="code code-text"><pre><code>1,Heater,47:0,1100,150,TiN - Palik,None,Grow,90,0
+</code></pre></div>
+<p>It is enabled. Its shapes are GDS layer 47 (<code>HEATER</code>). The shapes become a solid of TiN from
+1100 nm to 1250 nm above z = 0, with vertical walls. The <code>None</code> in the background column means
+that no background material is set for this layer.</p>
+<p>The background rows work differently. <code>Si_Substrate</code>, <code>BOX</code> and <code>TOX</code> have no GDS layer
+(<code>None</code>), and <code>process</code> is <code>Background</code>. They fill the whole space below and above the stack:
+silicon, then oxide, then oxide. Every <code>Grow</code> row is a solid placed on top of them.</p>
+<div class="layers-block"><figure class="layers-figure"><figcaption class="layers-caption"><b>Figure 1.</b> The layers of the ring modulator as the process file places them. The shapes come from the GDS file and the heights from <code>process_layers.csv</code>, both read when the site is built.</figcaption><div class="layers-scene layers-viewer" data-layers style="--stretch-on:10"><div class="layers-controls"><label class="lslider"><span class="lslider-name">Lift</span><input type="range" min="0" max="1" step="0.01" value="1" data-lift aria-label="Lift of the levels, 0 as drawn, 1 lifted" aria-valuetext="lifted"><output class="lslider-out" data-lift-out aria-live="off">lifted</output></label><div class="lswitch" role="group" aria-label="Scale of the heights"><button type="button" data-scale="stretch" aria-pressed="true">Heights ×10</button><button type="button" data-scale="true" aria-pressed="false">True scale</button></div></div><div class="layers-body"><div class="layers-main"><div class="layers-picture"><div class="layers-column" aria-hidden="true"><i class="lband oxide" style="--b:0.000%;--h:25.974%;--c:"></i><i class="lband oxide" style="--b:25.974%;--h:74.026%;--c:"></i><i class="lband level" data-level="slab" style="--b:25.974%;--h:1.169%;--c:#2a9db3"></i><i class="lband level" data-level="core" style="--b:25.974%;--h:2.857%;--c:#5ee7f5"></i><i class="lband level" data-level="contacts" style="--b:27.143%;--h:13.117%;--c:#c9b6e4"></i><i class="lband level" data-level="heater" style="--b:40.260%;--h:1.948%;--c:#ff9d6b"></i><i class="lband level" data-level="metal1" style="--b:40.260%;--h:9.091%;--c:#ffc457"></i><i class="lband level" data-level="via1-heater" style="--b:42.208%;--h:13.636%;--c:#c9b6e4"></i><i class="lband level" data-level="via1-metal1" style="--b:49.351%;--h:6.494%;--c:#c9b6e4"></i><i class="lband level" data-level="metal2" style="--b:55.844%;--h:9.091%;--c:#ffc457"></i><span class="lcol-top">5.7 µm</span><span class="lcol-bottom">-2.0 µm</span></div><div class="layers-stage" style="aspect-ratio:100 / 78;--cx:37.5cqw;--base:54.558cqw;--ground:69.573cqw;--axis-u:4.240cqw;--rise:3.746cqw;--axis-x:76cqw;--plane-x:7.5cqw;--plane-y:27.500cqw;--plane-w:60cqw;--plane-h:55.000cqw;--true:4.240cqw;--bar:16.667cqw"><i class="layers-light" aria-hidden="true"></i><div class="layers-plane"><i class="layers-ground" aria-hidden="true"></i><div class="lplate sheet" data-level="slab" style="--u:0.075cqw;--k:0;--c:#2a9db3;--s:#2a9db3;--fo:0.34"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-900 694 -900 394 -542 394 -542 358 -551 344 -566 320 -579 295 -587 280 -594 264 -605 238 -615 212 -623 185 -631 157 -636 135 -641 107 -644 85 -648 57 -649 28 -650 6 -650 -6 -649 -34 -648 -51 -646 -68 -644 -90 -640 -113 -635 -141 -629 -163 -622 -190 -616 -206 -611 -222 -603 -244 -592 -270 -582 -290 -568 -315 -560 -330 -548 -349 -539 -364 -522 -387 -509 -405 -494 -422 -475 -443 -456 -464 -439 -479 -418 -498 -400 -512 -377 -529 -359 -542 -340 -554 -315 -568 -290 -582 -270 -592 -259 -596 -233 -607 -206 -616 -190 -622 -174 -626 -152 -632 -130 -637 -102 -642 -79 -645 -51 -648 -23 -650 -6 -650 6 -650 17 -650 40 -649 57 -648 74 -646 96 -643 124 -638 146 -633 168 -628 185 -623 201 -618 228 -609 254 -598 280 -587 295 -579 310 -571 335 -557 354 -545 373 -532 396 -516 413 -502 435 -483 452 -468 472 -447 491 -426 505 -409 519 -391 536 -368 548 -349 560 -330 568 -315 582 -290 592 -270 603 -244 611 -222 616 -206 622 -190 629 -163 635 -141 640 -113 644 -90 646 -68 648 -51 649 -34 650 -6 650 6 649 28 648 57 644 85 641 107 636 135 631 157 623 185 615 212 605 238 594 264 587 280 579 295 566 320 551 344 542 358 542 394 900 394 900 694ZM-3 350 3 350 21 349 40 348 52 346 64 344 82 340 96 336 114 331 125 327 140 321 151 316 164 309 178 302 193 292 206 283 216 276 225 268 236 258 245 250 254 241 262 232 272 220 280 211 288 198 295 188 306 170 313 156 318 145 323 134 329 120 335 102 339 88 342 73 345 58 347 46 348 34 350 9 350 3 350 -3 349 -24 347 -43 346 -55 343 -70 340 -85 336 -99 330 -117 326 -128 320 -142 315 -153 308 -167 300 -180 290 -196 281 -208 274 -218 266 -227 256 -239 248 -248 239 -256 227 -266 218 -274 208 -281 196 -290 180 -300 167 -308 153 -315 142 -320 128 -326 117 -330 99 -336 85 -340 70 -343 55 -346 43 -347 24 -349 3 -350 -3 -350 -9 -350 -34 -348 -46 -347 -58 -345 -73 -342 -88 -339 -102 -335 -120 -329 -134 -323 -145 -318 -156 -313 -170 -306 -188 -295 -198 -288 -211 -280 -220 -272 -232 -262 -241 -254 -250 -245 -258 -236 -268 -225 -276 -216 -283 -206 -292 -193 -302 -178 -309 -164 -316 -151 -321 -140 -327 -125 -331 -114 -336 -96 -340 -82 -344 -64 -346 -52 -348 -40 -349 -21 -350 -3 -350 3 -350 12 -348 37 -345 61 -341 79 -337 94 -334 105 -328 123 -322 137 -317 148 -312 159 -303 175 -294 191 -285 203 -278 213 -270 223 -260 234 -252 243 -243 252 -234 260 -223 270 -213 278 -203 285 -191 294 -175 303 -159 312 -148 317 -137 322 -123 328 -105 334 -94 337 -79 341 -61 345 -37 348 -12 350Z"/></svg></div><div class="lplate core" data-level="core" style="--u:0.183cqw;--k:1;--c:#5ee7f5;--s:#5ee7f5;--fo:0.85"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="glow" d="M-900 556 -900 531 900 531 900 556ZM-4 512 -13 512 -36 511 -62 509 -89 505 -111 500 -133 495 -154 489 -180 480 -196 474 -217 465 -233 457 -256 444 -275 432 -290 422 -308 409 -323 398 -343 381 -359 366 -375 350 -387 336 -404 316 -415 301 -427 283 -437 268 -450 245 -461 225 -468 208 -477 188 -483 171 -491 146 -497 124 -502 102 -506 80 -509 62 -510 49 -512 27 -512 4 -512 -4 -512 -31 -510 -54 -508 -71 -505 -85 -501 -107 -496 -128 -490 -150 -482 -175 -475 -192 -466 -213 -459 -229 -448 -248 -435 -272 -425 -287 -412 -305 -401 -319 -384 -340 -372 -353 -353 -372 -340 -384 -319 -401 -305 -412 -287 -425 -272 -435 -248 -448 -229 -459 -213 -466 -192 -475 -175 -482 -154 -489 -133 -495 -111 -500 -89 -505 -62 -509 -36 -511 -13 -512 -4 -512 4 -512 18 -512 45 -511 71 -508 98 -503 120 -498 141 -493 167 -485 184 -478 204 -470 221 -463 237 -455 260 -442 279 -430 298 -417 312 -407 329 -393 346 -378 362 -362 378 -346 393 -329 407 -312 417 -298 430 -279 442 -260 455 -237 463 -221 470 -204 478 -184 485 -167 493 -141 498 -120 503 -98 508 -71 511 -45 512 -18 512 -4 512 4 512 13 511 36 509 62 505 89 500 111 495 133 489 154 480 180 474 196 465 217 457 233 444 256 432 275 422 290 409 308 398 323 381 343 366 359 350 375 336 387 316 404 301 415 283 427 268 437 245 450 225 461 208 468 188 477 171 483 146 491 124 497 102 502 80 506 62 509 49 510 27 512 4 512ZM-4 488 4 488 21 487 42 486 59 484 85 480 101 477 126 471 147 465 163 460 187 450 206 442 225 432 244 422 258 413 280 399 297 387 310 376 323 365 336 354 351 339 362 326 373 313 384 300 397 283 411 262 420 247 430 229 440 210 449 190 457 171 464 151 470 130 476 106 479 89 483 64 485 47 487 26 488 4 488 -4 487 -30 485 -51 482 -72 479 -93 474 -114 469 -134 462 -155 455 -175 445 -198 438 -214 428 -233 418 -251 409 -266 399 -280 392 -290 382 -304 371 -317 359 -329 348 -342 332 -357 320 -368 307 -379 293 -389 273 -404 255 -416 236 -426 218 -436 202 -444 179 -454 159 -461 143 -466 118 -473 97 -478 76 -482 55 -484 38 -486 13 -487 4 -488 -4 -488 -21 -487 -42 -486 -59 -484 -85 -480 -101 -477 -126 -471 -147 -465 -163 -460 -187 -450 -206 -442 -225 -432 -244 -422 -258 -413 -280 -399 -297 -387 -310 -376 -323 -365 -336 -354 -351 -339 -362 -326 -373 -313 -384 -300 -397 -283 -411 -262 -420 -247 -430 -229 -440 -210 -449 -190 -457 -171 -464 -151 -470 -130 -476 -106 -479 -89 -483 -64 -485 -47 -487 -26 -488 -4 -488 4 -487 30 -485 51 -482 72 -479 93 -474 114 -469 134 -462 155 -455 175 -445 198 -438 214 -428 233 -418 251 -409 266 -399 280 -392 290 -382 304 -371 317 -359 329 -348 342 -332 357 -320 368 -307 379 -293 389 -273 404 -255 416 -236 426 -218 436 -202 444 -179 454 -159 461 -143 466 -118 473 -97 478 -76 482 -55 484 -38 486 -13 487Z"/><path class="fill" fill-rule="evenodd" d="M-900 556 -900 531 900 531 900 556ZM-4 512 -13 512 -36 511 -62 509 -89 505 -111 500 -133 495 -154 489 -180 480 -196 474 -217 465 -233 457 -256 444 -275 432 -290 422 -308 409 -323 398 -343 381 -359 366 -375 350 -387 336 -404 316 -415 301 -427 283 -437 268 -450 245 -461 225 -468 208 -477 188 -483 171 -491 146 -497 124 -502 102 -506 80 -509 62 -510 49 -512 27 -512 4 -512 -4 -512 -31 -510 -54 -508 -71 -505 -85 -501 -107 -496 -128 -490 -150 -482 -175 -475 -192 -466 -213 -459 -229 -448 -248 -435 -272 -425 -287 -412 -305 -401 -319 -384 -340 -372 -353 -353 -372 -340 -384 -319 -401 -305 -412 -287 -425 -272 -435 -248 -448 -229 -459 -213 -466 -192 -475 -175 -482 -154 -489 -133 -495 -111 -500 -89 -505 -62 -509 -36 -511 -13 -512 -4 -512 4 -512 18 -512 45 -511 71 -508 98 -503 120 -498 141 -493 167 -485 184 -478 204 -470 221 -463 237 -455 260 -442 279 -430 298 -417 312 -407 329 -393 346 -378 362 -362 378 -346 393 -329 407 -312 417 -298 430 -279 442 -260 455 -237 463 -221 470 -204 478 -184 485 -167 493 -141 498 -120 503 -98 508 -71 511 -45 512 -18 512 -4 512 4 512 13 511 36 509 62 505 89 500 111 495 133 489 154 480 180 474 196 465 217 457 233 444 256 432 275 422 290 409 308 398 323 381 343 366 359 350 375 336 387 316 404 301 415 283 427 268 437 245 450 225 461 208 468 188 477 171 483 146 491 124 497 102 502 80 506 62 509 49 510 27 512 4 512ZM-4 488 4 488 21 487 42 486 59 484 85 480 101 477 126 471 147 465 163 460 187 450 206 442 225 432 244 422 258 413 280 399 297 387 310 376 323 365 336 354 351 339 362 326 373 313 384 300 397 283 411 262 420 247 430 229 440 210 449 190 457 171 464 151 470 130 476 106 479 89 483 64 485 47 487 26 488 4 488 -4 487 -30 485 -51 482 -72 479 -93 474 -114 469 -134 462 -155 455 -175 445 -198 438 -214 428 -233 418 -251 409 -266 399 -280 392 -290 382 -304 371 -317 359 -329 348 -342 332 -357 320 -368 307 -379 293 -389 273 -404 255 -416 236 -426 218 -436 202 -444 179 -454 159 -461 143 -466 118 -473 97 -478 76 -482 55 -484 38 -486 13 -487 4 -488 -4 -488 -21 -487 -42 -486 -59 -484 -85 -480 -101 -477 -126 -471 -147 -465 -163 -460 -187 -450 -206 -442 -225 -432 -244 -422 -258 -413 -280 -399 -297 -387 -310 -376 -323 -365 -336 -354 -351 -339 -362 -326 -373 -313 -384 -300 -397 -283 -411 -262 -420 -247 -430 -229 -440 -210 -449 -190 -457 -171 -464 -151 -470 -130 -476 -106 -479 -89 -483 -64 -485 -47 -487 -26 -488 -4 -488 4 -487 30 -485 51 -482 72 -479 93 -474 114 -469 134 -462 155 -455 175 -445 198 -438 214 -428 233 -418 251 -409 266 -399 280 -392 290 -382 304 -371 317 -359 329 -348 342 -332 357 -320 368 -307 379 -293 389 -273 404 -255 416 -236 426 -218 436 -202 444 -179 454 -159 461 -143 466 -118 473 -97 478 -76 482 -55 484 -38 486 -13 487Z"/></svg></div><div class="lplate soft" data-level="core" style="--u:0.183cqw;--k:2;--c:#6aa5ff;--s:#6aa5ff;--fo:0.12"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-433 250 -439 239 -449 219 -459 199 -468 175 -473 163 -478 146 -485 121 -490 100 -493 82 -495 70 -498 48 -499 26 -500 4 -500 -4 -499 -30 -497 -57 -494 -78 -492 -91 -488 -108 -484 -125 -481 -138 -476 -154 -467 -179 -457 -203 -446 -227 -435 -246 -422 -269 -410 -287 -397 -304 -383 -321 -372 -335 -360 -347 -344 -363 -331 -374 -318 -386 -301 -399 -280 -415 -261 -426 -239 -439 -219 -449 -199 -459 -175 -468 -163 -473 -146 -478 -121 -485 -100 -490 -82 -493 -70 -495 -48 -498 -26 -499 -4 -500 4 -500 30 -499 57 -497 78 -494 91 -492 108 -488 125 -484 138 -481 154 -476 179 -467 203 -457 227 -446 246 -435 269 -422 287 -410 304 -397 321 -383 335 -372 347 -360 363 -344 374 -331 386 -318 399 -301 415 -280 426 -261 439 -239 449 -219 459 -199 468 -175 473 -163 478 -146 485 -121 490 -100 493 -82 495 -70 498 -48 499 -26 500 -4 500 4 499 30 497 57 494 78 492 91 488 108 484 125 481 138 476 154 467 179 457 203 446 227 433 250 303 176 309 164 316 151 321 140 327 125 331 114 336 96 340 82 344 64 346 52 348 40 349 21 350 3 350 -3 350 -12 348 -37 345 -61 341 -79 337 -94 334 -105 328 -123 322 -137 317 -148 312 -159 303 -175 294 -191 285 -203 278 -213 270 -223 260 -234 252 -243 243 -252 234 -260 223 -270 213 -278 203 -285 191 -294 175 -303 159 -312 148 -317 137 -322 123 -328 105 -334 94 -337 79 -341 61 -345 37 -348 12 -350 3 -350 -3 -350 -21 -349 -40 -348 -52 -346 -64 -344 -82 -340 -96 -336 -114 -331 -125 -327 -140 -321 -151 -316 -164 -309 -178 -302 -193 -292 -206 -283 -216 -276 -225 -268 -236 -258 -245 -250 -254 -241 -262 -232 -272 -220 -280 -211 -288 -198 -295 -188 -306 -170 -313 -156 -318 -145 -323 -134 -329 -120 -335 -102 -339 -88 -342 -73 -345 -58 -347 -46 -348 -34 -350 -9 -350 -3 -350 3 -349 24 -347 43 -346 55 -343 70 -340 85 -336 99 -330 117 -326 128 -320 142 -315 153 -308 167 -303 176Z"/></svg></div><div class="lplate soft" data-level="core" style="--u:0.183cqw;--k:3;--c:#ff7fb0;--s:#ff7fb0;--fo:0.12"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-563 324 -568 315 -582 290 -592 270 -596 259 -607 233 -616 206 -622 190 -626 174 -632 152 -637 130 -642 102 -645 79 -648 51 -650 23 -650 6 -650 -6 -650 -17 -649 -40 -648 -57 -646 -74 -643 -96 -638 -124 -633 -146 -628 -168 -623 -185 -618 -201 -609 -228 -598 -254 -587 -280 -579 -295 -571 -310 -557 -335 -545 -354 -532 -373 -516 -396 -502 -413 -483 -435 -468 -452 -447 -472 -426 -491 -409 -505 -391 -519 -368 -536 -349 -548 -330 -560 -315 -568 -290 -582 -270 -592 -244 -603 -222 -611 -206 -616 -190 -622 -163 -629 -141 -635 -113 -640 -90 -644 -68 -646 -51 -648 -34 -649 -6 -650 6 -650 28 -649 57 -648 85 -644 107 -641 135 -636 157 -631 185 -623 212 -615 238 -605 264 -594 280 -587 295 -579 320 -566 344 -551 364 -539 387 -522 405 -509 422 -494 443 -475 464 -456 479 -439 498 -418 512 -400 529 -377 542 -359 554 -340 568 -315 582 -290 592 -270 596 -259 607 -233 616 -206 622 -190 626 -174 632 -152 637 -130 642 -102 645 -79 648 -51 650 -23 650 -6 650 6 650 17 649 40 648 57 646 74 643 96 638 124 633 146 628 168 623 185 618 201 609 228 598 254 587 280 579 295 571 310 563 324 433 250 439 239 449 219 459 199 468 175 473 163 478 146 485 121 490 100 493 82 495 70 498 48 499 26 500 4 500 -4 499 -30 497 -57 494 -78 492 -91 488 -108 484 -125 481 -138 476 -154 467 -179 457 -203 446 -227 435 -246 422 -269 410 -287 397 -304 383 -321 372 -335 360 -347 344 -363 331 -374 318 -386 301 -399 280 -415 261 -426 239 -439 219 -449 199 -459 175 -468 163 -473 146 -478 121 -485 100 -490 82 -493 70 -495 48 -498 26 -499 4 -500 -4 -500 -30 -499 -57 -497 -78 -494 -91 -492 -108 -488 -125 -484 -138 -481 -154 -476 -179 -467 -203 -457 -227 -446 -246 -435 -269 -422 -287 -410 -304 -397 -321 -383 -335 -372 -347 -360 -363 -344 -374 -331 -386 -318 -399 -301 -415 -280 -426 -261 -439 -239 -449 -219 -459 -199 -468 -175 -473 -163 -478 -146 -485 -121 -490 -100 -493 -82 -495 -70 -498 -48 -499 -26 -500 -4 -500 4 -499 30 -497 57 -494 78 -492 91 -488 108 -484 125 -481 138 -476 154 -467 179 -457 203 -446 227 -433 250Z"/></svg></div><div class="lplate soft" data-level="core" style="--u:0.183cqw;--k:4;--c:#6aa5ff;--s:#6aa5ff;--fo:0.22"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-405 234 -417 212 -427 190 -436 168 -442 152 -448 133 -455 109 -459 89 -463 65 -465 45 -467 24 -468 4 -468 -4 -467 -20 -466 -37 -464 -61 -460 -81 -456 -105 -449 -129 -443 -148 -438 -164 -429 -186 -418 -209 -411 -223 -403 -237 -394 -251 -385 -265 -376 -278 -368 -288 -353 -307 -342 -319 -325 -336 -310 -350 -291 -366 -272 -381 -255 -392 -241 -401 -227 -409 -212 -417 -190 -427 -168 -436 -152 -442 -133 -448 -109 -455 -89 -459 -65 -463 -45 -465 -24 -467 -4 -468 4 -468 20 -467 37 -466 61 -464 81 -460 105 -456 129 -449 148 -443 164 -438 186 -429 209 -418 223 -411 237 -403 251 -394 265 -385 278 -376 288 -368 307 -353 319 -342 336 -325 350 -310 366 -291 381 -272 392 -255 401 -241 409 -227 417 -212 427 -190 436 -168 442 -152 448 -133 455 -109 459 -89 463 -65 465 -45 467 -24 468 -4 468 4 467 20 466 37 464 61 460 81 456 105 449 129 443 148 438 164 429 186 418 209 411 223 405 234 303 176 313 156 318 145 323 134 329 120 335 102 339 88 342 73 345 58 347 46 348 34 350 9 350 3 350 -3 349 -24 347 -43 346 -55 343 -70 340 -85 336 -99 330 -117 326 -128 320 -142 315 -153 308 -167 300 -180 290 -196 281 -208 274 -218 266 -227 256 -239 248 -248 239 -256 227 -266 218 -274 208 -281 196 -290 180 -300 167 -308 153 -315 142 -320 128 -326 117 -330 99 -336 85 -340 70 -343 55 -346 43 -347 24 -349 3 -350 -3 -350 -9 -350 -34 -348 -46 -347 -58 -345 -73 -342 -88 -339 -102 -335 -120 -329 -134 -323 -145 -318 -156 -313 -170 -306 -188 -295 -198 -288 -211 -280 -220 -272 -232 -262 -241 -254 -250 -245 -258 -236 -268 -225 -276 -216 -283 -206 -292 -193 -302 -178 -309 -164 -316 -151 -321 -140 -327 -125 -331 -114 -336 -96 -340 -82 -344 -64 -346 -52 -348 -40 -349 -21 -350 -3 -350 3 -350 12 -348 37 -345 61 -341 79 -337 94 -334 105 -328 123 -322 137 -317 148 -312 159 -303 176Z"/></svg></div><div class="lplate soft" data-level="core" style="--u:0.183cqw;--k:5;--c:#ff7fb0;--s:#ff7fb0;--fo:0.22"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-563 324 -568 315 -582 290 -592 270 -596 259 -607 233 -616 206 -622 190 -626 174 -632 152 -637 130 -642 102 -645 79 -648 51 -650 23 -650 6 -650 -6 -650 -17 -649 -40 -648 -57 -646 -74 -643 -96 -638 -124 -633 -146 -628 -168 -623 -185 -618 -201 -609 -228 -598 -254 -587 -280 -579 -295 -571 -310 -557 -335 -545 -354 -532 -373 -516 -396 -502 -413 -483 -435 -468 -452 -447 -472 -426 -491 -409 -505 -391 -519 -368 -536 -349 -548 -330 -560 -315 -568 -290 -582 -270 -592 -244 -603 -222 -611 -206 -616 -190 -622 -163 -629 -141 -635 -113 -640 -90 -644 -68 -646 -51 -648 -34 -649 -6 -650 6 -650 28 -649 57 -648 85 -644 107 -641 135 -636 157 -631 185 -623 212 -615 238 -605 264 -594 280 -587 295 -579 320 -566 344 -551 364 -539 387 -522 405 -509 422 -494 443 -475 464 -456 479 -439 498 -418 512 -400 529 -377 542 -359 554 -340 568 -315 582 -290 592 -270 596 -259 607 -233 616 -206 622 -190 626 -174 632 -152 637 -130 642 -102 645 -79 648 -51 650 -23 650 -6 650 6 650 17 649 40 648 57 646 74 643 96 638 124 633 146 628 168 623 185 618 201 609 228 598 254 587 280 579 295 571 310 563 324 461 266 472 246 479 233 486 217 494 200 500 182 508 160 514 138 519 120 524 92 528 70 530 51 532 23 532 5 532 -5 532 -19 531 -37 530 -56 527 -79 524 -97 518 -124 513 -142 506 -165 499 -186 492 -204 485 -221 477 -238 468 -254 454 -278 447 -290 434 -309 420 -328 408 -342 393 -360 380 -373 367 -386 349 -402 335 -414 317 -428 302 -439 278 -454 254 -468 229 -481 212 -488 195 -495 173 -504 156 -509 133 -516 115 -520 88 -525 65 -529 46 -530 28 -532 5 -532 -5 -532 -23 -532 -42 -531 -60 -529 -83 -526 -106 -522 -129 -517 -147 -512 -169 -505 -191 -497 -208 -490 -225 -483 -246 -472 -258 -466 -274 -456 -294 -444 -313 -431 -332 -417 -346 -405 -363 -389 -377 -377 -389 -363 -405 -346 -417 -332 -431 -313 -444 -294 -456 -274 -466 -258 -472 -246 -483 -225 -490 -208 -497 -191 -505 -169 -512 -147 -517 -129 -522 -106 -526 -83 -529 -60 -531 -42 -532 -23 -532 -5 -532 5 -532 28 -530 46 -529 65 -525 88 -520 115 -516 133 -509 156 -504 173 -495 195 -488 212 -481 229 -468 254 -461 266Z"/></svg></div><div class="lplate soft" data-level="core" style="--u:0.183cqw;--k:6;--c:#6aa5ff;--s:#6aa5ff;--fo:0.34"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-379 219 -384 209 -395 188 -404 167 -411 150 -416 135 -422 117 -426 98 -429 84 -432 68 -435 50 -436 30 -437 8 -438 4 -438 -4 -437 -27 -436 -42 -433 -65 -430 -80 -427 -95 -423 -113 -418 -128 -412 -146 -406 -164 -398 -181 -393 -192 -386 -205 -375 -225 -367 -238 -356 -254 -347 -266 -330 -287 -312 -307 -301 -317 -290 -328 -278 -338 -260 -352 -241 -365 -229 -373 -209 -384 -188 -395 -167 -404 -150 -411 -135 -416 -117 -422 -98 -426 -84 -429 -68 -432 -50 -435 -30 -436 -8 -437 -4 -438 4 -438 27 -437 42 -436 65 -433 80 -430 95 -427 113 -423 128 -418 146 -412 164 -406 181 -398 192 -393 205 -386 225 -375 238 -367 254 -356 266 -347 287 -330 307 -312 317 -301 328 -290 338 -278 352 -260 365 -241 373 -229 384 -209 395 -188 404 -167 411 -150 416 -135 422 -117 426 -98 429 -84 432 -68 435 -50 436 -30 437 -8 438 -4 438 4 437 27 436 42 433 65 430 80 427 95 423 113 418 128 412 146 406 164 398 181 393 192 386 205 379 219 303 176 313 156 318 145 323 134 329 120 335 102 339 88 342 73 345 58 347 46 348 34 350 9 350 3 350 -3 349 -24 347 -43 346 -55 343 -70 340 -85 336 -99 330 -117 326 -128 320 -142 315 -153 308 -167 300 -180 290 -196 281 -208 274 -218 266 -227 256 -239 248 -248 239 -256 227 -266 218 -274 208 -281 196 -290 180 -300 167 -308 153 -315 142 -320 128 -326 117 -330 99 -336 85 -340 70 -343 55 -346 43 -347 24 -349 3 -350 -3 -350 -9 -350 -34 -348 -46 -347 -58 -345 -73 -342 -88 -339 -102 -335 -120 -329 -134 -323 -145 -318 -156 -313 -170 -306 -188 -295 -198 -288 -211 -280 -220 -272 -232 -262 -241 -254 -250 -245 -258 -236 -268 -225 -276 -216 -283 -206 -292 -193 -302 -178 -309 -164 -316 -151 -321 -140 -327 -125 -331 -114 -336 -96 -340 -82 -344 -64 -346 -52 -348 -40 -349 -21 -350 -3 -350 3 -350 12 -348 37 -345 61 -341 79 -337 94 -334 105 -328 123 -322 137 -317 148 -312 159 -303 176Z"/></svg></div><div class="lplate soft" data-level="core" style="--u:0.183cqw;--k:7;--c:#ff7fb0;--s:#ff7fb0;--fo:0.34"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-563 324 -568 315 -582 290 -592 270 -596 259 -607 233 -616 206 -622 190 -626 174 -632 152 -637 130 -642 102 -645 79 -648 51 -650 23 -650 6 -650 -6 -650 -17 -649 -40 -648 -57 -646 -74 -643 -96 -638 -124 -633 -146 -628 -168 -623 -185 -618 -201 -609 -228 -598 -254 -587 -280 -579 -295 -571 -310 -557 -335 -545 -354 -532 -373 -516 -396 -502 -413 -483 -435 -468 -452 -447 -472 -426 -491 -409 -505 -391 -519 -368 -536 -349 -548 -330 -560 -315 -568 -290 -582 -270 -592 -244 -603 -222 -611 -206 -616 -190 -622 -163 -629 -141 -635 -113 -640 -90 -644 -68 -646 -51 -648 -34 -649 -6 -650 6 -650 28 -649 57 -648 85 -644 107 -641 135 -636 157 -631 185 -623 212 -615 238 -605 264 -594 280 -587 295 -579 320 -566 344 -551 364 -539 387 -522 405 -509 422 -494 443 -475 464 -456 479 -439 498 -418 512 -400 529 -377 542 -359 554 -340 568 -315 582 -290 592 -270 596 -259 607 -233 616 -206 622 -190 626 -174 632 -152 637 -130 642 -102 645 -79 648 -51 650 -23 650 -6 650 6 650 17 649 40 648 57 646 74 643 96 638 124 633 146 628 168 623 185 618 201 609 228 598 254 587 280 579 295 571 310 563 324 487 281 501 255 510 238 518 220 527 197 533 178 541 155 546 136 551 112 555 93 558 73 560 54 561 39 562 20 562 5 562 -5 562 -29 560 -49 559 -64 557 -78 554 -98 550 -117 545 -141 539 -160 532 -183 525 -202 516 -224 508 -242 499 -260 490 -277 477 -298 461 -323 449 -338 434 -358 418 -376 398 -398 376 -418 358 -434 338 -449 323 -461 298 -477 277 -490 260 -499 242 -508 224 -516 202 -525 183 -532 160 -539 141 -545 117 -550 98 -554 78 -557 64 -559 49 -560 29 -562 5 -562 -5 -562 -20 -562 -39 -561 -54 -560 -73 -558 -93 -555 -112 -551 -136 -546 -155 -541 -178 -533 -197 -527 -220 -518 -238 -510 -255 -501 -273 -492 -290 -482 -302 -474 -315 -466 -335 -452 -354 -437 -373 -421 -391 -405 -411 -384 -428 -365 -446 -342 -458 -327 -466 -315 -474 -302 -487 -281 -497 -264 -506 -247 -514 -229 -522 -211 -530 -188 -536 -169 -543 -146 -548 -127 -553 -102 -556 -83 -558 -73 -560 -54 -561 -39 -562 -20 -562 -5 -562 5 -562 29 -560 49 -559 64 -556 88 -552 107 -547 131 -542 150 -535 174 -529 192 -520 215 -512 233 -503 251 -494 268 -487 281Z"/></svg></div><div class="lplate solid" data-level="contacts" style="--u:0.992cqw;--k:8;--c:#c9b6e4;--s:#c9b6e4;--fo:0.55"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-584 208 -592 184 -568 177 -560 200ZM584 208 560 200 568 177 592 184ZM-599 159 -605 135 -581 129 -575 154ZM599 159 575 154 581 129 605 135ZM-610 110 -614 85 -590 81 -586 106ZM610 110 586 106 590 81 614 85ZM-617 59 -619 34 -594 32 -592 57ZM617 59 592 57 594 32 619 34ZM-595 8 -620 8 -620 -17 -595 -17ZM595 8 595 -17 620 -17 620 8ZM-594 -41 -619 -43 -616 -68 -592 -66ZM594 -41 592 -66 616 -68 619 -43ZM-588 -89 -613 -94 -609 -118 -584 -114ZM588 -89 584 -114 609 -118 613 -94ZM-579 -137 -603 -144 -597 -168 -573 -162ZM579 -137 573 -162 597 -168 603 -144ZM-566 -184 -589 -193 -581 -216 -558 -208ZM566 -184 558 -208 581 -216 589 -193ZM-549 -230 -572 -241 -561 -263 -539 -253ZM549 -230 539 -253 561 -263 572 -241ZM-528 -275 -550 -287 -538 -309 -516 -297ZM528 -275 516 -297 538 -309 550 -287ZM-504 -317 -524 -331 -511 -352 -490 -338ZM504 -317 490 -338 511 -352 524 -331ZM-476 -358 -495 -373 -480 -393 -460 -377ZM476 -358 460 -377 480 -393 495 -373ZM-445 -395 -463 -412 -446 -431 -428 -414ZM445 -395 428 -414 446 -431 463 -412ZM-411 -431 -428 -449 -409 -466 -392 -448ZM411 -431 392 -448 409 -466 428 -449ZM-374 -463 -389 -483 -370 -498 -354 -478ZM374 -463 354 -478 370 -498 389 -483ZM-335 -492 -348 -513 -327 -527 -314 -506ZM335 -492 314 -506 327 -527 348 -513ZM-293 -518 -305 -540 -283 -552 -271 -530ZM293 -518 271 -530 283 -552 305 -540ZM-249 -540 -259 -563 -237 -573 -227 -550ZM249 -540 227 -550 237 -573 259 -563ZM-204 -559 -212 -583 -189 -591 -181 -567ZM204 -559 181 -567 189 -591 212 -583ZM-158 -574 -164 -598 -139 -604 -133 -580ZM158 -574 133 -580 139 -604 164 -598ZM-110 -585 -114 -610 -89 -614 -85 -589ZM110 -585 85 -589 89 -614 114 -610ZM-61 -592 -63 -617 -38 -619 -36 -594ZM61 -592 36 -594 38 -619 63 -617ZM-12 -595 -12 -620 12 -620 12 -595Z"/></svg></div><div class="lplate solid" data-level="contacts" style="--u:0.992cqw;--k:9;--c:#c9b6e4;--s:#c9b6e4;--fo:0.55"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-393 98 -398 73 -374 68 -369 92ZM393 98 369 92 374 68 398 73ZM-402 47 -405 22 -380 20 -378 45ZM402 47 378 45 380 20 405 22ZM-380 -4 -405 -5 -404 -30 -379 -29ZM380 -4 379 -29 404 -30 405 -5ZM-377 -52 -401 -56 -397 -81 -372 -76ZM377 -52 372 -76 397 -81 401 -56ZM-367 -99 -391 -107 -384 -130 -360 -123ZM367 -99 360 -123 384 -130 391 -107ZM-351 -145 -374 -155 -364 -178 -341 -168ZM351 -145 341 -168 364 -178 374 -155ZM-330 -188 -351 -202 -338 -223 -317 -210ZM330 -188 317 -210 338 -223 351 -202ZM-304 -229 -323 -245 -307 -264 -288 -248ZM304 -229 288 -248 307 -264 323 -245ZM-272 -266 -289 -284 -271 -301 -254 -283ZM272 -266 254 -283 271 -301 289 -284ZM-236 -298 -251 -318 -231 -333 -216 -313ZM236 -298 216 -313 231 -333 251 -318ZM-196 -326 -208 -347 -187 -360 -174 -338ZM196 -326 174 -338 187 -360 208 -347ZM-153 -348 -163 -371 -139 -380 -130 -357ZM153 -348 130 -357 139 -380 163 -371ZM-108 -365 -114 -389 -90 -395 -84 -371ZM108 -365 84 -371 90 -395 114 -389ZM-61 -375 -64 -400 -39 -403 -36 -378ZM61 -375 36 -378 39 -403 64 -400ZM-12 -380 -12 -405 12 -405 12 -380Z"/></svg></div><div class="lplate film" data-level="heater" style="--u:1.958cqw;--k:10;--c:#ff9d6b;--s:#ff9d6b;--fo:0.42"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-396 481 -481 396 -422 337 -426 332 -440 314 -450 298 -463 278 -472 262 -483 241 -491 224 -499 207 -507 185 -514 167 -519 149 -525 126 -530 103 -535 75 -537 56 -539 33 -540 5 -540 -5 -540 -24 -539 -38 -537 -61 -533 -84 -528 -112 -524 -131 -518 -153 -512 -171 -504 -194 -497 -211 -489 -228 -481 -245 -470 -266 -460 -282 -448 -302 -434 -321 -420 -340 -404 -358 -388 -375 -375 -388 -358 -404 -340 -420 -321 -434 -302 -448 -282 -460 -266 -470 -245 -481 -228 -489 -211 -497 -194 -504 -171 -512 -153 -518 -131 -524 -112 -528 -84 -533 -61 -537 -38 -539 -24 -540 -5 -540 5 -540 33 -539 56 -537 75 -535 103 -530 126 -525 149 -519 167 -514 185 -507 207 -499 224 -491 241 -483 262 -472 278 -463 298 -450 314 -440 332 -426 344 -417 354 -408 368 -395 385 -378 401 -361 417 -344 431 -325 445 -306 455 -290 468 -270 479 -249 487 -233 495 -215 502 -198 511 -176 516 -158 523 -135 527 -117 530 -103 533 -89 536 -66 538 -42 540 -14 540 -5 540 5 540 24 538 47 535 70 532 94 526 121 522 140 515 162 509 180 501 202 493 220 485 237 477 254 465 274 453 294 442 310 428 329 422 337 481 396 396 481 283 368 325 325 325 325 331 320 347 302 362 283 372 270 381 257 392 240 402 223 413 202 422 183 428 169 436 146 442 127 446 111 450 96 454 76 456 60 459 36 460 20 460 4 460 -4 459 -32 457 -52 454 -72 452 -88 447 -107 443 -123 438 -142 429 -165 423 -180 415 -198 404 -219 394 -237 384 -254 374 -267 365 -280 350 -299 334 -317 320 -331 302 -347 283 -362 270 -372 257 -381 240 -392 223 -402 202 -413 183 -422 169 -428 146 -436 127 -442 111 -446 96 -450 76 -454 60 -456 36 -459 20 -460 4 -460 -4 -460 -32 -459 -52 -457 -72 -454 -88 -452 -107 -447 -123 -443 -142 -438 -165 -429 -180 -423 -198 -415 -219 -404 -237 -394 -254 -384 -267 -374 -280 -365 -299 -350 -317 -334 -331 -320 -347 -302 -362 -283 -372 -270 -381 -257 -392 -240 -402 -223 -413 -202 -422 -183 -428 -169 -436 -146 -442 -127 -446 -111 -450 -96 -454 -76 -456 -60 -459 -36 -460 -20 -460 -4 -460 4 -459 32 -457 52 -454 72 -452 88 -447 107 -443 123 -438 142 -429 165 -423 180 -415 198 -404 219 -394 237 -384 254 -374 267 -365 280 -350 299 -334 317 -283 368Z"/></svg></div><div class="lplate metal" data-level="metal1" style="--u:2.417cqw;--k:11;--c:#ffc457;--s:#ffc457;--fo:0.32"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-4 420 -15 420 -37 418 -55 416 -73 414 -91 410 -112 405 -130 399 -147 393 -161 388 -178 381 -194 373 -213 362 -229 352 -247 340 -259 331 -273 319 -286 307 -300 294 -312 281 -324 267 -335 253 -346 238 -356 223 -367 204 -378 184 -384 171 -391 154 -397 137 -403 119 -408 98 -412 84 -415 66 -417 48 -419 22 -420 4 -420 -4 -419 -29 -417 -51 -414 -69 -411 -87 -406 -109 -402 -123 -396 -140 -389 -157 -382 -174 -374 -191 -364 -210 -354 -226 -342 -244 -333 -256 -322 -270 -310 -284 -297 -297 -284 -310 -270 -322 -256 -333 -244 -342 -226 -354 -210 -364 -191 -374 -174 -382 -157 -389 -140 -396 -123 -402 -109 -406 -87 -411 -69 -414 -51 -417 -29 -419 -4 -420 4 -420 22 -419 48 -417 66 -415 84 -412 98 -408 119 -403 137 -397 154 -391 171 -384 184 -378 204 -367 223 -356 238 -346 253 -335 267 -324 281 -312 294 -300 307 -286 319 -273 331 -259 340 -247 352 -229 362 -213 373 -194 381 -178 388 -161 393 -147 399 -130 405 -112 410 -91 414 -73 416 -55 418 -37 420 -15 420 -4 420 4 419 29 418 44 415 62 412 80 409 94 404 116 398 133 392 150 385 167 379 181 371 197 364 210 350 232 338 250 329 261 317 276 305 289 289 305 276 317 261 329 250 338 232 350 210 364 197 371 181 379 167 385 150 392 133 398 116 404 94 409 80 412 62 415 44 418 29 419 4 420ZM-589 340 -595 330 -606 309 -616 287 -624 271 -633 249 -641 227 -649 204 -655 182 -661 159 -666 136 -672 106 -675 83 -678 53 -679 30 -680 0 -679 -30 -678 -53 -675 -83 -672 -106 -666 -136 -661 -159 -655 -182 -649 -204 -641 -227 -633 -249 -624 -271 -616 -287 -606 -309 -595 -330 -583 -350 -570 -370 -557 -390 -543 -409 -525 -433 -505 -455 -493 -468 -481 -481 -468 -493 -455 -505 -433 -525 -409 -543 -390 -557 -370 -570 -350 -583 -330 -595 -309 -606 -287 -616 -271 -624 -249 -633 -227 -641 -204 -649 -182 -655 -159 -661 -136 -666 -106 -672 -83 -675 -53 -678 -30 -679 0 -680 30 -679 53 -678 83 -675 106 -672 136 -666 159 -661 182 -655 204 -649 227 -641 249 -633 271 -624 287 -616 309 -606 330 -595 350 -583 370 -570 390 -557 409 -543 433 -525 455 -505 468 -493 481 -481 493 -468 505 -455 525 -433 543 -409 557 -390 570 -370 583 -350 595 -330 606 -309 616 -287 624 -271 633 -249 641 -227 649 -204 655 -182 661 -159 666 -136 672 -106 675 -83 678 -53 679 -30 680 0 679 30 678 53 675 83 672 106 666 136 661 159 655 182 649 204 641 227 633 249 624 271 616 287 606 309 595 330 589 340 502 290 517 263 528 241 536 222 542 208 548 189 555 170 560 150 566 126 570 106 574 81 577 61 579 30 580 5 580 -5 579 -25 577 -56 575 -76 571 -101 567 -121 562 -145 556 -165 550 -184 540 -213 530 -236 519 -259 512 -272 502 -290 495 -303 486 -316 472 -337 457 -357 441 -377 428 -392 410 -410 392 -428 377 -441 357 -457 337 -472 316 -486 303 -495 290 -502 272 -512 259 -519 236 -530 213 -540 184 -550 165 -556 145 -562 121 -567 101 -571 76 -575 56 -577 25 -579 5 -580 -5 -580 -30 -579 -61 -577 -81 -574 -106 -570 -126 -566 -150 -560 -170 -555 -189 -548 -208 -542 -222 -536 -241 -528 -263 -517 -281 -507 -294 -500 -312 -489 -320 -484 -341 -469 -353 -460 -365 -451 -380 -438 -396 -424 -414 -407 -431 -388 -444 -373 -460 -353 -469 -341 -478 -328 -489 -312 -500 -294 -507 -281 -521 -254 -532 -231 -542 -208 -548 -189 -558 -160 -564 -135 -568 -116 -572 -96 -576 -71 -578 -51 -580 -20 -580 -5 -580 5 -580 15 -579 40 -576 66 -574 86 -569 111 -565 130 -559 155 -553 174 -547 194 -540 213 -534 227 -524 250 -512 272 -502 290Z"/></svg></div><div class="lplate solid" data-level="via1-heater" style="--u:2.958cqw;--k:12;--c:#c9b6e4;--s:#c9b6e4;--fo:0.55"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-407 442 -442 407 -407 371 -371 407ZM407 442 371 407 407 371 442 407Z"/></svg></div><div class="lplate solid" data-level="via1-metal1" style="--u:3.417cqw;--k:13;--c:#c9b6e4;--s:#c9b6e4;--fo:0.55"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-125 125 -125 75 -75 75 -75 125ZM-25 125 -25 75 25 75 25 125ZM75 125 75 75 125 75 125 125ZM-125 25 -125 -25 -75 -25 -75 25ZM-25 25 -25 -25 25 -25 25 25ZM75 25 75 -25 125 -25 125 25ZM-125 -75 -125 -125 -75 -125 -75 -75ZM-25 -75 -25 -125 25 -125 25 -75ZM75 -75 75 -125 125 -125 125 -75ZM-505 -335 -545 -364 -516 -404 -475 -375ZM505 -335 475 -375 516 -404 545 -364ZM-446 -410 -481 -446 -446 -481 -410 -446ZM446 -410 410 -446 446 -481 481 -446ZM-375 -475 -404 -516 -364 -545 -335 -505ZM375 -475 335 -505 364 -545 404 -516Z"/></svg></div><div class="lplate metal" data-level="metal2" style="--u:4.417cqw;--k:14;--c:#ffc457;--s:#ffc457;--fo:0.32"><svg viewBox="-900 -800 1800 1650" focusable="false" aria-hidden="true"><path class="fill" fill-rule="evenodd" d="M-557 850 -557 356 -257 356 -257 850ZM257 850 257 356 557 356 557 850ZM-900 -296 -900 -596 -320 -596 -320 -296ZM320 -296 320 -596 900 -596 900 -296ZM-150 140 -150 -800 150 -800 150 140Z"/></svg></div></div><ol class="layers-axis" aria-label="Heights of the levels, bottom to top"><li class="ltick lost lost-phone" data-level="slab" style="--zs:0.064cqw;--dy:12px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="slab"><span class="ltick-name">silicon slab</span> <span class="ltick-nm">0–90</span></button></li><li class="ltick" data-level="core" style="--zs:0.155cqw;--dy:0px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="core"><span class="ltick-name">silicon core</span> <span class="ltick-nm">0–220</span></button></li><li class="ltick" data-level="contacts" style="--zs:0.841cqw;--dy:0px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="contacts"><span class="ltick-name">contact vias</span> <span class="ltick-nm">90–1100</span></button></li><li class="ltick lost-phone" data-level="heater" style="--zs:1.661cqw;--dy:0px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="heater"><span class="ltick-name">heater</span> <span class="ltick-nm">1100–1250</span></button></li><li class="ltick" data-level="metal1" style="--zs:2.049cqw;--dy:0px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="metal1"><span class="ltick-name">metal 1</span> <span class="ltick-nm">1100–1800</span></button></li><li class="ltick lost-phone" data-level="via1-heater" style="--zs:2.509cqw;--dy:0px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="via1-heater"><span class="ltick-name">vias 1 on heater</span> <span class="ltick-nm">1250–2300</span></button></li><li class="ltick" data-level="via1-metal1" style="--zs:2.897cqw;--dy:0px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="via1-metal1"><span class="ltick-name">vias 1 on metal 1</span> <span class="ltick-nm">1800–2300</span></button></li><li class="ltick" data-level="metal2" style="--zs:3.746cqw;--dy:0px"><i class="ltick-line" aria-hidden="true"></i><button type="button" data-level="metal2"><span class="ltick-name">metal 2</span> <span class="ltick-nm">2300–3000</span></button></li></ol><span class="layers-unit" aria-hidden="true">height, nm</span><div class="layers-scale" aria-hidden="true"><i></i><span>10 µm</span></div></div></div><div class="layers-readout" data-readout aria-live="off"><p class="readout-hint">Point at a level, or tab to it.</p><div class="info" data-info="slab" hidden><p class="info-title">Silicon slab</p><ul><li><span>silicon slab</span> <span>0 to 90 nm, 90 nm thick</span> <span>silicon (Si)</span> <span>PDK layer SLAB90, GDS 3/0</span></li></ul></div><div class="info" data-info="core" hidden><p class="info-title">Silicon core, with its implants</p><ul><li><span>silicon core</span> <span>0 to 220 nm, 220 nm thick</span> <span>silicon (Si)</span> <span>PDK layer WG, GDS 1/0</span></li><li><span>n implant</span> <span>n type, 5 × 10¹⁷ cm⁻³</span> <span>strength 1 of 3</span> <span>PDK layer N, GDS 20/0</span></li><li><span>p implant</span> <span>p type, 7 × 10¹⁷ cm⁻³</span> <span>strength 1 of 3</span> <span>PDK layer P, GDS 21/0</span></li><li><span>n+ implant</span> <span>n type, 3 × 10¹⁸ cm⁻³</span> <span>strength 2 of 3</span> <span>PDK layer NP, GDS 22/0</span></li><li><span>p+ implant</span> <span>p type, 2 × 10¹⁸ cm⁻³</span> <span>strength 2 of 3</span> <span>PDK layer PP, GDS 23/0</span></li><li><span>n++ implant</span> <span>n type, 5 × 10²⁰ cm⁻³</span> <span>strength 3 of 3</span> <span>PDK layer NPP, GDS 24/0</span></li><li><span>p++ implant</span> <span>p type, 1.9 × 10²⁰ cm⁻³</span> <span>strength 3 of 3</span> <span>PDK layer PPP, GDS 25/0</span></li></ul></div><div class="info" data-info="contacts" hidden><p class="info-title">Contact vias, p and n sides</p><ul><li><span>contact vias, p side</span> <span>90 to 1100 nm, 1010 nm thick</span> <span>aluminium (Al)</span> <span>PDK layer VIAC, PPP, GDS 40/0, 25/0</span></li><li><span>contact vias, n side</span> <span>90 to 1100 nm, 1010 nm thick</span> <span>aluminium (Al)</span> <span>PDK layer VIAC, NPP, GDS 40/0, 24/0</span></li></ul></div><div class="info" data-info="heater" hidden><p class="info-title">Heater</p><ul><li><span>heater</span> <span>1100 to 1250 nm, 150 nm thick</span> <span>titanium nitride (TiN)</span> <span>PDK layer HEATER, GDS 47/0</span></li></ul></div><div class="info" data-info="metal1" hidden><p class="info-title">Metal 1</p><ul><li><span>metal 1</span> <span>1100 to 1800 nm, 700 nm thick</span> <span>aluminium (Al)</span> <span>PDK layer M1, GDS 41/0</span></li></ul></div><div class="info" data-info="via1-heater" hidden><p class="info-title">Vias 1, on the heater</p><ul><li><span>vias 1, on the heater</span> <span>1250 to 2300 nm, 1050 nm thick</span> <span>aluminium (Al)</span> <span>PDK layer VIA1, HEATER, GDS 44/0, 47/0</span></li></ul></div><div class="info" data-info="via1-metal1" hidden><p class="info-title">Vias 1, on metal 1</p><ul><li><span>vias 1, on metal 1</span> <span>1800 to 2300 nm, 500 nm thick</span> <span>aluminium (Al)</span> <span>PDK layer VIA1, M1, GDS 44/0, 41/0</span></li></ul></div><div class="info" data-info="metal2" hidden><p class="info-title">Metal 2</p><ul><li><span>metal 2</span> <span>2300 to 3000 nm, 700 nm thick</span> <span>aluminium (Al)</span> <span>PDK layer M2, GDS 45/0</span></li></ul></div></div></div></div><div class="layers-key" aria-label="The levels, grouped by what they are"><section class="key-group"><p class="key-title">Silicon</p><ol class="key-list"><li class="lrow" data-level="slab" style="--c:#2a9db3"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">silicon slab</span><span class="lnm">0–90 nm</span></button><span class="lpdk">PDK SLAB90; GDS 3/0</span></li><li class="lrow" data-level="core" style="--c:#5ee7f5"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">silicon core</span><span class="lnm">0–220 nm</span></button><span class="lpdk">PDK WG; GDS 1/0</span></li></ol></section><section class="key-group"><p class="key-title">Implants</p><ol class="key-list"><li class="lrow" data-level="core"><button type="button" class="lrow-head"><i class="lmark pn" aria-hidden="true"></i><span class="lname">n and p implants</span><span class="lnm">0–220 nm</span></button><span class="lpdk">PDK N, P, NP, PP, NPP, PPP; GDS 20/0, 21/0, 22/0, 23/0, 24/0, 25/0</span></li></ol></section><section class="key-group"><p class="key-title">Contacts and vias</p><ol class="key-list"><li class="lrow" data-level="contacts" style="--c:#c9b6e4"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">contact vias (p and n)</span><span class="lnm">90–1100 nm</span></button><span class="lpdk">PDK VIAC, PPP, NPP; GDS 40/0, 25/0, 24/0</span></li><li class="lrow" data-level="via1-metal1" style="--c:#c9b6e4"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">vias 1, on metal 1</span><span class="lnm">1800–2300 nm</span></button><span class="lpdk">PDK VIA1, M1; GDS 44/0, 41/0</span></li><li class="lrow" data-level="via1-heater" style="--c:#c9b6e4"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">vias 1, on the heater</span><span class="lnm">1250–2300 nm</span></button><span class="lpdk">PDK VIA1, HEATER; GDS 44/0, 47/0</span></li></ol></section><section class="key-group"><p class="key-title">Heater</p><ol class="key-list"><li class="lrow" data-level="heater" style="--c:#ff9d6b"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">heater</span><span class="lnm">1100–1250 nm</span></button><span class="lpdk">PDK HEATER; GDS 47/0</span></li></ol></section><section class="key-group"><p class="key-title">Metal</p><ol class="key-list"><li class="lrow" data-level="metal1" style="--c:#ffc457"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">metal 1</span><span class="lnm">1100–1800 nm</span></button><span class="lpdk">PDK M1; GDS 41/0</span></li><li class="lrow" data-level="metal2" style="--c:#ffc457"><button type="button" class="lrow-head"><i class="lmark " aria-hidden="true"></i><span class="lname">metal 2</span><span class="lnm">2300–3000 nm</span></button><span class="lpdk">PDK M2; GDS 45/0</span></li></ol></section></div></div><p class="layers-line">Heights are drawn 10 times larger than the widths. At true scale (the switch above) they are drawn as they are, so the levels lie close together: the layers are thin next to the 36 µm of the layout. The column on the left runs from the bottom of the buried oxide, at -2.0 µm, to the top of the cladding, at 5.7 µm, at true scale in both views.</p><p class="layers-note">Point at a level, or choose one in the key. Each level is drawn as a sheet at the middle of its height range, and the implants are drawn over the full height of the silicon core. 3 rows of the table have no shapes in the layout: silicon slab (150 nm), germanium and silicon nitride. 2 more rows have shapes only outside this 36 µm window: vias 2 and metal 3.</p></figure></div>
+<hr />
+<h2 id="3-one-gds-layer-two-solids">3. One GDS layer, two solids <a class="here" href="#3-one-gds-layer-two-solids" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> Why is the heater not drawn on metal 1? Both sit at 1.10 µm, and both are
+drawn as shapes. The answer shows how the process file works.</p>
+</div>
+<p>Metal 1 is aluminium, 0.70 µm thick, with a low resistance. The heater must be a resistive TiN
+film, 0.15 µm thick, with about 10 Ω per square. The material belongs to the layer, and the
+layer belongs to a GDS number. So the heater gets its own GDS number, 47, and its own row in the
+table. A shape drawn on layer 41 becomes metal 1, whatever it is called in the layout.</p>
+<p>The expression column can combine layers. Look at the contact vias:</p>
+<div class="code code-text"><pre><code>1,Via_contact_P,40:0 and 25:0,90,1010,Al (Aluminium) - Palik,None,Grow,90,0
+1,Via_contact_N,40:0 and 24:0,90,1010,Al (Aluminium) - Palik,None,Grow,90,0
+</code></pre></div>
+<p>Layer 40 is the contact via, drawn as one set of squares. Layer 25 is the P++ implant, and layer
+24 is the N++ implant. <code>and</code> means that the solid is the overlap of the two. The P-side row keeps
+only the parts of the vias that sit on P++, and the N-side row keeps only the parts on N++. One
+drawn via becomes two solids.</p>
+<p>Why does that matter? CHARGE puts one electrical contact on each solid. A single solid would
+give one contact for both the p side and the n side of the junction.</p>
+<p>The same trick gives the via 1 that lands on the heater:</p>
+<div class="code code-text"><pre><code>1,Via1_on_metal1,44:0 and 41:0,1800,500,Al (Aluminium) - Palik,None,Grow,90,0
+1,Via1_on_heater,44:0 and 47:0,1250,1050,Al (Aluminium) - Palik,None,Grow,90,0
+</code></pre></div>
+<p>Via 1 is drawn once, on layer 44. Where it overlaps metal 1 it starts at 1800 nm. Where it
+overlaps the heater it starts at 1250 nm, the top of the thin film. Two solids, two heights.
+<code>gsip_technology.py</code> states the same rule in <code>STACK</code> (lines 266 and 267): on the heater, via 1
+&quot;starts at the top of the heater film&quot;. The <code>STACK</code> table has one height per GDS layer, so the
+second height is listed in the process table only, and a test checks it there.</p>
+<p>The compiler passes the expression to Lumerical as text (its comment reads &quot;a GDS layer or a
+not()/and/or/xor expression&quot;, line 142). This repository uses only <code>and</code> and single layers.</p>
+<hr />
+<h2 id="4-doping-flat-profiles">4. Doping: flat profiles <a class="here" href="#4-doping-flat-profiles" aria-label="Link to this section">#</a></h2>
+<p><strong>The idea.</strong> A doped region is an implant: a dopant, a concentration, and a depth profile. The
+implant is masked by a GDS layer, so the doping follows the layout, as the metal does.</p>
+<p>Each row of <code>doping_process_layers.csv</code> gives a mask, a dopant and a concentration in cm⁻³. The
+silicon implants have a straggle of 1 µm, which is much longer than the 220 nm of silicon. So
+the concentration is flat over the silicon, from top to bottom. The profile is a rectangle in
+depth. That is the abrupt-junction picture of the textbook. A real implant has a curved profile
+with a peak, and a real process file has measured profiles.</p>
+<div class="table" style="--cols:4"><table>
+<thead>
+<tr>
+<th>implant</th>
+<th>mask</th>
+<th>dopant</th>
+<th>concentration (cm⁻³)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N</td>
+<td>20:0</td>
+<td>n</td>
+<td>5e17</td>
+</tr>
+<tr>
+<td>P</td>
+<td>21:0</td>
+<td>p</td>
+<td>7e17</td>
+</tr>
+<tr>
+<td>N+</td>
+<td>22:0</td>
+<td>n</td>
+<td>3e18</td>
+</tr>
+<tr>
+<td>P+</td>
+<td>23:0</td>
+<td>p</td>
+<td>2e18</td>
+</tr>
+<tr>
+<td>N++</td>
+<td>24:0</td>
+<td>n</td>
+<td>5e20</td>
+</tr>
+<tr>
+<td>P++</td>
+<td>25:0</td>
+<td>p</td>
+<td>1.9e20</td>
+</tr>
+</tbody>
+</table></div>
+<p>The masks nest. In the cross-section <code>rib_pn</code> of <code>gsip_technology.py</code>, the N mask covers the whole
+n side. N+ covers everything beyond 0.65 µm from the core centre, and N++ everything beyond
+1.25 µm. The concentrations add. So the n side next to the core holds 5e17 + 3e18 = 3.5e18 cm⁻³,
+and the contact region holds 5e17 + 3e18 + 5e20 = 5.035e20 cm⁻³. Step 3 of the simulations
+compares the net doping that CHARGE sees with these values. It averages the solver's doping over
+each region of its mesh, and all six regions agree with the table within 0.5 %
+(see the <a href="../simulations/index.html">simulations chapter</a>). The
+comparison tests the concentration and the lateral position of each region. It does not test
+the depth, because the profiles are flat in depth by construction.</p>
+<p>The Ge rows and the wafer background are in the table too. The Ge implants are not used by the
+ring modulator. The wafer is lightly p-type, at 1e15 cm⁻³.</p>
+<hr />
+<h2 id="5-materials-and-models">5. Materials and models <a class="here" href="#5-materials-and-models" aria-label="Link to this section">#</a></h2>
+<p><strong>The idea.</strong> A material in a process file has two faces. Light sees its refractive index (n and
+k). The electrical and thermal solvers see a model of the same material: an electrical
+conductivity, a thermal conductivity, a heat capacity. The process file names one optical
+material for each layer, and attaches to it one electrical (CT) model and one thermal (HT) model
+from the Lumerical database.</p>
+<p><code>active_material_models.csv</code> lists the attachment for each material. A few rows:</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>optical material (light)</th>
+<th>CHARGE model (electrical)</th>
+<th>HEAT model (thermal)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Si (Silicon) - Palik</code></td>
+<td><code>Si (Silicon)</code></td>
+<td><code>Si (Silicon)</code></td>
+</tr>
+<tr>
+<td><code>SiO2 (Glass) - Palik</code></td>
+<td><code>SiO2 (Glass) - Sze</code></td>
+<td><code>SiO2 (Glass) - Sze</code></td>
+</tr>
+<tr>
+<td><code>Al (Aluminium) - Palik</code></td>
+<td><code>Al (Aluminium) - CRC</code></td>
+<td><code>Al (Aluminium) - CRC</code></td>
+</tr>
+<tr>
+<td><code>TiN - Palik</code></td>
+<td><code>Al (Aluminium) - CRC</code></td>
+<td><code>Al (Aluminium) - CRC</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The <code>TiN - Palik</code> row needs attention. Lumerical's CHARGE and HEAT database has no titanium
+nitride. The film still needs an electrical and a thermal model, so it borrows the aluminium
+models. Four numbers of that borrowed model are then changed, as listed in
+<code>material_property_overrides.csv</code>:</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>property</th>
+<th>value</th>
+<th>where the number comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>thermal conductivity</td>
+<td>28 W m⁻¹ K⁻¹</td>
+<td>bulk TiN is about 29; <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/gsip_process_file_py/gsip_csv/README.md" rel="noopener"><code>gsip_csv/README.md</code></a></td>
+</tr>
+<tr>
+<td>mass density</td>
+<td>5400 kg m⁻³</td>
+<td>bulk TiN</td>
+</tr>
+<tr>
+<td>specific heat</td>
+<td>600 J kg⁻¹ K⁻¹</td>
+<td>bulk TiN</td>
+</tr>
+<tr>
+<td>electrical conductivity</td>
+<td>666667 S m⁻¹</td>
+<td>1 / 1.5 µΩ·m; 10 Ω per square at 150 nm</td>
+</tr>
+</tbody>
+</table></div>
+<p>The electrical value is not an independent guess. It is 1 / <code>TIN_RESISTIVITY</code> of
+<code>gsip_technology.py</code>, and <code>test_heater_film_properties</code> checks the table against that number.</p>
+<p>The compiler applies an override with <code>apply_property_overrides</code>. A property whose name ends in
+<code>.constant</code> (for example <code>thermal conductivity.constant</code>) is first switched to the constant model,
+so that the single number takes effect. The override is honest about what it is: the film has
+bulk values, not the values of a sputtered film. Chapter 5 lists this among the assumptions of the
+flow (<a href="../your-foundry/index.html">Chapter 5</a>).</p>
+<p><strong>The optics of the film</strong> come from <code>TiN - Palik</code>. At 1550 nm its index is 3.54 + 6.52i. The
+imaginary part is what makes the heater absorb. Section 9 shows that value in the structure.</p>
+<p><strong>Index perturbation.</strong> The silicon <code>Si_np</code> is not plain silicon in the process file. It is an
+index-perturbation material. Its index responds to free carriers (the Soref and Bennett
+coefficients of Nedeljkovic, Soref and Mashanovich, 2011) and to temperature (dn/dT = 1.87e-4 K⁻¹
+at 300 K, a teaching value [T]). Without carriers and at the reference temperature it is plain silicon. Step 2 uses it
+without carriers. Step 5 loads the carriers of step 3 and the temperature of step 4, so that its
+index responds to them.</p>
+<hr />
+<h2 id="6-the-compiler-step-by-step">6. The compiler, step by step <a class="here" href="#6-the-compiler-step-by-step" aria-label="Link to this section">#</a></h2>
+<p>The compiler has four parts. Each part opens a Lumerical session, does one job, and saves the
+file. The optical part and the electrical part use separate sessions, because they need different
+licences. All sessions run hidden (<code>hide=True</code>), so no GUI opens.</p>
+<p><strong>Step 1, <span class="gloss" tabindex="0" data-def="Finite-difference time domain: Maxwell&#x27;s equations stepped in time on a 3D grid. Close to exact, and the slowest of the solvers.">FDTD</span> session: the optical part.</strong> The functions are called in this order:</p>
+<ol>
+<li><code>add_dielectric_materials</code> adds air, with a constant index of 1.0, from <code>dielectric_materials.csv</code>.</li>
+<li><code>add_index_perturbation_materials</code> adds <code>Si_np</code>, with its carrier and temperature settings.
+The compiler accepts only the built-in Soref and Bennett coefficients and the linear
+temperature model. Any other setting stops the run with an error.</li>
+<li><code>addlayerbuilder</code> creates a Layer Builder object. The process name is set to <code>gsip</code>, and the
+sidewall reference to <code>middle</code>. The sidewall reference says which height of a slanted wall the
+GDS edge refers to. With 90° walls it makes no difference.</li>
+<li><code>add_process_layers</code> adds each of the 20 rows. Before it adds a row, it checks that the
+materials of the row exist in the FDTD material database or among the custom materials, and
+stops if they do not. Heights are converted from nm to m. The start position <code>Auto</code> is kept as it is.</li>
+<li><code>save_process_file</code> writes <code>gsip_process.lbr</code> with the material data inside
+(<code>export materials</code> is true). Loading the file then does not depend on the local database.</li>
+</ol>
+<p><strong>Step 2, CHARGE session: the electrical and thermal part.</strong></p>
+<ol>
+<li><code>loadprocessfile</code> loads the file from step 1.</li>
+<li><code>add_doping_layers</code> adds the 9 implants: mask, dopant, concentration, and the Gaussian depth
+profile (range, straggle and so on).</li>
+<li><code>add_ct_ht_models</code> attaches the electrical (CT) and thermal (HT) model to each of the 8 optical
+materials.</li>
+<li><code>apply_property_overrides</code> sets the four numbers of the TiN film.</li>
+<li><code>save_process_file</code> saves the file again, now with doping and models.</li>
+</ol>
+<p><strong>Step 3, optional: process variations.</strong> Off by default (<code>STATISTICAL_PROCESS_FILE = False</code>).
+When it is on, <code>append_process_variation</code> writes the rows of <code>pattern_variations.csv</code> and
+<code>stack_variations.csv</code> into the file as a <code>&lt;process_variation&gt;</code> block, in the format of the Ansys
+template. A pattern row has one 0 or 1 per layer, and a 1 says that the layer moves. A stack row
+has two blocks of 20 flags: one for the thickness, one for the start position. In the core width
+row the 1 is at position 6 of the 20 layers, which is <code>Si_core</code>. None of the seven simulation steps
+uses these variations. The σ values are teaching values (see
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/gsip_process_file_py/gsip_csv/README.md" rel="noopener"><code>gsip_csv/README.md</code></a>).</p>
+<p><strong>Step 4, QA: the read-back check.</strong> This step is what makes the file trustworthy. The compiler
+does not take its own word for what it wrote. It loads the saved file again, in new sessions, and
+reads every property back from Lumerical:</p>
+<ul>
+<li><code>qa_process_layers</code> compares, for each of the 20 layers, the enabled flag, process, layer number,
+thickness, both materials, sidewall angle and growth delta, and the start position unless it is
+<code>Auto</code>. Numbers must agree with the CSV to a relative tolerance of 1e-6.</li>
+<li><code>qa_doping_and_materials</code> checks that each of the 9 implants reads back with the same
+properties, and that each material has the CT and HT models it should have.</li>
+<li><code>qa_property_overrides</code> reads back the four overridden numbers, and the model switch of each
+of them. The switch must read &quot;constant&quot;. Mass density has no switch, so it is not checked for one.</li>
+</ul>
+<p>Every difference prints one line, and the total ends the run. The format strings of the code are:</p>
+<div class="code code-text"><pre><code>  mismatch  &lt;layer&gt; / &lt;property&gt;: CSV=&lt;value&gt;  LBR=&lt;value&gt;
+  missing   process layer &lt;name&gt;
+[QA]     &lt;n&gt; mismatches        (then the run exits with code 1)
+</code></pre></div>
+<p>The QA step is the one you rely on. The tests of section 1 show that the CSV matches the Python
+technology. The QA step shows that the file Lumerical will load holds the CSV. Step 0 (section 9)
+shows that the 3D structure is the one the layout describes.</p>
+<p>The QA step does not cover everything. It does not read back <code>index_perturbation_data.csv</code> or
+<code>dielectric_materials.csv</code>: the materials <code>Si_np</code> and <code>Air</code> are exercised by steps 0 and 5 (see the compiler docstring).
+It also cannot tell whether a number in the tables is physically right. It shows that the file
+says what the tables say, and nothing more.</p>
+<hr />
+<h2 id="7-running-the-compiler">7. Running the compiler <a class="here" href="#7-running-the-compiler" aria-label="Link to this section">#</a></h2>
+<p>The compiler needs an installed Lumerical with FDTD and CHARGE licences. It finds Lumerical
+through <code>LUMERICAL_ROOT</code>, or in the usual install locations (see
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_env.py" rel="noopener"><code>lumerical_env.py</code></a>). It takes no arguments, and it always writes
+<code>gsip_process.lbr</code> next to itself. Its tables are found relative to its own file, so it runs from
+any folder. From the repository root:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>gsip_process_file_py/gsip_process_file_compiler.py
+</code></pre></div>
+<p>The docstring of the script shows <code>python gsip_process_file_compiler.py</code>, run from the folder
+that contains it. Both forms do the same work.</p>
+<p>What it prints. These are the print statements of the code, in the order they run. This is the
+output of a run with the current tables and no mismatch:</p>
+<div class="code code-text"><pre><code>[FDTD]   20 process layers, 2 custom materials -&gt; gsip_process.lbr
+[CHARGE] 9 doping layers, CT/HT models of 8 materials, 4 adjusted properties -&gt; gsip_process.lbr
+[QA]     reloading and comparing with the CSV tables ...
+[QA]     everything matches
+done: &lt;full path of gsip_process.lbr&gt;
+</code></pre></div>
+<p>The counts are 20 process layers and 2 custom materials in the first line, and 9 doping layers,
+8 materials and 4 adjusted properties in the second. The line <code>[XML]    appended &lt;process_variation&gt; (statistical_1)</code> appears only when the statistical variations are on. A mismatch prints the lines
+of section 6 and a <code>[QA]</code> line with the number of mismatches, and the run exits with code 1.</p>
+<p>A rerun overwrites <code>gsip_process.lbr</code>, which is kept in the repository. Rerun the compiler only
+after you change a table. If the compiler writes a file that differs from the kept one, version
+control will show the difference.</p>
+<hr />
+<h2 id="8-loading-the-result">8. Loading the result <a class="here" href="#8-loading-the-result" aria-label="Link to this section">#</a></h2>
+<p><strong>By script.</strong> <code>lumerical_simulations/flow.py</code> holds the function that every simulation step of every
+device calls. It is shown here as it is written:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="k">def</span><span class="w"> </span><span class="nf">add_layer_builder</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">gds</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">x_span</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">y_span</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"device"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add a Layer Builder centred on the origin and load the layout and the process file (spans in um).</span>
+
+<span class="sd">    The Layer Builder builds only what lies inside its box, and the box is centred on the origin.  A layout</span>
+<span class="sd">    that reaches further is cut off without a word, and the solver then finds air where the device should</span>
+<span class="sd">    be.  Leave the spans out and the box is made large enough for the whole layout, wherever it lies.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">x_span</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">y_span</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">layout_extent</span><span class="p">(</span><span class="n">gds</span><span class="p">)</span>
+        <span class="n">x_span</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">left</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">right</span><span class="p">))</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="k">if</span> <span class="n">x_span</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x_span</span>
+        <span class="n">y_span</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">bottom</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">top</span><span class="p">))</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="k">if</span> <span class="n">y_span</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_span</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">addlayerbuilder</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"z"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"x span"</span><span class="p">,</span> <span class="n">x_span</span> <span class="o">*</span> <span class="n">um</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"y span"</span><span class="p">,</span> <span class="n">y_span</span> <span class="o">*</span> <span class="n">um</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"gds position reference"</span><span class="p">,</span> <span class="s2">"Centered at origin"</span><span class="p">)</span>  <span class="c1"># GDS coordinates = simulation coordinates</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">loadgdsfile</span><span class="p">(</span><span class="n">gds</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">loadprocessfile</span><span class="p">(</span><span class="n">LBR</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
+</code></pre></div>
+<p>The spans are given in µm, and <code>um = 1e-6</code>. Without them the function reads the size of the layout
+and makes the box large enough. Three Lumerical commands do the work:
+<code>addlayerbuilder</code> creates the object, <code>loadgdsfile</code> loads the layout, and <code>loadprocessfile</code> loads
+the process. The reference &quot;Centered at origin&quot; puts the GDS coordinates on the simulation
+coordinates, so a shape at x = 5 µm in the layout is at x = 5 µm in the solver.</p>
+<p>To use it, run from the
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/tree/main/lumerical_simulations/ring_modulator/scripts" rel="noopener"><code>scripts/</code></a> folder of a device. Its <code>common.py</code>
+passes the function on:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="kn">from</span><span class="w"> </span><span class="nn">common</span><span class="w"> </span><span class="kn">import</span> <span class="n">REPO</span><span class="p">,</span> <span class="n">add_layer_builder</span><span class="p">,</span> <span class="n">import_lumapi</span>
+
+<span class="n">lumapi</span> <span class="o">=</span> <span class="n">import_lumapi</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">lumapi</span><span class="o">.</span><span class="n">MODE</span><span class="p">(</span><span class="n">hide</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">m</span><span class="p">:</span>
+    <span class="n">add_layer_builder</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">REPO</span> <span class="o">/</span> <span class="s2">"devices"</span> <span class="o">/</span> <span class="s2">"gds"</span> <span class="o">/</span> <span class="s2">"ring_modulator.gds"</span><span class="p">,</span> <span class="mf">36.0</span><span class="p">,</span> <span class="mf">36.0</span><span class="p">)</span>
+</code></pre></div>
+<p><code>devices/gds/ring_modulator.gds</code> must exist. <code>devices/ring_modulator_builder.py</code> writes it. The spans are in µm,
+as the function expects.</p>
+<p><strong>In the GUI.</strong> Add a Layer Builder object from the object library, under the simulation objects.
+In its properties, set the x, y and z centre to 0, and the x and y span to the size of the layout
+(36 µm by 36 µm for the step 0 check). Set the GDS position reference to &quot;Centered at origin&quot;.
+Then load the GDS file <code>devices/gds/ring_modulator.gds</code>, and load the process file <code>gsip_process.lbr</code>. The property
+names are the ones of the script above. The button labels of your Lumerical version may differ
+slightly from the names the script uses.</p>
+<p>After loading, the names carry the process prefix. Silicon is <code>gsip Si_np</code>, which is the constant
+<code>SI_MATERIAL</code> in <code>lumerical_simulations/flow.py</code>. Use the prefixed name in scripts, or the simulator will not find the
+material.</p>
+<hr />
+<h2 id="9-step-0-the-structure-check">9. Step 0: the structure check <a class="here" href="#9-step-0-the-structure-check" aria-label="Link to this section">#</a></h2>
+<p><strong>The idea.</strong> Before any physics, look at what the Layer Builder built. A mode solver meshes a
+plane, and for each mesh cell it knows the refractive index. The check uses that index as a
+probe. It reads the material at a few points of the finished 3D device and compares each reading
+with the material that should be there.</p>
+<p>The script is
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/ring_modulator/scripts/layer_builder_check.py" rel="noopener"><code>layer_builder_check.py</code></a>.
+It loads the whole ring modulator, takes two vertical cuts and four horizontal cuts, and saves
+the results in <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/tree/main/lumerical_simulations/ring_modulator/0_layer_builder_check" rel="noopener"><code>0_layer_builder_check/</code></a>.
+The vertical cut through the PN section runs from z = −5.5 µm to 3.6 µm, so that it reaches the
+substrate and the buried oxide below the device. Its docstring states the purpose:</p>
+<blockquote>
+<p>A layer expression that is wrong in the process file shows up here at once, as a missing or
+misplaced shape. No solver licence is used beyond MODE.</p>
+</blockquote>
+<p>Run it from the scripts folder, after <code>devices/ring_modulator_builder.py</code> has written <code>devices/gds/ring_modulator.gds</code>:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="nb">cd</span><span class="w"> </span>lumerical_simulations/ring_modulator/scripts
+python<span class="w"> </span>layer_builder_check.py
+</code></pre></div>
+<p>It needs MODE only. It takes no options: <code>python layer_builder_check.py --help</code> prints the
+docstring and exits. The script prints the ten lines of the probe table below, and saves them to
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/ring_modulator/0_layer_builder_check/structure.txt" rel="noopener"><code>0_layer_builder_check/structure.txt</code></a>.
+The cut arrays go to <code>structure.npz</code>, which the figure reads.</p>
+<p>The ten probe points lie on the cut through the PN section, on the north side of the ring. The
+ring radius R is 10 µm.</p>
+<div class="table" style="--cols:4"><table>
+<thead>
+<tr>
+<th>probe point</th>
+<th>at (y, z) in µm</th>
+<th>index seen</th>
+<th>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>substrate</td>
+<td>y = R, z = −5.00</td>
+<td>3.476 + 0.000i</td>
+<td>silicon, about 3.48</td>
+</tr>
+<tr>
+<td>buried oxide</td>
+<td>y = R, z = −1.00</td>
+<td>1.444 + 0.000i</td>
+<td>oxide, about 1.44</td>
+</tr>
+<tr>
+<td>core centre</td>
+<td>y = R, z = 0.11</td>
+<td>3.476 + 0.000i</td>
+<td>silicon, about 3.48</td>
+</tr>
+<tr>
+<td>slab</td>
+<td>y = R − 1.0, z = 0.05</td>
+<td>3.476 + 0.000i</td>
+<td>silicon</td>
+</tr>
+<tr>
+<td>above the slab</td>
+<td>y = R − 1.0, z = 0.15</td>
+<td>1.444 + 0.000i</td>
+<td>oxide, about 1.44</td>
+</tr>
+<tr>
+<td>inner contact via</td>
+<td>y = R − 2.15, z = 0.60</td>
+<td>1.440 + 16.000i</td>
+<td>aluminium (large imaginary part)</td>
+</tr>
+<tr>
+<td>heater film</td>
+<td>y = R, z = 1.17</td>
+<td>3.538 + 6.517i</td>
+<td>TiN</td>
+</tr>
+<tr>
+<td>metal 1, outer arc</td>
+<td>y = R + 2.6, z = 1.45</td>
+<td>1.440 + 16.000i</td>
+<td>aluminium</td>
+</tr>
+<tr>
+<td>metal 2 wire</td>
+<td>y = R, z = 2.65</td>
+<td>1.440 + 16.000i</td>
+<td>aluminium</td>
+</tr>
+<tr>
+<td>between the levels</td>
+<td>y = R, z = 2.00</td>
+<td>1.444 + 0.000i</td>
+<td>oxide</td>
+</tr>
+</tbody>
+</table></div>
+<p>How to read it. Silicon and oxide have real indices with no loss, so their imaginary part is 0.
+The two metals and the TiN film have an imaginary part, which is their absorption. Aluminium reads
+1.44 + 16i in the solver. The heater film reads 3.54 + 6.52i, which is the TiN optics of section 5.
+If a probe reads oxide where the film should be, a layer is missing. If it reads silicon where the
+contact should be, a layer is in the wrong place. The first two probes check the bottom of the
+stack: if the substrate reads oxide, the <code>Si_Substrate</code> row is missing or wrong.</p>
+<p>The figure below shows the same check as pictures. It was drawn from the saved <code>structure.npz</code>,
+and it can be redrawn without Lumerical:</p>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/ring_modulator/figures/fig0_layer_builder.webp" width="2881" height="1763" alt="Six panels of the Layer Builder check: a vertical cut through the PN section with every layer, a vertical cut through the coupler, and four horizontal cuts at the slab, core, metal 1 with the heater, and metal 2 levels" loading="lazy" decoding="async"></button><figcaption><strong>Figure 1.</strong> What the Layer Builder built. (a) A vertical cut through the PN section on the north
+side of the ring, from the buried oxide to metal 2: the p ground arc of metal 1 outside, the n
+signal disc inside, the contact vias down to the slab, the TiN heater above the core, and metal 2
+above. The panel starts at z = −0.7 µm, so the substrate probe lies below the picture; the table
+above reads it. (b) A vertical cut through the coupler: the ring core and the bus core on one slab,
+with the 370 nm gap. (c) to (f) Horizontal cuts at the slab (45 nm), the core (160 nm), metal 1
+with the heater (1.17 µm) and metal 2 (2.65 µm). Redraw it with <code>python fig0_layer_builder.py</code> in
+the figures folder. That script reads only the saved data and needs no Lumerical.</figcaption></figure>
+<p>Check the figure against the table. In (a), the heater sits above the core, between the two metal 1
+electrodes. In (e), the TiN is a ring with two landings, and the metal 1 disc sits in its centre.</p>
+<hr />
+<h2 id="10-what-goes-wrong">10. What goes wrong <a class="here" href="#10-what-goes-wrong" aria-label="Link to this section">#</a></h2>
+<p>These are the failures that the code and its comments describe. Each one has a message or a
+comment that points to it.</p>
+<ul>
+<li><strong>A material is not in the database.</strong> <code>add_process_layers</code> stops with
+<code>material '...' is not in the FDTD material database</code>. Add the material as a custom material in
+<code>dielectric_materials.csv</code> or <code>index_perturbation_data.csv</code>, or correct the name.</li>
+<li><strong>A model name does not match.</strong> <code>add_ct_ht_models</code> stops with <code>cannot attach the CT model</code>.
+The name in <code>active_material_models.csv</code> must be the database name, spelled exactly, with the
+same capital letters and brackets.</li>
+<li><strong>An unsupported index setting.</strong> The compiler accepts only the Soref and Bennett coefficients
+and the linear temperature model. Any other setting stops with <code>only the built-in Soref and Bennett coefficients are implemented</code> or <code>only the linear temperature model is implemented</code>.</li>
+<li><strong>The database does not have a material.</strong> TiN is the case in this repository. The override
+table gives a borrowed model with changed numbers. Use it with the values written down, and
+state them in any report.</li>
+<li><strong>A property has the wrong name.</strong> <code>cannot set '...' of '...'</code> means that the property does not
+exist in that model. The <code>.constant</code> suffix switches the property to its constant model first.
+A model that has only a constant (such as the mass density) skips the switch.</li>
+<li><strong>An override does not take effect without its switch.</strong> The compiler sets the model switch to
+&quot;constant&quot; before it writes the number. If that switch is missing, the QA step reports it as a
+mismatch on the <code>.active model</code> property, so the error is not silent.</li>
+<li><strong>The read-back check fails.</strong> The mismatch lines name the layer and the property. Compare the
+CSV value with the LBR value.</li>
+<li><strong>The file was edited by hand.</strong> The compiler removes the <code>&lt;revisions&gt;</code> line when it appends the
+statistical variations, because its checksum no longer matches after a manual edit. Edit the
+tables, not the file, and rerun the compiler.</li>
+<li><strong>A layer is drawn on the wrong GDS number.</strong> It is still a solid, and the compiler does not
+fail. Step 0 finds it, because the probe reads the wrong material at that point.</li>
+<li><strong>A simulation region leaves the stack.</strong> The heat simulation's docstring says that the region
+&quot;has to stay inside the layers of the process file, otherwise the solver stops&quot;. Give the region
+the heights of the stack, not a guess.</li>
+<li><strong>A script deletes the materials.</strong> <code>charge_profile.py</code> has the comment &quot;no deleteall here: it
+would remove the materials group the process file fills&quot;. Keep the materials group when you
+edit the Layer Builder object.</li>
+<li><strong>Names carry a prefix after loading.</strong> Silicon is <code>gsip Si_np</code> in the simulator. The compiler
+strips the prefix only when it compares the file with the tables.</li>
+<li><strong>The model is not the whole truth.</strong> Vias and metals are aluminium, not tungsten or copper.
+The silicon profiles are flat, not measured. The sidewalls are vertical. These are teaching
+assumptions, and they are the first things a foundry file replaces.</li>
+</ul>
+<hr />
+<h2 id="check-yourself">Check yourself <a class="here" href="#check-yourself" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>Why does the heater have its own GDS layer (47) and its own row in <code>process_layers.csv</code>,
+instead of being drawn on metal 1 (layer 41)?</li>
+<li>The P-side contact is <code>40:0 and 25:0</code>. What does <code>and</code> do to the drawn vias, and why does CHARGE
+need two solids here rather than one?</li>
+<li>Which check compares the Python technology with the CSV tables without Lumerical? Which check
+compares the saved <code>.lbr</code> file with the CSV tables? Which check compares the 3D structure with
+the layout?</li>
+<li>The compiler prints <code>[QA]     everything matches</code>. What does that prove, and what does it not
+prove?</li>
+<li>At (y = R − 2.15, z = 0.60) the probe reads 1.440 + 16.000i. Which material is it? If the contact
+layer were missing, which value would you expect instead?</li>
+</ol>
+<h2 id="exercises">Exercises <a class="here" href="#exercises" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>
+<p><strong>Sidewall angle of the core.</strong> Edit <code>process_layers.csv</code>: in the row <code>Si_core</code>, change
+<code>sidewall_angle</code> from 90 to 85. Run the compiler from the repository root, and check that
+<code>[QA]     everything matches</code> is printed. Then run <code>uv run pytest</code> in the repository root.
+<code>test_sidewall_angle_is_the_technology_value</code> fails. That is the check working: the table and
+<code>SIDEWALL_ANGLE</code> in <code>gsip_technology.py</code> must agree, so decide which one is the truth and change
+the other. Then, in the scripts folder, run <code>python passive_mode_fde.py --help</code> and rerun step 2
+with the options you need. Observe the change in n<sub>eff</sub> and n<sub>g</sub> of the straight waveguide, and in
+the bend loss. Before you run it, predict the size of the change: at 85° over the 220 nm height,
+the core width changes by about 20 nm between its base and its top (0.22 µm × cot 85°). Work on
+a copy of the repository, because the step scripts overwrite the results in the step folders.</p>
+</li>
+<li>
+<p><strong>A thicker buried oxide.</strong> Edit <code>process_layers.csv</code>: in <code>BOX</code>, change the start to −3000 and
+the thickness to 3000. In <code>Si_Substrate</code>, change the start to −3000 and keep the thickness at
+−10000. Run the compiler, then run <code>uv run pytest</code> in the repository root. The pytest run should
+fail in the stack tests for <code>box</code> and <code>substrate</code>. Explain why. Then change <code>T_BOX</code> in
+<code>gsip_technology.py</code> to 3.0, and change the <code>Undercut</code> row to a thickness of 4000, so that it
+still ends at the bottom of the buried oxide. Rerun the tests: they pass again. Predict which
+results of the simulations move. A prediction to test: the heater and core temperatures in step 4
+rise, because heat leaves through a thicker oxide. The mode of step 2 hardly moves, because the
+guided mode is already confined well inside the 2 µm oxide. Test both predictions, and say where
+the prediction was wrong.</p>
+</li>
+<li>
+<p><strong>Two checks, one error.</strong> Change the N implant concentration in <code>doping_process_layers.csv</code>
+from 5e+17 to 6e+17, and do not change <code>gsip_technology.py</code>. Run <code>uv run pytest</code> and see which
+test fails. Then run the compiler and see whether its QA step fails. The QA step passes: it
+compares the file with the CSV, and the file was written from the new CSV. Explain why the two
+checks disagree. Then ask which check would catch a wrong number that was typed in both places,
+the CSV and <code>gsip_technology.py</code>. Neither does. The pytest test passes because the two copies
+agree, and the QA step passes because the file holds the CSV. Only a comparison with the source
+of the number (<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/gsip_process_file_py/gsip_csv/README.md" rel="noopener"><code>gsip_csv/README.md</code></a>) catches it.</p>
+</li>
+</ol>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<a class="card pager-prev" href="../device/index.html"><span>Previous</span><b>The device</b></a><a class="card pager-next" href="../simulations/index.html"><span>Next</span><b>The simulations</b></a>
+</nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../pdk/index.html">1. The PDK</a><a href="../device/index.html">2. The device</a><a href="index.html">3. The process file</a><a href="../simulations/index.html">4. The simulations</a><a href="../your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../../devices/strip-waveguide/index.html">Strip waveguide</a><a href="../../devices/rib-waveguide/index.html">Rib waveguide</a><a href="../../devices/directional-coupler/index.html">Directional coupler</a><a href="../../devices/mmi1x2/index.html">1×2 MMI splitter</a><a href="../../devices/thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../../devices/index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../../circuits/index.html">The chip</a><a href="../../circuits/clements-mesh/index.html">Clements mesh</a><a href="../../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="../../more/cornerstone-soi220a/index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/layers.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>No such page · photonics-layout-cookbook</title>
+<meta name="description" content="This address does not lead to a page of the site.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<meta name="robots" content="noindex">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="website">
+<meta property="og:title" content="No such page">
+<meta property="og:description" content="This address does not lead to a page of the site.">
+<meta property="og:locale" content="en_US">
+<link rel="icon" href="/photonics-layout-cookbook/assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/photonics-layout-cookbook/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/photonics-layout-cookbook/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/photonics-layout-cookbook/site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["/photonics-layout-cookbook/assets/fonts/cookbook-display-black.woff2", "/photonics-layout-cookbook/assets/fonts/cookbook-display.woff2", "/photonics-layout-cookbook/assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="/photonics-layout-cookbook/assets/site.css?v=0bf0c5b6">
+</head>
+<body class="lost">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="/photonics-layout-cookbook/index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="/photonics-layout-cookbook/assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="/photonics-layout-cookbook/index.html#course">Course</a>
+      <a href="/photonics-layout-cookbook/devices/index.html">Devices</a>
+<a href="/photonics-layout-cookbook/circuits/index.html">Circuits</a>      <a class="nav-opt" href="/photonics-layout-cookbook/roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section class="lost-head">
+  <p class="lost-num" aria-hidden="true">404</p>
+  <div class="wrap">
+    <p class="eyebrow"><span class="pip"></span>Error 404</p>
+    <h1 class="display lost-title" data-words aria-label="No such page"><span class="w" style="--n:0">No</span> <span class="w" style="--n:1">such</span> <span class="thin"><span class="w" style="--n:2">page</span></span></h1>
+    <p class="page-sub">This address does not lead to a page of the site.</p>
+    <p class="lost-asked" hidden>You asked for <code></code></p>
+    <p class="lost-hint" hidden>You may be looking for <a href="/photonics-layout-cookbook/index.html"></a>.</p>
+    <div class="hero-cta">
+      <a class="btn btn-solid" href="/photonics-layout-cookbook/index.html">Back to the start<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="btn" href="/photonics-layout-cookbook/devices/index.html">Device library</a>
+    </div>
+    <nav class="lost-links" aria-label="The course">
+<a href="/photonics-layout-cookbook/course/pdk/index.html"><b>01</b>The PDK</a><a href="/photonics-layout-cookbook/course/device/index.html"><b>02</b>The device</a><a href="/photonics-layout-cookbook/course/process-file/index.html"><b>03</b>The process file</a><a href="/photonics-layout-cookbook/course/simulations/index.html"><b>04</b>The simulations</a><a href="/photonics-layout-cookbook/course/your-foundry/index.html"><b>05</b>Your foundry</a>    </nav>
+  </div>
+</section>
+
+<figure class="plate-field lost-plate">
+  <canvas class="field lost-field" role="img" aria-label="Light reaches the end of a waveguide and spreads out"></canvas>
+  <figcaption class="wrap">
+    <p><strong>Light at the end of a waveguide.</strong> With nothing left to guide it, it spreads out. This picture is drawn from the formula of a Gaussian beam, with the wavelength and the effective index of the strip waveguide of the course. It is a sketch, not a simulation.</p>
+  </figcaption>
+</figure>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="/photonics-layout-cookbook/assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="/photonics-layout-cookbook/assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="/photonics-layout-cookbook/course/pdk/index.html">1. The PDK</a><a href="/photonics-layout-cookbook/course/device/index.html">2. The device</a><a href="/photonics-layout-cookbook/course/process-file/index.html">3. The process file</a><a href="/photonics-layout-cookbook/course/simulations/index.html">4. The simulations</a><a href="/photonics-layout-cookbook/course/your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="/photonics-layout-cookbook/devices/strip-waveguide/index.html">Strip waveguide</a><a href="/photonics-layout-cookbook/devices/rib-waveguide/index.html">Rib waveguide</a><a href="/photonics-layout-cookbook/devices/directional-coupler/index.html">Directional coupler</a><a href="/photonics-layout-cookbook/devices/mmi1x2/index.html">1×2 MMI splitter</a><a href="/photonics-layout-cookbook/devices/thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="/photonics-layout-cookbook/devices/index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="/photonics-layout-cookbook/circuits/index.html">The chip</a><a href="/photonics-layout-cookbook/circuits/clements-mesh/index.html">Clements mesh</a><a href="/photonics-layout-cookbook/circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="/photonics-layout-cookbook/roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="/photonics-layout-cookbook/roadmap/index.html">Roadmap</a><a href="/photonics-layout-cookbook/more/cornerstone-soi220a/index.html">A second process</a><a href="/photonics-layout-cookbook/contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="/photonics-layout-cookbook/assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="/photonics-layout-cookbook/assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="/photonics-layout-cookbook/assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="/photonics-layout-cookbook/roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="/photonics-layout-cookbook/index.html" data-index="/photonics-layout-cookbook/assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="/photonics-layout-cookbook/assets/site.js?v=0bf0c5b6" defer></script>
+<script src="/photonics-layout-cookbook/assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="/photonics-layout-cookbook/assets/palette.js?v=0bf0c5b6" defer></script>
+<script>
+(() => {
+  "use strict";
+  // ---- which page was meant: compare the words of the address with the words of every page ----------------
+  const known = [{"u":"index.html","t":"the start","k":"home start readme"},{"u":"devices/index.html","t":"the device library","k":"devices device library"},{"u":"course/pdk/index.html","t":"chapter 1, The PDK","k":"course/pdk/ docs/pdk.md the pdk"},{"u":"course/device/index.html","t":"chapter 2, The device","k":"course/device/ docs/device.md the device"},{"u":"course/process-file/index.html","t":"chapter 3, The process file","k":"course/process-file/ gsip_process_file_py/readme.md the process file"},{"u":"course/simulations/index.html","t":"chapter 4, The simulations","k":"course/simulations/ lumerical_simulations/ring_modulator/readme.md the simulations"},{"u":"course/your-foundry/index.html","t":"chapter 5, Your foundry","k":"course/your-foundry/ docs/your_foundry.md your foundry"},{"u":"devices/strip-waveguide/index.html","t":"Strip waveguide, bend and taper","k":"devices/strip-waveguide/ lumerical_simulations/strip_waveguide/readme.md strip waveguide"},{"u":"devices/rib-waveguide/index.html","t":"Rib waveguide and bend","k":"devices/rib-waveguide/ lumerical_simulations/rib_waveguide/readme.md rib waveguide"},{"u":"devices/directional-coupler/index.html","t":"Directional coupler","k":"devices/directional-coupler/ lumerical_simulations/directional_coupler/readme.md directional coupler"},{"u":"devices/mmi1x2/index.html","t":"1×2 MMI splitter","k":"devices/mmi1x2/ lumerical_simulations/mmi1x2/readme.md 1×2 mmi splitter"},{"u":"devices/thermo-optic-phase-shifter/index.html","t":"Thermo-optic phase shifter","k":"devices/thermo-optic-phase-shifter/ lumerical_simulations/thermo_optic_phase_shifter/readme.md thermo-optic phase shifter"},{"u":"circuits/clements-mesh/index.html","t":"Clements mesh of Mach-Zehnder interferometers","k":"circuits/clements-mesh/ lumerical_simulations/clements_mesh/readme.md clements mesh"},{"u":"circuits/svd-multiplier/index.html","t":"Real matrix multiplier","k":"circuits/svd-multiplier/ lumerical_simulations/svd_multiplier/readme.md real matrix multiplier"},{"u":"roadmap/index.html","t":"Roadmap","k":"roadmap/ roadmap.md roadmap"},{"u":"more/cornerstone-soi220a/index.html","t":"CORNERSTONE SOI220A","k":"more/cornerstone-soi220a/ more_processes/cornerstone_soi220a/readme.md a second process"},{"u":"contributing/index.html","t":"Contributing","k":"contributing/ contributing.md contributing"}];
+  const base = "/photonics-layout-cookbook/";
+  let asked = location.pathname;
+  try {
+    asked = decodeURIComponent(asked);
+  } catch {}
+  const shown = asked.startsWith(base) ? asked.slice(base.length - 1) : asked;
+  const line = document.querySelector(".lost-asked");
+  line.querySelector("code").textContent = shown.length > 90 ? shown.slice(0, 88) + "…" : shown;
+  line.hidden = false;
+  const stop = new Set(["index", "html", "htm", "readme", "the", "and", "www"]);
+  const words = (text) => text.toLowerCase().split(/[^a-z0-9]+/).filter((word) => word.length > 2 && !stop.has(word));
+  const keys = known.map((page) => new Set(words(page.k)));
+  const count = {};
+  keys.forEach((set) => set.forEach((word) => (count[word] = (count[word] || 0) + 1)));
+  // a word that few pages have counts for more than one that many have
+  const scores = keys.map((set) => words(shown).reduce((sum, word) => sum + (set.has(word) ? 1 / count[word] : 0), 0));
+  const best = scores.indexOf(Math.max(...scores));
+  const next = Math.max(...scores.filter((_, i) => i !== best));
+  if (scores[best] >= 0.5 && scores[best] > next) {
+    const hint = document.querySelector(".lost-hint");
+    const link = hint.querySelector("a");
+    link.textContent = known[best].t;
+    link.href = base + known[best].u;
+    hint.hidden = false;
+  }
+
+  // ---- the picture: a guided mode up to the end of the waveguide, a Gaussian beam after it ----------------
+  const canvas = document.querySelector(".lost-field");
+  const W = 912;
+  const H = 172;
+  const X0 = -11; // micrometres; the waveguide ends at x = 0
+  const X1 = 27;
+  const Y = 3.6;
+  const lam = 1.55; // wavelength in vacuum (um)
+  const neff = 2.4445; // the strip waveguide of the course at that wavelength
+  const nox = 1.444; // the oxide around it
+  const half = 0.5 / 2; // half the width of its core (um)
+  const w0 = 0.42; // radius of the Gaussian that stands for the mode: a round value for the picture
+  const zr = (Math.PI * w0 * w0 * nox) / lam;
+  canvas.width = W;
+  canvas.height = H;
+  const context = canvas.getContext("2d");
+  const amplitude = new Float32Array(W * H);
+  const phase = new Float32Array(W * H);
+  for (let i = 0; i < W; i++) {
+    const x = X0 + ((i + 0.5) / W) * (X1 - X0);
+    const fade = Math.min(1, (X1 - x) / 7) * Math.min(1, (x - X0) / 1.5);
+    for (let j = 0; j < H; j++) {
+      const y = Y - ((j + 0.5) / H) * 2 * Y;
+      let a;
+      let p;
+      if (x < 0) {
+        a = Math.exp(-((y / w0) ** 2));
+        p = (2 * Math.PI * neff * x) / lam;
+      } else {
+        const w = w0 * Math.sqrt(1 + (x / zr) ** 2);
+        const curvature = x / (x * x + zr * zr); // 1 / R
+        a = Math.sqrt(w0 / w) * Math.exp(-((y / w) ** 2));
+        p = ((2 * Math.PI * nox) / lam) * (x + (y * y * curvature) / 2) - 0.5 * Math.atan(x / zr);
+      }
+      amplitude[j * W + i] = Math.pow(a, 0.6) * fade * 255;
+      phase[j * W + i] = p;
+    }
+  }
+  const STOPS = [[3, 4, 10], [10, 53, 88], [15, 147, 168], [240, 180, 60], [255, 244, 210]]; // as the fields of the home page
+  const LUT = new Uint32Array(256);
+  for (let i = 0; i < 256; i++) {
+    const position = (i / 255) * (STOPS.length - 1);
+    const low = Math.min(STOPS.length - 2, Math.floor(position));
+    const [r, g, b] = [0, 1, 2].map((k) => Math.round(STOPS[low][k] * (1 - position + low) + STOPS[low + 1][k] * (position - low)));
+    LUT[i] = (255 << 24) | (b << 16) | (g << 8) | r;
+  }
+  const image = context.createImageData(W, H);
+  const pixels = new Uint32Array(image.data.buffer);
+  const px = (x) => ((x - X0) / (X1 - X0)) * W;
+  const py = (y) => ((Y - y) / (2 * Y)) * H;
+  const draw = (seconds) => {
+    const turn = seconds * 2 * Math.PI * 1.1;
+    for (let k = 0; k < W * H; k++) pixels[k] = LUT[(amplitude[k] * (0.4 + 0.3 * (1 + Math.cos(phase[k] - turn)))) | 0];
+    context.putImageData(image, 0, 0);
+    context.strokeStyle = "rgba(255, 255, 255, 0.34)";
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(0, py(half) + 0.5);
+    context.lineTo(px(0), py(half) + 0.5);
+    context.lineTo(px(0), py(-half) + 0.5);
+    context.lineTo(0, py(-half) + 0.5);
+    context.stroke();
+  };
+  draw(0);
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || /[?&]still/.test(location.search)) return;
+  let last = 0;
+  const tick = (now) => {
+    if (!document.hidden && now - last > 32) {
+      last = now;
+      draw(now / 1000);
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

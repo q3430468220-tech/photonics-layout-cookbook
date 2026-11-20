@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clements mesh of Mach-Zehnder interferometers · photonics-layout-cookbook</title>
+<meta name="description" content="A mesh of Mach-Zehnder interferometers is a programmable linear circuit. Light enters on N waveguides and leaves on N waveguides.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/circuits/clements-mesh/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Clements mesh of Mach-Zehnder interferometers">
+<meta property="og:description" content="A mesh of Mach-Zehnder interferometers is a programmable linear circuit. Light enters on N waveguides and leaves on N waveguides.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/circuits/clements-mesh/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/circuits-clements-mesh.jpg?v=cf38e5d1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Clements mesh of Mach-Zehnder interferometers, with a drawing of the circuit: its waveguides, couplers and heaters">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Clements mesh of Mach-Zehnder interferometers","description":"A mesh of Mach-Zehnder interferometers is a programmable linear circuit. Light enters on N waveguides and leaves on N waveguides.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/circuits/clements-mesh/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/circuits-clements-mesh.jpg?v=cf38e5d1"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"Clements mesh of Mach-Zehnder interferometers","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/circuits/clements-mesh/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course">Course</a>
+      <a href="../../devices/index.html">Devices</a>
+<a href="../index.html" aria-current="true">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+
+<header class="page-head has-art">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../index.html">Circuits</a>        <i>·</i> Programmable photonics · 4 × 4</p>
+      <h1 class="display page-title" data-words aria-label="Clements mesh of Mach-Zehnder interferometers"><span class="w" style="--n:0">Clements</span> <span class="w" style="--n:1">mesh</span> <span class="w" style="--n:2">of</span> <span class="w" style="--n:3">Mach-Zehnder</span> <span class="w" style="--n:4">interferometers</span></h1>
+      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>42 min read</span>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/README.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+    <div class="page-art circuit-art" aria-hidden="true"><svg class="glyph circuit-glyph" viewBox="0 0 221.5 72"><style>.si-line{fill:none;stroke:var(--g-si);stroke-width:1.1;stroke-linecap:round}.heater{fill:var(--g-heater)}</style><path class="si-line" d="M0 6L7.65 6C12.15 6 12.15 14.5 16.65 14.5L21.65 14.5C26.15 14.5 26.15 6 30.65 6L30.55 6C35.05 6 35.05 14.5 39.55 14.5L44.55 14.5C49.05 14.5 49.05 6 53.55 6L53.45 6C57.95 6 57.95 14.5 62.45 14.5L67.45 14.5C71.95 14.5 71.95 6 76.45 6L76.35 6C80.85 6 80.85 14.5 85.35 14.5L90.35 14.5C94.85 14.5 94.85 6 99.35 6L99.25 6C103.75 6 103.75 14.5 108.25 14.5L113.25 14.5C117.75 14.5 117.75 6 122.25 6L122.15 6C126.65 6 126.65 14.5 131.15 14.5L136.15 14.5C140.65 14.5 140.65 6 145.15 6L145.05 6C149.55 6 149.55 14.5 154.05 14.5L159.05 14.5C163.55 14.5 163.55 6 168.05 6L167.95 6C172.45 6 172.45 14.5 176.95 14.5L181.95 14.5C186.45 14.5 186.45 6 190.95 6L221.5 6"/><path class="si-line" d="M0 26L7.65 26C12.15 26 12.15 17.5 16.65 17.5L21.65 17.5C26.15 17.5 26.15 26 30.65 26L30.55 26C35.05 26 35.05 17.5 39.55 17.5L44.55 17.5C49.05 17.5 49.05 26 53.55 26L53.45 26C57.95 26 57.95 34.5 62.45 34.5L67.45 34.5C71.95 34.5 71.95 26 76.45 26L76.35 26C80.85 26 80.85 34.5 85.35 34.5L90.35 34.5C94.85 34.5 94.85 26 99.35 26L99.25 26C103.75 26 103.75 17.5 108.25 17.5L113.25 17.5C117.75 17.5 117.75 26 122.25 26L122.15 26C126.65 26 126.65 17.5 131.15 17.5L136.15 17.5C140.65 17.5 140.65 26 145.15 26L145.05 26C149.55 26 149.55 34.5 154.05 34.5L159.05 34.5C163.55 34.5 163.55 26 168.05 26L167.95 26C172.45 26 172.45 34.5 176.95 34.5L181.95 34.5C186.45 34.5 186.45 26 190.95 26L221.5 26"/><path class="si-line" d="M0 46L7.65 46C12.15 46 12.15 54.5 16.65 54.5L21.65 54.5C26.15 54.5 26.15 46 30.65 46L30.55 46C35.05 46 35.05 54.5 39.55 54.5L44.55 54.5C49.05 54.5 49.05 46 53.55 46L53.45 46C57.95 46 57.95 37.5 62.45 37.5L67.45 37.5C71.95 37.5 71.95 46 76.45 46L76.35 46C80.85 46 80.85 37.5 85.35 37.5L90.35 37.5C94.85 37.5 94.85 46 99.35 46L99.25 46C103.75 46 103.75 54.5 108.25 54.5L113.25 54.5C117.75 54.5 117.75 46 122.25 46L122.15 46C126.65 46 126.65 54.5 131.15 54.5L136.15 54.5C140.65 54.5 140.65 46 145.15 46L145.05 46C149.55 46 149.55 37.5 154.05 37.5L159.05 37.5C163.55 37.5 163.55 46 168.05 46L167.95 46C172.45 46 172.45 37.5 176.95 37.5L181.95 37.5C186.45 37.5 186.45 46 190.95 46L221.5 46"/><path class="si-line" d="M0 66L7.65 66C12.15 66 12.15 57.5 16.65 57.5L21.65 57.5C26.15 57.5 26.15 66 30.65 66L30.55 66C35.05 66 35.05 57.5 39.55 57.5L44.55 57.5C49.05 57.5 49.05 66 53.55 66L53.45 66C57.95 66 57.95 57.5 62.45 57.5L67.45 57.5C71.95 57.5 71.95 66 76.45 66L76.35 66C80.85 66 80.85 57.5 85.35 57.5L90.35 57.5C94.85 57.5 94.85 66 99.35 66L99.25 66C103.75 66 103.75 57.5 108.25 57.5L113.25 57.5C117.75 57.5 117.75 66 122.25 66L122.15 66C126.65 66 126.65 57.5 131.15 57.5L136.15 57.5C140.65 57.5 140.65 66 145.15 66L145.05 66C149.55 66 149.55 57.5 154.05 57.5L159.05 57.5C163.55 57.5 163.55 66 168.05 66L167.95 66C172.45 66 172.45 57.5 176.95 57.5L181.95 57.5C186.45 57.5 186.45 66 190.95 66L221.5 66"/><rect class="heater" x="2.7" y="2.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="25.6" y="2.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="2.7" y="42.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="25.6" y="42.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="48.5" y="22.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="71.4" y="22.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="94.3" y="2.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="117.2" y="2.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="94.3" y="42.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="117.2" y="42.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="140.1" y="22.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="163" y="22.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="185.9" y="2.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="208.8" y="22.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="208.8" y="42.6" width="10" height="1.8" rx=".9"/><rect class="heater" x="185.9" y="62.6" width="10" height="1.8" rx=".9"/></svg></div>
+  </div>
+  <div class="wrap">
+    <div class="src-group">
+    <dl class="nums nums-head">
+      <div><dt>heaters for the DFT</dt><dd data-count data-source="src-0" data-source-label="Where 139 mW comes from">139<small>mW</small></dd></div>
+      <div><dt>band with F &gt; 0.99</dt><dd data-count data-source="src-1" data-source-label="Where 13 nm comes from">13<small>nm</small></dd></div>
+      <div><dt>largest share of a neighbour&#39;s heat</dt><dd data-count data-source="src-2" data-source-label="Where 0.64 % comes from">0.64<small>%</small></dd></div>
+    </dl>
+<aside class="src-panel" id="src-panel" role="region" aria-label="Where the number comes from" hidden tabindex="-1"><span class="src-caret" aria-hidden="true"></span><div class="src-body"></div></aside><p class="src-line"><span>Numbers from</span> <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/2_program/program.txt">2_program/program.txt</a>, <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/3_crosstalk/crosstalk.txt">3_crosstalk/crosstalk.txt</a></p><template id="src-0"><p class="src-head"><b>139</b><small>mW</small><span>heaters for the DFT</span></p><p class="src-k">Line 21 of the kept summary</p><pre class="src-quote" tabindex="0">  total heater power: DFT <mark>139.2</mark> mW; random mean 162.4 mW, from 116.4 to 219.0 mW; the largest single heater 20.49 mW (3.20 V on 500 ohm)</pre><p class="src-note">The page rounds 139.2 to 139 mW.</p><p class="src-k">How the run was made</p><p class="src-how">INTERCONNECT, Lumerical 2025 R1, and the Python model of the same circuit (mesh_model.py): the 4 x 4 mesh of</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/2_program/program.txt">result file<span>program.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/scripts/program_mesh.py">script<span>program_mesh.py</span></a></p></template><template id="src-1"><p class="src-head"><b>13</b><small>nm</small><span>band with F &gt; 0.99</span></p><p class="src-k">Line 5 of the kept summary</p><pre class="src-quote" tabindex="0">answer: the drawn mesh holds the DFT with 1 - F = 3.5e-07 at 1.55 um, and every one of 40 random unitaries with 1 - F &lt;= 9.1e-07.  What is left is mostly light lost unevenly along the paths.  The fidelity stays above 0.99 over <mark>13</mark> nm (median of the 41 targets); the couplers set that width.  The first draft of the layout, with straight edge rows, held it over 2 nm.</pre><p class="src-k">How the run was made</p><p class="src-how">INTERCONNECT, Lumerical 2025 R1, and the Python model of the same circuit (mesh_model.py): the 4 x 4 mesh of</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/2_program/program.txt">result file<span>program.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/scripts/program_mesh.py">script<span>program_mesh.py</span></a></p></template><template id="src-2"><p class="src-head"><b>0.64</b><small>%</small><span>largest share of a neighbour&#x27;s heat</span></p><p class="src-k">Line 8 of the kept summary</p><pre class="src-quote" tabindex="0">  largest: <mark>0.64</mark> %: P0 on the waveguide 30 um beside it (row 1, same x)</pre><p class="src-k">How the run was made</p><p class="src-how">INTERCONNECT, Lumerical 2025 R1, and the Python model: the 4 x 4 mesh with the heat that every heater gives every site</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/3_crosstalk/crosstalk.txt">result file<span>crosstalk.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/scripts/thermal_crosstalk.py">script<span>thermal_crosstalk.py</span></a></p></template>    </div>
+  </div>
+</header>
+<section class="pg" id="program-the-mesh" data-pg aria-label="Program the mesh"><div class="wrap pg-head"><p class="eyebrow"><span class="pip"></span>Try it <i>·</i> <b>the model of step 2, in your browser</b></p><h2 class="display pg-title">Program the mesh <span class="thin">with sixteen voltages</span></h2><p class="pg-lede">Give it a matrix <em>M</em> and a vector of light <em>x</em>. The decomposition of the paper turns <em>M</em> into a phase for every heater, a fit corrects the phases for the circuit as drawn, and each phase becomes a voltage. The light then runs through the mesh, and what leaves it is <em>M x</em>.</p></div><div class="pg-stage" data-pg-stage><svg class="pg-svg" viewBox="-215 -78 1678.95 445" role="img" aria-label="The 4 by 4 mesh as drawn, programmed to the matrix: the light in its waveguides, the voltage of every heater, and a dial for the field of every input and output"><defs><linearGradient id="pg-beam" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1173.95" y2="0"><stop offset="0" stop-color="#5ee7f5"/><stop offset=".55" stop-color="#ffffff"/><stop offset="1" stop-color="#ff8fd8"/></linearGradient><radialGradient id="pg-heat-fill"><stop offset="0" stop-color="#ffb37f" stop-opacity=".85"/><stop offset=".5" stop-color="#ff7a45" stop-opacity=".28"/><stop offset="1" stop-color="#ff7a45" stop-opacity="0"/></radialGradient><radialGradient id="pg-aura-in"><stop offset=".55" stop-color="#5ee7f5" stop-opacity=".45"/><stop offset="1" stop-color="#5ee7f5" stop-opacity="0"/></radialGradient><radialGradient id="pg-aura-out"><stop offset=".55" stop-color="#ff8fd8" stop-opacity=".45"/><stop offset="1" stop-color="#ff8fd8" stop-opacity="0"/></radialGradient></defs><text class="pg-side" x="-112" y="-56">x · in</text><text class="pg-side" x="1285.95" y="-56">y = U x · out</text><g class="pg-base"><path d="M0 0L10.6 0L71.02 0C81.62 0 81.62 42.9 92.22 42.9C94.87 42.9 94.87 48.34 97.52 48.34L101.5 48.34"/><path d="M101.5 48.34L105.47 48.34C108.12 48.34 108.12 42.9 110.77 42.9C121.37 42.9 121.37 0 131.97 0L192.39 0C202.99 0 202.99 42.9 213.59 42.9C216.24 42.9 216.24 48.34 218.89 48.34L222.87 48.34"/><path d="M222.87 48.34L226.84 48.34C229.49 48.34 229.49 42.9 232.14 42.9C242.74 42.9 242.74 0 253.34 0L313.76 0C324.36 0 324.36 42.9 334.96 42.9C337.61 42.9 337.61 48.34 340.26 48.34L348.21 48.34C350.86 48.34 350.86 42.9 353.51 42.9C364.11 42.9 364.11 0 374.71 0L435.13 0C445.73 0 445.73 42.9 456.33 42.9C458.98 42.9 458.98 48.34 461.63 48.34L469.58 48.34C472.23 48.34 472.23 42.9 474.88 42.9C485.48 42.9 485.48 0 496.08 0L556.5 0C567.1 0 567.1 42.9 577.7 42.9C580.35 42.9 580.35 48.34 583 48.34L586.98 48.34"/><path d="M586.98 48.34L590.95 48.34C593.6 48.34 593.6 42.9 596.25 42.9C606.85 42.9 606.85 0 617.45 0L677.87 0C688.47 0 688.47 42.9 699.07 42.9C701.72 42.9 701.72 48.34 704.37 48.34L708.35 48.34"/><path d="M708.35 48.34L712.32 48.34C714.97 48.34 714.97 42.9 717.62 42.9C728.22 42.9 728.22 0 738.82 0L799.24 0C809.84 0 809.84 42.9 820.44 42.9C823.09 42.9 823.09 48.34 825.74 48.34L833.69 48.34C836.34 48.34 836.34 42.9 838.99 42.9C849.59 42.9 849.59 0 860.19 0L920.61 0C931.21 0 931.21 42.9 941.81 42.9C944.46 42.9 944.46 48.34 947.11 48.34L955.06 48.34C957.71 48.34 957.71 42.9 960.36 42.9C970.96 42.9 970.96 0 981.56 0L1173.95 0"/><path d="M0 99L10.6 99L71.02 99C81.62 99 81.62 56.1 92.22 56.1C94.87 56.1 94.87 50.66 97.52 50.66L101.5 50.66"/><path d="M101.5 50.66L105.47 50.66C108.12 50.66 108.12 56.1 110.77 56.1C121.37 56.1 121.37 99 131.97 99L192.39 99C202.99 99 202.99 56.1 213.59 56.1C216.24 56.1 216.24 50.66 218.89 50.66L222.87 50.66"/><path d="M222.87 50.66L226.84 50.66C229.49 50.66 229.49 56.1 232.14 56.1C242.74 56.1 242.74 99 253.34 99L313.76 99C324.36 99 324.36 141.9 334.96 141.9C337.61 141.9 337.61 147.34 340.26 147.34L344.24 147.34"/><path d="M344.24 147.34L348.21 147.34C350.86 147.34 350.86 141.9 353.51 141.9C364.11 141.9 364.11 99 374.71 99L435.13 99C445.73 99 445.73 141.9 456.33 141.9C458.98 141.9 458.98 147.34 461.63 147.34L465.61 147.34"/><path d="M465.61 147.34L469.58 147.34C472.23 147.34 472.23 141.9 474.88 141.9C485.48 141.9 485.48 99 496.08 99L556.5 99C567.1 99 567.1 56.1 577.7 56.1C580.35 56.1 580.35 50.66 583 50.66L586.98 50.66"/><path d="M586.98 50.66L590.95 50.66C593.6 50.66 593.6 56.1 596.25 56.1C606.85 56.1 606.85 99 617.45 99L677.87 99C688.47 99 688.47 56.1 699.07 56.1C701.72 56.1 701.72 50.66 704.37 50.66L708.35 50.66"/><path d="M708.35 50.66L712.32 50.66C714.97 50.66 714.97 56.1 717.62 56.1C728.22 56.1 728.22 99 738.82 99L799.24 99C809.84 99 809.84 141.9 820.44 141.9C823.09 141.9 823.09 147.34 825.74 147.34L829.72 147.34"/><path d="M829.72 147.34L833.69 147.34C836.34 147.34 836.34 141.9 838.99 141.9C849.59 141.9 849.59 99 860.19 99L920.61 99C931.21 99 931.21 141.9 941.81 141.9C944.46 141.9 944.46 147.34 947.11 147.34L951.09 147.34"/><path d="M951.09 147.34L955.06 147.34C957.71 147.34 957.71 141.9 960.36 141.9C970.96 141.9 970.96 99 981.56 99L1173.95 99"/><path d="M0 198L10.6 198L71.02 198C81.62 198 81.62 240.9 92.22 240.9C94.87 240.9 94.87 246.34 97.52 246.34L101.5 246.34"/><path d="M101.5 246.34L105.47 246.34C108.12 246.34 108.12 240.9 110.77 240.9C121.37 240.9 121.37 198 131.97 198L192.39 198C202.99 198 202.99 240.9 213.59 240.9C216.24 240.9 216.24 246.34 218.89 246.34L222.87 246.34"/><path d="M222.87 246.34L226.84 246.34C229.49 246.34 229.49 240.9 232.14 240.9C242.74 240.9 242.74 198 253.34 198L313.76 198C324.36 198 324.36 155.1 334.96 155.1C337.61 155.1 337.61 149.66 340.26 149.66L344.24 149.66"/><path d="M344.24 149.66L348.21 149.66C350.86 149.66 350.86 155.1 353.51 155.1C364.11 155.1 364.11 198 374.71 198L435.13 198C445.73 198 445.73 155.1 456.33 155.1C458.98 155.1 458.98 149.66 461.63 149.66L465.61 149.66"/><path d="M465.61 149.66L469.58 149.66C472.23 149.66 472.23 155.1 474.88 155.1C485.48 155.1 485.48 198 496.08 198L556.5 198C567.1 198 567.1 240.9 577.7 240.9C580.35 240.9 580.35 246.34 583 246.34L586.98 246.34"/><path d="M586.98 246.34L590.95 246.34C593.6 246.34 593.6 240.9 596.25 240.9C606.85 240.9 606.85 198 617.45 198L677.87 198C688.47 198 688.47 240.9 699.07 240.9C701.72 240.9 701.72 246.34 704.37 246.34L708.35 246.34"/><path d="M708.35 246.34L712.32 246.34C714.97 246.34 714.97 240.9 717.62 240.9C728.22 240.9 728.22 198 738.82 198L799.24 198C809.84 198 809.84 155.1 820.44 155.1C823.09 155.1 823.09 149.66 825.74 149.66L829.72 149.66"/><path d="M829.72 149.66L833.69 149.66C836.34 149.66 836.34 155.1 838.99 155.1C849.59 155.1 849.59 198 860.19 198L920.61 198C931.21 198 931.21 155.1 941.81 155.1C944.46 155.1 944.46 149.66 947.11 149.66L951.09 149.66"/><path d="M951.09 149.66L955.06 149.66C957.71 149.66 957.71 155.1 960.36 155.1C970.96 155.1 970.96 198 981.56 198L1173.95 198"/><path d="M0 297L10.6 297L71.02 297C81.62 297 81.62 254.1 92.22 254.1C94.87 254.1 94.87 248.66 97.52 248.66L101.5 248.66"/><path d="M101.5 248.66L105.47 248.66C108.12 248.66 108.12 254.1 110.77 254.1C121.37 254.1 121.37 297 131.97 297L192.39 297C202.99 297 202.99 254.1 213.59 254.1C216.24 254.1 216.24 248.66 218.89 248.66L222.87 248.66"/><path d="M222.87 248.66L226.84 248.66C229.49 248.66 229.49 254.1 232.14 254.1C242.74 254.1 242.74 297 253.34 297L313.76 297C324.36 297 324.36 254.1 334.96 254.1C337.61 254.1 337.61 248.66 340.26 248.66L348.21 248.66C350.86 248.66 350.86 254.1 353.51 254.1C364.11 254.1 364.11 297 374.71 297L435.13 297C445.73 297 445.73 254.1 456.33 254.1C458.98 254.1 458.98 248.66 461.63 248.66L469.58 248.66C472.23 248.66 472.23 254.1 474.88 254.1C485.48 254.1 485.48 297 496.08 297L556.5 297C567.1 297 567.1 254.1 577.7 254.1C580.35 254.1 580.35 248.66 583 248.66L586.98 248.66"/><path d="M586.98 248.66L590.95 248.66C593.6 248.66 593.6 254.1 596.25 254.1C606.85 254.1 606.85 297 617.45 297L677.87 297C688.47 297 688.47 254.1 699.07 254.1C701.72 254.1 701.72 248.66 704.37 248.66L708.35 248.66"/><path d="M708.35 248.66L712.32 248.66C714.97 248.66 714.97 254.1 717.62 254.1C728.22 254.1 728.22 297 738.82 297L799.24 297C809.84 297 809.84 254.1 820.44 254.1C823.09 254.1 823.09 248.66 825.74 248.66L833.69 248.66C836.34 248.66 836.34 254.1 838.99 254.1C849.59 254.1 849.59 297 860.19 297L920.61 297C931.21 297 931.21 254.1 941.81 254.1C944.46 254.1 944.46 248.66 947.11 248.66L955.06 248.66C957.71 248.66 957.71 254.1 960.36 254.1C970.96 254.1 970.96 297 981.56 297L1173.95 297"/></g><g class="pg-light"><g class="pg-pc" data-k="0" style="--d:0.043"><path class="pg-glow" d="M0 0L10.6 0L71.02 0C81.62 0 81.62 42.9 92.22 42.9C94.87 42.9 94.87 48.34 97.52 48.34L101.5 48.34"/><path class="pg-lit" d="M0 0L10.6 0L71.02 0C81.62 0 81.62 42.9 92.22 42.9C94.87 42.9 94.87 48.34 97.52 48.34L101.5 48.34"/><path class="pg-flow" d="M0 0L10.6 0L71.02 0C81.62 0 81.62 42.9 92.22 42.9C94.87 42.9 94.87 48.34 97.52 48.34L101.5 48.34"/></g><g class="pg-pc" data-k="1" style="--d:0.138"><path class="pg-glow" d="M101.5 48.34L105.47 48.34C108.12 48.34 108.12 42.9 110.77 42.9C121.37 42.9 121.37 0 131.97 0L192.39 0C202.99 0 202.99 42.9 213.59 42.9C216.24 42.9 216.24 48.34 218.89 48.34L222.87 48.34"/><path class="pg-lit" d="M101.5 48.34L105.47 48.34C108.12 48.34 108.12 42.9 110.77 42.9C121.37 42.9 121.37 0 131.97 0L192.39 0C202.99 0 202.99 42.9 213.59 42.9C216.24 42.9 216.24 48.34 218.89 48.34L222.87 48.34"/><path class="pg-flow" d="M101.5 48.34L105.47 48.34C108.12 48.34 108.12 42.9 110.77 42.9C121.37 42.9 121.37 0 131.97 0L192.39 0C202.99 0 202.99 42.9 213.59 42.9C216.24 42.9 216.24 48.34 218.89 48.34L222.87 48.34"/></g><g class="pg-pc" data-k="2" style="--d:0.345"><path class="pg-glow" d="M222.87 48.34L226.84 48.34C229.49 48.34 229.49 42.9 232.14 42.9C242.74 42.9 242.74 0 253.34 0L313.76 0C324.36 0 324.36 42.9 334.96 42.9C337.61 42.9 337.61 48.34 340.26 48.34L348.21 48.34C350.86 48.34 350.86 42.9 353.51 42.9C364.11 42.9 364.11 0 374.71 0L435.13 0C445.73 0 445.73 42.9 456.33 42.9C458.98 42.9 458.98 48.34 461.63 48.34L469.58 48.34C472.23 48.34 472.23 42.9 474.88 42.9C485.48 42.9 485.48 0 496.08 0L556.5 0C567.1 0 567.1 42.9 577.7 42.9C580.35 42.9 580.35 48.34 583 48.34L586.98 48.34"/><path class="pg-lit" d="M222.87 48.34L226.84 48.34C229.49 48.34 229.49 42.9 232.14 42.9C242.74 42.9 242.74 0 253.34 0L313.76 0C324.36 0 324.36 42.9 334.96 42.9C337.61 42.9 337.61 48.34 340.26 48.34L348.21 48.34C350.86 48.34 350.86 42.9 353.51 42.9C364.11 42.9 364.11 0 374.71 0L435.13 0C445.73 0 445.73 42.9 456.33 42.9C458.98 42.9 458.98 48.34 461.63 48.34L469.58 48.34C472.23 48.34 472.23 42.9 474.88 42.9C485.48 42.9 485.48 0 496.08 0L556.5 0C567.1 0 567.1 42.9 577.7 42.9C580.35 42.9 580.35 48.34 583 48.34L586.98 48.34"/><path class="pg-flow" d="M222.87 48.34L226.84 48.34C229.49 48.34 229.49 42.9 232.14 42.9C242.74 42.9 242.74 0 253.34 0L313.76 0C324.36 0 324.36 42.9 334.96 42.9C337.61 42.9 337.61 48.34 340.26 48.34L348.21 48.34C350.86 48.34 350.86 42.9 353.51 42.9C364.11 42.9 364.11 0 374.71 0L435.13 0C445.73 0 445.73 42.9 456.33 42.9C458.98 42.9 458.98 48.34 461.63 48.34L469.58 48.34C472.23 48.34 472.23 42.9 474.88 42.9C485.48 42.9 485.48 0 496.08 0L556.5 0C567.1 0 567.1 42.9 577.7 42.9C580.35 42.9 580.35 48.34 583 48.34L586.98 48.34"/></g><g class="pg-pc" data-k="3" style="--d:0.552"><path class="pg-glow" d="M586.98 48.34L590.95 48.34C593.6 48.34 593.6 42.9 596.25 42.9C606.85 42.9 606.85 0 617.45 0L677.87 0C688.47 0 688.47 42.9 699.07 42.9C701.72 42.9 701.72 48.34 704.37 48.34L708.35 48.34"/><path class="pg-lit" d="M586.98 48.34L590.95 48.34C593.6 48.34 593.6 42.9 596.25 42.9C606.85 42.9 606.85 0 617.45 0L677.87 0C688.47 0 688.47 42.9 699.07 42.9C701.72 42.9 701.72 48.34 704.37 48.34L708.35 48.34"/><path class="pg-flow" d="M586.98 48.34L590.95 48.34C593.6 48.34 593.6 42.9 596.25 42.9C606.85 42.9 606.85 0 617.45 0L677.87 0C688.47 0 688.47 42.9 699.07 42.9C701.72 42.9 701.72 48.34 704.37 48.34L708.35 48.34"/></g><g class="pg-pc" data-k="4" style="--d:0.802"><path class="pg-glow" d="M708.35 48.34L712.32 48.34C714.97 48.34 714.97 42.9 717.62 42.9C728.22 42.9 728.22 0 738.82 0L799.24 0C809.84 0 809.84 42.9 820.44 42.9C823.09 42.9 823.09 48.34 825.74 48.34L833.69 48.34C836.34 48.34 836.34 42.9 838.99 42.9C849.59 42.9 849.59 0 860.19 0L920.61 0C931.21 0 931.21 42.9 941.81 42.9C944.46 42.9 944.46 48.34 947.11 48.34L955.06 48.34C957.71 48.34 957.71 42.9 960.36 42.9C970.96 42.9 970.96 0 981.56 0L1173.95 0"/><path class="pg-lit" d="M708.35 48.34L712.32 48.34C714.97 48.34 714.97 42.9 717.62 42.9C728.22 42.9 728.22 0 738.82 0L799.24 0C809.84 0 809.84 42.9 820.44 42.9C823.09 42.9 823.09 48.34 825.74 48.34L833.69 48.34C836.34 48.34 836.34 42.9 838.99 42.9C849.59 42.9 849.59 0 860.19 0L920.61 0C931.21 0 931.21 42.9 941.81 42.9C944.46 42.9 944.46 48.34 947.11 48.34L955.06 48.34C957.71 48.34 957.71 42.9 960.36 42.9C970.96 42.9 970.96 0 981.56 0L1173.95 0"/><path class="pg-flow" d="M708.35 48.34L712.32 48.34C714.97 48.34 714.97 42.9 717.62 42.9C728.22 42.9 728.22 0 738.82 0L799.24 0C809.84 0 809.84 42.9 820.44 42.9C823.09 42.9 823.09 48.34 825.74 48.34L833.69 48.34C836.34 48.34 836.34 42.9 838.99 42.9C849.59 42.9 849.59 0 860.19 0L920.61 0C931.21 0 931.21 42.9 941.81 42.9C944.46 42.9 944.46 48.34 947.11 48.34L955.06 48.34C957.71 48.34 957.71 42.9 960.36 42.9C970.96 42.9 970.96 0 981.56 0L1173.95 0"/></g><g class="pg-pc" data-k="5" style="--d:0.043"><path class="pg-glow" d="M0 99L10.6 99L71.02 99C81.62 99 81.62 56.1 92.22 56.1C94.87 56.1 94.87 50.66 97.52 50.66L101.5 50.66"/><path class="pg-lit" d="M0 99L10.6 99L71.02 99C81.62 99 81.62 56.1 92.22 56.1C94.87 56.1 94.87 50.66 97.52 50.66L101.5 50.66"/><path class="pg-flow" d="M0 99L10.6 99L71.02 99C81.62 99 81.62 56.1 92.22 56.1C94.87 56.1 94.87 50.66 97.52 50.66L101.5 50.66"/></g><g class="pg-pc" data-k="6" style="--d:0.138"><path class="pg-glow" d="M101.5 50.66L105.47 50.66C108.12 50.66 108.12 56.1 110.77 56.1C121.37 56.1 121.37 99 131.97 99L192.39 99C202.99 99 202.99 56.1 213.59 56.1C216.24 56.1 216.24 50.66 218.89 50.66L222.87 50.66"/><path class="pg-lit" d="M101.5 50.66L105.47 50.66C108.12 50.66 108.12 56.1 110.77 56.1C121.37 56.1 121.37 99 131.97 99L192.39 99C202.99 99 202.99 56.1 213.59 56.1C216.24 56.1 216.24 50.66 218.89 50.66L222.87 50.66"/><path class="pg-flow" d="M101.5 50.66L105.47 50.66C108.12 50.66 108.12 56.1 110.77 56.1C121.37 56.1 121.37 99 131.97 99L192.39 99C202.99 99 202.99 56.1 213.59 56.1C216.24 56.1 216.24 50.66 218.89 50.66L222.87 50.66"/></g><g class="pg-pc" data-k="7" style="--d:0.242"><path class="pg-glow" d="M222.87 50.66L226.84 50.66C229.49 50.66 229.49 56.1 232.14 56.1C242.74 56.1 242.74 99 253.34 99L313.76 99C324.36 99 324.36 141.9 334.96 141.9C337.61 141.9 337.61 147.34 340.26 147.34L344.24 147.34"/><path class="pg-lit" d="M222.87 50.66L226.84 50.66C229.49 50.66 229.49 56.1 232.14 56.1C242.74 56.1 242.74 99 253.34 99L313.76 99C324.36 99 324.36 141.9 334.96 141.9C337.61 141.9 337.61 147.34 340.26 147.34L344.24 147.34"/><path class="pg-flow" d="M222.87 50.66L226.84 50.66C229.49 50.66 229.49 56.1 232.14 56.1C242.74 56.1 242.74 99 253.34 99L313.76 99C324.36 99 324.36 141.9 334.96 141.9C337.61 141.9 337.61 147.34 340.26 147.34L344.24 147.34"/></g><g class="pg-pc" data-k="8" style="--d:0.345"><path class="pg-glow" d="M344.24 147.34L348.21 147.34C350.86 147.34 350.86 141.9 353.51 141.9C364.11 141.9 364.11 99 374.71 99L435.13 99C445.73 99 445.73 141.9 456.33 141.9C458.98 141.9 458.98 147.34 461.63 147.34L465.61 147.34"/><path class="pg-lit" d="M344.24 147.34L348.21 147.34C350.86 147.34 350.86 141.9 353.51 141.9C364.11 141.9 364.11 99 374.71 99L435.13 99C445.73 99 445.73 141.9 456.33 141.9C458.98 141.9 458.98 147.34 461.63 147.34L465.61 147.34"/><path class="pg-flow" d="M344.24 147.34L348.21 147.34C350.86 147.34 350.86 141.9 353.51 141.9C364.11 141.9 364.11 99 374.71 99L435.13 99C445.73 99 445.73 141.9 456.33 141.9C458.98 141.9 458.98 147.34 461.63 147.34L465.61 147.34"/></g><g class="pg-pc" data-k="9" style="--d:0.448"><path class="pg-glow" d="M465.61 147.34L469.58 147.34C472.23 147.34 472.23 141.9 474.88 141.9C485.48 141.9 485.48 99 496.08 99L556.5 99C567.1 99 567.1 56.1 577.7 56.1C580.35 56.1 580.35 50.66 583 50.66L586.98 50.66"/><path class="pg-lit" d="M465.61 147.34L469.58 147.34C472.23 147.34 472.23 141.9 474.88 141.9C485.48 141.9 485.48 99 496.08 99L556.5 99C567.1 99 567.1 56.1 577.7 56.1C580.35 56.1 580.35 50.66 583 50.66L586.98 50.66"/><path class="pg-flow" d="M465.61 147.34L469.58 147.34C472.23 147.34 472.23 141.9 474.88 141.9C485.48 141.9 485.48 99 496.08 99L556.5 99C567.1 99 567.1 56.1 577.7 56.1C580.35 56.1 580.35 50.66 583 50.66L586.98 50.66"/></g><g class="pg-pc" data-k="10" style="--d:0.552"><path class="pg-glow" d="M586.98 50.66L590.95 50.66C593.6 50.66 593.6 56.1 596.25 56.1C606.85 56.1 606.85 99 617.45 99L677.87 99C688.47 99 688.47 56.1 699.07 56.1C701.72 56.1 701.72 50.66 704.37 50.66L708.35 50.66"/><path class="pg-lit" d="M586.98 50.66L590.95 50.66C593.6 50.66 593.6 56.1 596.25 56.1C606.85 56.1 606.85 99 617.45 99L677.87 99C688.47 99 688.47 56.1 699.07 56.1C701.72 56.1 701.72 50.66 704.37 50.66L708.35 50.66"/><path class="pg-flow" d="M586.98 50.66L590.95 50.66C593.6 50.66 593.6 56.1 596.25 56.1C606.85 56.1 606.85 99 617.45 99L677.87 99C688.47 99 688.47 56.1 699.07 56.1C701.72 56.1 701.72 50.66 704.37 50.66L708.35 50.66"/></g><g class="pg-pc" data-k="11" style="--d:0.655"><path class="pg-glow" d="M708.35 50.66L712.32 50.66C714.97 50.66 714.97 56.1 717.62 56.1C728.22 56.1 728.22 99 738.82 99L799.24 99C809.84 99 809.84 141.9 820.44 141.9C823.09 141.9 823.09 147.34 825.74 147.34L829.72 147.34"/><path class="pg-lit" d="M708.35 50.66L712.32 50.66C714.97 50.66 714.97 56.1 717.62 56.1C728.22 56.1 728.22 99 738.82 99L799.24 99C809.84 99 809.84 141.9 820.44 141.9C823.09 141.9 823.09 147.34 825.74 147.34L829.72 147.34"/><path class="pg-flow" d="M708.35 50.66L712.32 50.66C714.97 50.66 714.97 56.1 717.62 56.1C728.22 56.1 728.22 99 738.82 99L799.24 99C809.84 99 809.84 141.9 820.44 141.9C823.09 141.9 823.09 147.34 825.74 147.34L829.72 147.34"/></g><g class="pg-pc" data-k="12" style="--d:0.758"><path class="pg-glow" d="M829.72 147.34L833.69 147.34C836.34 147.34 836.34 141.9 838.99 141.9C849.59 141.9 849.59 99 860.19 99L920.61 99C931.21 99 931.21 141.9 941.81 141.9C944.46 141.9 944.46 147.34 947.11 147.34L951.09 147.34"/><path class="pg-lit" d="M829.72 147.34L833.69 147.34C836.34 147.34 836.34 141.9 838.99 141.9C849.59 141.9 849.59 99 860.19 99L920.61 99C931.21 99 931.21 141.9 941.81 141.9C944.46 141.9 944.46 147.34 947.11 147.34L951.09 147.34"/><path class="pg-flow" d="M829.72 147.34L833.69 147.34C836.34 147.34 836.34 141.9 838.99 141.9C849.59 141.9 849.59 99 860.19 99L920.61 99C931.21 99 931.21 141.9 941.81 141.9C944.46 141.9 944.46 147.34 947.11 147.34L951.09 147.34"/></g><g class="pg-pc" data-k="13" style="--d:0.905"><path class="pg-glow" d="M951.09 147.34L955.06 147.34C957.71 147.34 957.71 141.9 960.36 141.9C970.96 141.9 970.96 99 981.56 99L1173.95 99"/><path class="pg-lit" d="M951.09 147.34L955.06 147.34C957.71 147.34 957.71 141.9 960.36 141.9C970.96 141.9 970.96 99 981.56 99L1173.95 99"/><path class="pg-flow" d="M951.09 147.34L955.06 147.34C957.71 147.34 957.71 141.9 960.36 141.9C970.96 141.9 970.96 99 981.56 99L1173.95 99"/></g><g class="pg-pc" data-k="14" style="--d:0.043"><path class="pg-glow" d="M0 198L10.6 198L71.02 198C81.62 198 81.62 240.9 92.22 240.9C94.87 240.9 94.87 246.34 97.52 246.34L101.5 246.34"/><path class="pg-lit" d="M0 198L10.6 198L71.02 198C81.62 198 81.62 240.9 92.22 240.9C94.87 240.9 94.87 246.34 97.52 246.34L101.5 246.34"/><path class="pg-flow" d="M0 198L10.6 198L71.02 198C81.62 198 81.62 240.9 92.22 240.9C94.87 240.9 94.87 246.34 97.52 246.34L101.5 246.34"/></g><g class="pg-pc" data-k="15" style="--d:0.138"><path class="pg-glow" d="M101.5 246.34L105.47 246.34C108.12 246.34 108.12 240.9 110.77 240.9C121.37 240.9 121.37 198 131.97 198L192.39 198C202.99 198 202.99 240.9 213.59 240.9C216.24 240.9 216.24 246.34 218.89 246.34L222.87 246.34"/><path class="pg-lit" d="M101.5 246.34L105.47 246.34C108.12 246.34 108.12 240.9 110.77 240.9C121.37 240.9 121.37 198 131.97 198L192.39 198C202.99 198 202.99 240.9 213.59 240.9C216.24 240.9 216.24 246.34 218.89 246.34L222.87 246.34"/><path class="pg-flow" d="M101.5 246.34L105.47 246.34C108.12 246.34 108.12 240.9 110.77 240.9C121.37 240.9 121.37 198 131.97 198L192.39 198C202.99 198 202.99 240.9 213.59 240.9C216.24 240.9 216.24 246.34 218.89 246.34L222.87 246.34"/></g><g class="pg-pc" data-k="16" style="--d:0.242"><path class="pg-glow" d="M222.87 246.34L226.84 246.34C229.49 246.34 229.49 240.9 232.14 240.9C242.74 240.9 242.74 198 253.34 198L313.76 198C324.36 198 324.36 155.1 334.96 155.1C337.61 155.1 337.61 149.66 340.26 149.66L344.24 149.66"/><path class="pg-lit" d="M222.87 246.34L226.84 246.34C229.49 246.34 229.49 240.9 232.14 240.9C242.74 240.9 242.74 198 253.34 198L313.76 198C324.36 198 324.36 155.1 334.96 155.1C337.61 155.1 337.61 149.66 340.26 149.66L344.24 149.66"/><path class="pg-flow" d="M222.87 246.34L226.84 246.34C229.49 246.34 229.49 240.9 232.14 240.9C242.74 240.9 242.74 198 253.34 198L313.76 198C324.36 198 324.36 155.1 334.96 155.1C337.61 155.1 337.61 149.66 340.26 149.66L344.24 149.66"/></g><g class="pg-pc" data-k="17" style="--d:0.345"><path class="pg-glow" d="M344.24 149.66L348.21 149.66C350.86 149.66 350.86 155.1 353.51 155.1C364.11 155.1 364.11 198 374.71 198L435.13 198C445.73 198 445.73 155.1 456.33 155.1C458.98 155.1 458.98 149.66 461.63 149.66L465.61 149.66"/><path class="pg-lit" d="M344.24 149.66L348.21 149.66C350.86 149.66 350.86 155.1 353.51 155.1C364.11 155.1 364.11 198 374.71 198L435.13 198C445.73 198 445.73 155.1 456.33 155.1C458.98 155.1 458.98 149.66 461.63 149.66L465.61 149.66"/><path class="pg-flow" d="M344.24 149.66L348.21 149.66C350.86 149.66 350.86 155.1 353.51 155.1C364.11 155.1 364.11 198 374.71 198L435.13 198C445.73 198 445.73 155.1 456.33 155.1C458.98 155.1 458.98 149.66 461.63 149.66L465.61 149.66"/></g><g class="pg-pc" data-k="18" style="--d:0.448"><path class="pg-glow" d="M465.61 149.66L469.58 149.66C472.23 149.66 472.23 155.1 474.88 155.1C485.48 155.1 485.48 198 496.08 198L556.5 198C567.1 198 567.1 240.9 577.7 240.9C580.35 240.9 580.35 246.34 583 246.34L586.98 246.34"/><path class="pg-lit" d="M465.61 149.66L469.58 149.66C472.23 149.66 472.23 155.1 474.88 155.1C485.48 155.1 485.48 198 496.08 198L556.5 198C567.1 198 567.1 240.9 577.7 240.9C580.35 240.9 580.35 246.34 583 246.34L586.98 246.34"/><path class="pg-flow" d="M465.61 149.66L469.58 149.66C472.23 149.66 472.23 155.1 474.88 155.1C485.48 155.1 485.48 198 496.08 198L556.5 198C567.1 198 567.1 240.9 577.7 240.9C580.35 240.9 580.35 246.34 583 246.34L586.98 246.34"/></g><g class="pg-pc" data-k="19" style="--d:0.552"><path class="pg-glow" d="M586.98 246.34L590.95 246.34C593.6 246.34 593.6 240.9 596.25 240.9C606.85 240.9 606.85 198 617.45 198L677.87 198C688.47 198 688.47 240.9 699.07 240.9C701.72 240.9 701.72 246.34 704.37 246.34L708.35 246.34"/><path class="pg-lit" d="M586.98 246.34L590.95 246.34C593.6 246.34 593.6 240.9 596.25 240.9C606.85 240.9 606.85 198 617.45 198L677.87 198C688.47 198 688.47 240.9 699.07 240.9C701.72 240.9 701.72 246.34 704.37 246.34L708.35 246.34"/><path class="pg-flow" d="M586.98 246.34L590.95 246.34C593.6 246.34 593.6 240.9 596.25 240.9C606.85 240.9 606.85 198 617.45 198L677.87 198C688.47 198 688.47 240.9 699.07 240.9C701.72 240.9 701.72 246.34 704.37 246.34L708.35 246.34"/></g><g class="pg-pc" data-k="20" style="--d:0.655"><path class="pg-glow" d="M708.35 246.34L712.32 246.34C714.97 246.34 714.97 240.9 717.62 240.9C728.22 240.9 728.22 198 738.82 198L799.24 198C809.84 198 809.84 155.1 820.44 155.1C823.09 155.1 823.09 149.66 825.74 149.66L829.72 149.66"/><path class="pg-lit" d="M708.35 246.34L712.32 246.34C714.97 246.34 714.97 240.9 717.62 240.9C728.22 240.9 728.22 198 738.82 198L799.24 198C809.84 198 809.84 155.1 820.44 155.1C823.09 155.1 823.09 149.66 825.74 149.66L829.72 149.66"/><path class="pg-flow" d="M708.35 246.34L712.32 246.34C714.97 246.34 714.97 240.9 717.62 240.9C728.22 240.9 728.22 198 738.82 198L799.24 198C809.84 198 809.84 155.1 820.44 155.1C823.09 155.1 823.09 149.66 825.74 149.66L829.72 149.66"/></g><g class="pg-pc" data-k="21" style="--d:0.758"><path class="pg-glow" d="M829.72 149.66L833.69 149.66C836.34 149.66 836.34 155.1 838.99 155.1C849.59 155.1 849.59 198 860.19 198L920.61 198C931.21 198 931.21 155.1 941.81 155.1C944.46 155.1 944.46 149.66 947.11 149.66L951.09 149.66"/><path class="pg-lit" d="M829.72 149.66L833.69 149.66C836.34 149.66 836.34 155.1 838.99 155.1C849.59 155.1 849.59 198 860.19 198L920.61 198C931.21 198 931.21 155.1 941.81 155.1C944.46 155.1 944.46 149.66 947.11 149.66L951.09 149.66"/><path class="pg-flow" d="M829.72 149.66L833.69 149.66C836.34 149.66 836.34 155.1 838.99 155.1C849.59 155.1 849.59 198 860.19 198L920.61 198C931.21 198 931.21 155.1 941.81 155.1C944.46 155.1 944.46 149.66 947.11 149.66L951.09 149.66"/></g><g class="pg-pc" data-k="22" style="--d:0.905"><path class="pg-glow" d="M951.09 149.66L955.06 149.66C957.71 149.66 957.71 155.1 960.36 155.1C970.96 155.1 970.96 198 981.56 198L1173.95 198"/><path class="pg-lit" d="M951.09 149.66L955.06 149.66C957.71 149.66 957.71 155.1 960.36 155.1C970.96 155.1 970.96 198 981.56 198L1173.95 198"/><path class="pg-flow" d="M951.09 149.66L955.06 149.66C957.71 149.66 957.71 155.1 960.36 155.1C970.96 155.1 970.96 198 981.56 198L1173.95 198"/></g><g class="pg-pc" data-k="23" style="--d:0.043"><path class="pg-glow" d="M0 297L10.6 297L71.02 297C81.62 297 81.62 254.1 92.22 254.1C94.87 254.1 94.87 248.66 97.52 248.66L101.5 248.66"/><path class="pg-lit" d="M0 297L10.6 297L71.02 297C81.62 297 81.62 254.1 92.22 254.1C94.87 254.1 94.87 248.66 97.52 248.66L101.5 248.66"/><path class="pg-flow" d="M0 297L10.6 297L71.02 297C81.62 297 81.62 254.1 92.22 254.1C94.87 254.1 94.87 248.66 97.52 248.66L101.5 248.66"/></g><g class="pg-pc" data-k="24" style="--d:0.138"><path class="pg-glow" d="M101.5 248.66L105.47 248.66C108.12 248.66 108.12 254.1 110.77 254.1C121.37 254.1 121.37 297 131.97 297L192.39 297C202.99 297 202.99 254.1 213.59 254.1C216.24 254.1 216.24 248.66 218.89 248.66L222.87 248.66"/><path class="pg-lit" d="M101.5 248.66L105.47 248.66C108.12 248.66 108.12 254.1 110.77 254.1C121.37 254.1 121.37 297 131.97 297L192.39 297C202.99 297 202.99 254.1 213.59 254.1C216.24 254.1 216.24 248.66 218.89 248.66L222.87 248.66"/><path class="pg-flow" d="M101.5 248.66L105.47 248.66C108.12 248.66 108.12 254.1 110.77 254.1C121.37 254.1 121.37 297 131.97 297L192.39 297C202.99 297 202.99 254.1 213.59 254.1C216.24 254.1 216.24 248.66 218.89 248.66L222.87 248.66"/></g><g class="pg-pc" data-k="25" style="--d:0.345"><path class="pg-glow" d="M222.87 248.66L226.84 248.66C229.49 248.66 229.49 254.1 232.14 254.1C242.74 254.1 242.74 297 253.34 297L313.76 297C324.36 297 324.36 254.1 334.96 254.1C337.61 254.1 337.61 248.66 340.26 248.66L348.21 248.66C350.86 248.66 350.86 254.1 353.51 254.1C364.11 254.1 364.11 297 374.71 297L435.13 297C445.73 297 445.73 254.1 456.33 254.1C458.98 254.1 458.98 248.66 461.63 248.66L469.58 248.66C472.23 248.66 472.23 254.1 474.88 254.1C485.48 254.1 485.48 297 496.08 297L556.5 297C567.1 297 567.1 254.1 577.7 254.1C580.35 254.1 580.35 248.66 583 248.66L586.98 248.66"/><path class="pg-lit" d="M222.87 248.66L226.84 248.66C229.49 248.66 229.49 254.1 232.14 254.1C242.74 254.1 242.74 297 253.34 297L313.76 297C324.36 297 324.36 254.1 334.96 254.1C337.61 254.1 337.61 248.66 340.26 248.66L348.21 248.66C350.86 248.66 350.86 254.1 353.51 254.1C364.11 254.1 364.11 297 374.71 297L435.13 297C445.73 297 445.73 254.1 456.33 254.1C458.98 254.1 458.98 248.66 461.63 248.66L469.58 248.66C472.23 248.66 472.23 254.1 474.88 254.1C485.48 254.1 485.48 297 496.08 297L556.5 297C567.1 297 567.1 254.1 577.7 254.1C580.35 254.1 580.35 248.66 583 248.66L586.98 248.66"/><path class="pg-flow" d="M222.87 248.66L226.84 248.66C229.49 248.66 229.49 254.1 232.14 254.1C242.74 254.1 242.74 297 253.34 297L313.76 297C324.36 297 324.36 254.1 334.96 254.1C337.61 254.1 337.61 248.66 340.26 248.66L348.21 248.66C350.86 248.66 350.86 254.1 353.51 254.1C364.11 254.1 364.11 297 374.71 297L435.13 297C445.73 297 445.73 254.1 456.33 254.1C458.98 254.1 458.98 248.66 461.63 248.66L469.58 248.66C472.23 248.66 472.23 254.1 474.88 254.1C485.48 254.1 485.48 297 496.08 297L556.5 297C567.1 297 567.1 254.1 577.7 254.1C580.35 254.1 580.35 248.66 583 248.66L586.98 248.66"/></g><g class="pg-pc" data-k="26" style="--d:0.552"><path class="pg-glow" d="M586.98 248.66L590.95 248.66C593.6 248.66 593.6 254.1 596.25 254.1C606.85 254.1 606.85 297 617.45 297L677.87 297C688.47 297 688.47 254.1 699.07 254.1C701.72 254.1 701.72 248.66 704.37 248.66L708.35 248.66"/><path class="pg-lit" d="M586.98 248.66L590.95 248.66C593.6 248.66 593.6 254.1 596.25 254.1C606.85 254.1 606.85 297 617.45 297L677.87 297C688.47 297 688.47 254.1 699.07 254.1C701.72 254.1 701.72 248.66 704.37 248.66L708.35 248.66"/><path class="pg-flow" d="M586.98 248.66L590.95 248.66C593.6 248.66 593.6 254.1 596.25 254.1C606.85 254.1 606.85 297 617.45 297L677.87 297C688.47 297 688.47 254.1 699.07 254.1C701.72 254.1 701.72 248.66 704.37 248.66L708.35 248.66"/></g><g class="pg-pc" data-k="27" style="--d:0.802"><path class="pg-glow" d="M708.35 248.66L712.32 248.66C714.97 248.66 714.97 254.1 717.62 254.1C728.22 254.1 728.22 297 738.82 297L799.24 297C809.84 297 809.84 254.1 820.44 254.1C823.09 254.1 823.09 248.66 825.74 248.66L833.69 248.66C836.34 248.66 836.34 254.1 838.99 254.1C849.59 254.1 849.59 297 860.19 297L920.61 297C931.21 297 931.21 254.1 941.81 254.1C944.46 254.1 944.46 248.66 947.11 248.66L955.06 248.66C957.71 248.66 957.71 254.1 960.36 254.1C970.96 254.1 970.96 297 981.56 297L1173.95 297"/><path class="pg-lit" d="M708.35 248.66L712.32 248.66C714.97 248.66 714.97 254.1 717.62 254.1C728.22 254.1 728.22 297 738.82 297L799.24 297C809.84 297 809.84 254.1 820.44 254.1C823.09 254.1 823.09 248.66 825.74 248.66L833.69 248.66C836.34 248.66 836.34 254.1 838.99 254.1C849.59 254.1 849.59 297 860.19 297L920.61 297C931.21 297 931.21 254.1 941.81 254.1C944.46 254.1 944.46 248.66 947.11 248.66L955.06 248.66C957.71 248.66 957.71 254.1 960.36 254.1C970.96 254.1 970.96 297 981.56 297L1173.95 297"/><path class="pg-flow" d="M708.35 248.66L712.32 248.66C714.97 248.66 714.97 254.1 717.62 254.1C728.22 254.1 728.22 297 738.82 297L799.24 297C809.84 297 809.84 254.1 820.44 254.1C823.09 254.1 823.09 248.66 825.74 248.66L833.69 248.66C836.34 248.66 836.34 254.1 838.99 254.1C849.59 254.1 849.59 297 860.19 297L920.61 297C931.21 297 931.21 254.1 941.81 254.1C944.46 254.1 944.46 248.66 947.11 248.66L955.06 248.66C957.71 248.66 957.71 254.1 960.36 254.1C970.96 254.1 970.96 297 981.56 297L1173.95 297"/></g></g><g class="pg-heaters"><g class="pg-ht" data-j="0"><ellipse class="pg-heat" cx="40.81" cy="0" rx="52.5" ry="26"/><rect class="pg-film" x="14.31" y="-4.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="40.81" y="-19"><tspan class="pg-hn">P0</tspan><tspan data-volt="0"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="1"><ellipse class="pg-heat" cx="162.18" cy="0" rx="52.5" ry="26"/><rect class="pg-film" x="135.68" y="-4.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="162.18" y="-19"><tspan class="pg-hn">T0</tspan><tspan data-volt="1"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="2"><ellipse class="pg-heat" cx="40.81" cy="198" rx="52.5" ry="26"/><rect class="pg-film" x="14.31" y="193.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="40.81" y="229"><tspan class="pg-hn">P1</tspan><tspan data-volt="2"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="3"><ellipse class="pg-heat" cx="162.18" cy="198" rx="52.5" ry="26"/><rect class="pg-film" x="135.68" y="193.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="162.18" y="229"><tspan class="pg-hn">T1</tspan><tspan data-volt="3"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="4"><ellipse class="pg-heat" cx="283.55" cy="99" rx="52.5" ry="26"/><rect class="pg-film" x="257.05" y="94.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="283.55" y="80"><tspan class="pg-hn">P2</tspan><tspan data-volt="4"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="5"><ellipse class="pg-heat" cx="404.92" cy="99" rx="52.5" ry="26"/><rect class="pg-film" x="378.42" y="94.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="404.92" y="80"><tspan class="pg-hn">T2</tspan><tspan data-volt="5"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="6"><ellipse class="pg-heat" cx="526.29" cy="0" rx="52.5" ry="26"/><rect class="pg-film" x="499.79" y="-4.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="526.29" y="-19"><tspan class="pg-hn">P3</tspan><tspan data-volt="6"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="7"><ellipse class="pg-heat" cx="647.66" cy="0" rx="52.5" ry="26"/><rect class="pg-film" x="621.16" y="-4.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="647.66" y="-19"><tspan class="pg-hn">T3</tspan><tspan data-volt="7"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="8"><ellipse class="pg-heat" cx="526.29" cy="198" rx="52.5" ry="26"/><rect class="pg-film" x="499.79" y="193.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="526.29" y="229"><tspan class="pg-hn">P4</tspan><tspan data-volt="8"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="9"><ellipse class="pg-heat" cx="647.66" cy="198" rx="52.5" ry="26"/><rect class="pg-film" x="621.16" y="193.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="647.66" y="229"><tspan class="pg-hn">T4</tspan><tspan data-volt="9"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="10"><ellipse class="pg-heat" cx="769.03" cy="99" rx="52.5" ry="26"/><rect class="pg-film" x="742.53" y="94.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="769.03" y="80"><tspan class="pg-hn">P5</tspan><tspan data-volt="10"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="11"><ellipse class="pg-heat" cx="890.4" cy="99" rx="52.5" ry="26"/><rect class="pg-film" x="863.9" y="94.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="890.4" y="80"><tspan class="pg-hn">T5</tspan><tspan data-volt="11"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="12"><ellipse class="pg-heat" cx="1011.77" cy="0" rx="52.5" ry="26"/><rect class="pg-film" x="985.27" y="-4.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="1011.77" y="-19"><tspan class="pg-hn">D0</tspan><tspan data-volt="12"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="13"><ellipse class="pg-heat" cx="1133.14" cy="99" rx="52.5" ry="26"/><rect class="pg-film" x="1106.64" y="94.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="1133.14" y="80"><tspan class="pg-hn">D1</tspan><tspan data-volt="13"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="14"><ellipse class="pg-heat" cx="1133.14" cy="198" rx="52.5" ry="26"/><rect class="pg-film" x="1106.64" y="193.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="1133.14" y="229"><tspan class="pg-hn">D2</tspan><tspan data-volt="14"> 0.00 V</tspan></text></g><g class="pg-ht" data-j="15"><ellipse class="pg-heat" cx="1011.77" cy="297" rx="52.5" ry="26"/><rect class="pg-film" x="985.27" y="292.5" width="53" height="9" rx="4.5"/><text class="pg-volt" x="1011.77" y="328"><tspan class="pg-hn">D3</tspan><tspan data-volt="15"> 0.00 V</tspan></text></g></g><g class="pg-ins"><path class="pg-fib" d="M-76 0H0"/><g class="pg-dial pg-dial-in" data-in="0" transform="translate(-112 0)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-in" x="-156" y="5" data-in-val="0">0</text><text class="pg-port" x="-112" y="52">x1</text><path class="pg-fib" d="M-76 99H0"/><g class="pg-dial pg-dial-in" data-in="1" transform="translate(-112 99)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-in" x="-156" y="104" data-in-val="1">0</text><text class="pg-port" x="-112" y="151">x2</text><path class="pg-fib" d="M-76 198H0"/><g class="pg-dial pg-dial-in" data-in="2" transform="translate(-112 198)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-in" x="-156" y="203" data-in-val="2">0</text><text class="pg-port" x="-112" y="250">x3</text><path class="pg-fib" d="M-76 297H0"/><g class="pg-dial pg-dial-in" data-in="3" transform="translate(-112 297)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-in" x="-156" y="302" data-in-val="3">0</text><text class="pg-port" x="-112" y="349">x4</text></g><g class="pg-outs"><path class="pg-fib pg-fib-out" d="M1173.95 0H1249.95"/><g class="pg-dial pg-dial-out" data-out="0" transform="translate(1285.95 0)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-ghost" d="M0 0"/><circle class="pg-ghost-tip" r="4"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-out" x="1329.95" y="5" data-out-val="0">0</text><text class="pg-port" x="1285.95" y="52">y1</text><path class="pg-fib pg-fib-out" d="M1173.95 99H1249.95"/><g class="pg-dial pg-dial-out" data-out="1" transform="translate(1285.95 99)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-ghost" d="M0 0"/><circle class="pg-ghost-tip" r="4"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-out" x="1329.95" y="104" data-out-val="1">0</text><text class="pg-port" x="1285.95" y="151">y2</text><path class="pg-fib pg-fib-out" d="M1173.95 198H1249.95"/><g class="pg-dial pg-dial-out" data-out="2" transform="translate(1285.95 198)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-ghost" d="M0 0"/><circle class="pg-ghost-tip" r="4"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-out" x="1329.95" y="203" data-out-val="2">0</text><text class="pg-port" x="1285.95" y="250">y3</text><path class="pg-fib pg-fib-out" d="M1173.95 297H1249.95"/><g class="pg-dial pg-dial-out" data-out="3" transform="translate(1285.95 297)"><circle class="pg-aura" r="46"/><circle class="pg-ring" r="30"/><path class="pg-re" d="M-37 0H37"/><path class="pg-im" d="M0 -37V37"/><path class="pg-ghost" d="M0 0"/><circle class="pg-ghost-tip" r="4"/><path class="pg-arrow" d="M0 0"/><circle class="pg-tip" r="4"/></g><text class="pg-val pg-val-out" x="1329.95" y="302" data-out-val="3">0</text><text class="pg-port" x="1285.95" y="349">y4</text></g></svg><div class="pg-tip" role="status" hidden></div></div><div class="wrap pg-steps"><div class="pg-panel pg-p-matrix"><p class="pg-k"><b>1</b>The matrix</p><div class="pg-buttons" role="group" aria-label="Matrices"><button type="button" data-preset="hadamard" aria-pressed="false">Hadamard</button><button type="button" data-preset="rotation" aria-pressed="false">Two rotations</button><button type="button" data-preset="swap" aria-pressed="false">Swap in pairs</button><button type="button" data-preset="identity" aria-pressed="false">Identity</button><button type="button" data-preset="orthogonal" aria-pressed="false">Random orthogonal</button><button type="button" data-preset="dft" aria-pressed="false">Fourier (complex)</button><button type="button" data-preset="real" aria-pressed="false">Any real matrix</button></div><div class="pg-mats"><figure><figcaption><em>M</em>, yours <small>type 0.5, −1, 0.5i or 0.35−0.35i</small></figcaption><div class="pg-grid pg-grid-m"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="0-0" aria-label="M, row 1, column 1"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="0-1" aria-label="M, row 1, column 2"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="0-2" aria-label="M, row 1, column 3"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="0-3" aria-label="M, row 1, column 4"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="1-0" aria-label="M, row 2, column 1"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="1-1" aria-label="M, row 2, column 2"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="1-2" aria-label="M, row 2, column 3"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="1-3" aria-label="M, row 2, column 4"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="2-0" aria-label="M, row 3, column 1"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="2-1" aria-label="M, row 3, column 2"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="2-2" aria-label="M, row 3, column 3"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="2-3" aria-label="M, row 3, column 4"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="3-0" aria-label="M, row 4, column 1"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="3-1" aria-label="M, row 4, column 2"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="3-2" aria-label="M, row 4, column 3"><input type="text" inputmode="text" spellcheck="false" autocomplete="off" data-cell="3-3" aria-label="M, row 4, column 4"></div></figure><figure><figcaption><em>U</em>, the drawn mesh <small>measured in the model, over its common phase and loss</small></figcaption><div class="pg-grid pg-grid-u"><output data-ucell="0-0" aria-label="U, row 1, column 1"></output><output data-ucell="0-1" aria-label="U, row 1, column 2"></output><output data-ucell="0-2" aria-label="U, row 1, column 3"></output><output data-ucell="0-3" aria-label="U, row 1, column 4"></output><output data-ucell="1-0" aria-label="U, row 2, column 1"></output><output data-ucell="1-1" aria-label="U, row 2, column 2"></output><output data-ucell="1-2" aria-label="U, row 2, column 3"></output><output data-ucell="1-3" aria-label="U, row 2, column 4"></output><output data-ucell="2-0" aria-label="U, row 3, column 1"></output><output data-ucell="2-1" aria-label="U, row 3, column 2"></output><output data-ucell="2-2" aria-label="U, row 3, column 3"></output><output data-ucell="2-3" aria-label="U, row 3, column 4"></output><output data-ucell="3-0" aria-label="U, row 4, column 1"></output><output data-ucell="3-1" aria-label="U, row 4, column 2"></output><output data-ucell="3-2" aria-label="U, row 4, column 3"></output><output data-ucell="3-3" aria-label="U, row 4, column 4"></output></div></figure></div><p class="pg-status" data-status aria-live="polite"></p><p class="pg-pipe" data-pipe></p><p class="pg-legend" aria-hidden="true"><span><i class="is-pos"></i>positive</span><span><i class="is-neg"></i>negative</span><span><i class="is-cx"></i>complex</span><span><i class="is-off"></i>more than 0.02 from the target</span></p></div><div class="pg-panel pg-p-volts"><p class="pg-k"><b>2</b>The voltages</p><div class="pg-buttons pg-mode" role="group" aria-label="Which phases"><button type="button" data-mode="fit" aria-pressed="true">Fitted to the drawn circuit</button><button type="button" data-mode="recipe" aria-pressed="false">Recipe of the paper alone</button></div><dl class="pg-nums"><div><dt>1 − fidelity</dt><dd data-infid>–</dd></div><div><dt>power</dt><dd><span data-total>–</span><small>mW</small></dd></div><div><dt>highest</dt><dd><span data-vmax>–</span><small>V</small></dd></div><div><dt>loss</dt><dd><span data-loss>–</span><small>dB</small></dd></div></dl><p class="pg-note pg-mode-note" data-mode-note>The fit starts from the recipe of the paper and takes up what the recipe does not know: the phase of every piece of waveguide, and couplers that are not exactly 50:50.</p><div class="pg-heater-grid" aria-label="Voltage and power of each heater"><div class="pg-hcell" data-hcell="0"><b>P0</b><span data-hv="0">–</span><small data-hp="0">–</small><i></i></div><div class="pg-hcell" data-hcell="1"><b>T0</b><span data-hv="1">–</span><small data-hp="1">–</small><i></i></div><div class="pg-hcell" data-hcell="2"><b>P1</b><span data-hv="2">–</span><small data-hp="2">–</small><i></i></div><div class="pg-hcell" data-hcell="3"><b>T1</b><span data-hv="3">–</span><small data-hp="3">–</small><i></i></div><div class="pg-hcell" data-hcell="4"><b>P2</b><span data-hv="4">–</span><small data-hp="4">–</small><i></i></div><div class="pg-hcell" data-hcell="5"><b>T2</b><span data-hv="5">–</span><small data-hp="5">–</small><i></i></div><div class="pg-hcell" data-hcell="6"><b>P3</b><span data-hv="6">–</span><small data-hp="6">–</small><i></i></div><div class="pg-hcell" data-hcell="7"><b>T3</b><span data-hv="7">–</span><small data-hp="7">–</small><i></i></div><div class="pg-hcell" data-hcell="8"><b>P4</b><span data-hv="8">–</span><small data-hp="8">–</small><i></i></div><div class="pg-hcell" data-hcell="9"><b>T4</b><span data-hv="9">–</span><small data-hp="9">–</small><i></i></div><div class="pg-hcell" data-hcell="10"><b>P5</b><span data-hv="10">–</span><small data-hp="10">–</small><i></i></div><div class="pg-hcell" data-hcell="11"><b>T5</b><span data-hv="11">–</span><small data-hp="11">–</small><i></i></div><div class="pg-hcell" data-hcell="12"><b>D0</b><span data-hv="12">–</span><small data-hp="12">–</small><i></i></div><div class="pg-hcell" data-hcell="13"><b>D1</b><span data-hv="13">–</span><small data-hp="13">–</small><i></i></div><div class="pg-hcell" data-hcell="14"><b>D2</b><span data-hv="14">–</span><small data-hp="14">–</small><i></i></div><div class="pg-hcell" data-hcell="15"><b>D3</b><span data-hv="15">–</span><small data-hp="15">–</small><i></i></div></div><p class="pg-note">V = √(P R), with R = 500 Ω; π costs 10.26 mW (2.26 V). A heater only adds phase, so each one stays between 0 and 2π.</p></div><div class="pg-panel pg-p-light"><p class="pg-k"><b>3</b>The light</p><div class="pg-buttons pg-vecs" role="group" aria-label="Input vectors"><button type="button" data-vec="e1" aria-pressed="true">into 1</button><button type="button" data-vec="e3" aria-pressed="false">into 3</button><button type="button" data-vec="even" aria-pressed="false">all four</button><button type="button" data-vec="alt" aria-pressed="false">+ − + −</button><button type="button" data-vec="rand" aria-pressed="false">random</button></div><div class="pg-sliders"><div class="pg-slider" role="group" aria-label="x1"><span>x<sub>1</sub></span><input type="text" class="pg-xin" inputmode="text" spellcheck="false" autocomplete="off" data-xin="0" value="1" aria-label="x1, real or complex"><input type="range" min="-1" max="1" step="0.01" value="1" data-x="0" aria-label="x1, its real part"></div><div class="pg-slider" role="group" aria-label="x2"><span>x<sub>2</sub></span><input type="text" class="pg-xin" inputmode="text" spellcheck="false" autocomplete="off" data-xin="1" value="0" aria-label="x2, real or complex"><input type="range" min="-1" max="1" step="0.01" value="0" data-x="1" aria-label="x2, its real part"></div><div class="pg-slider" role="group" aria-label="x3"><span>x<sub>3</sub></span><input type="text" class="pg-xin" inputmode="text" spellcheck="false" autocomplete="off" data-xin="2" value="0" aria-label="x3, real or complex"><input type="range" min="-1" max="1" step="0.01" value="0" data-x="2" aria-label="x3, its real part"></div><div class="pg-slider" role="group" aria-label="x4"><span>x<sub>4</sub></span><input type="text" class="pg-xin" inputmode="text" spellcheck="false" autocomplete="off" data-xin="3" value="0" aria-label="x4, real or complex"><input type="range" min="-1" max="1" step="0.01" value="0" data-x="3" aria-label="x4, its real part"></div></div><table class="pg-table"><thead><tr><th scope="col">port</th><th scope="col"><em>x</em></th><th scope="col"><em>y</em> = <em>U x</em></th><th scope="col" data-target-head><em>M x</em></th></tr></thead><tbody><tr><th scope="row">1</th><td data-tx="0"></td><td data-ty="0"></td><td data-tt="0"></td></tr><tr><th scope="row">2</th><td data-tx="1"></td><td data-ty="1"></td><td data-tt="1"></td></tr><tr><th scope="row">3</th><td data-tx="2"></td><td data-ty="2"></td><td data-tt="2"></td></tr><tr><th scope="row">4</th><td data-tx="3"></td><td data-ty="3"></td><td data-tt="3"></td></tr></tbody></table><p class="pg-note">Type a field amplitude for each port, real or complex (0.5, −1, 0.5i, 0.35−0.35i), or a whole vector into one box: 1, 0, 0.5i, −1. A slider sets the real part. <em>y</em> = <em>U x</em> for the vector as given, taken over the common phase and loss of the mesh (the loss stands in 2); the dials and the light are drawn relative to |<em>x</em>|. Point at an entry of a matrix to send light into its column alone.</p></div></div><p class="wrap pg-foot">The circuit is the model of this chapter at 1550 nm: the coupler of its chapter, the waveguides as drawn with their loss, and the heaters of the phase shifter chapter, without the crosstalk of step 3. A mesh of lossless interferometers sets unitary matrices only; the next chapter, optical computing, sets any real matrix with two meshes and a column of attenuators between them.</p><script type="application/json" id="pg-data">{"n":4,"P_pi":10.255246983,"R":500.0,"through":[0.621201066089,0.338784273197],"cross":[-0.338197489453,0.619856770726],"ops":[[0,0,-0.965314810271,-0.259142224812,-1],[0,1,-0.965314810271,-0.259142224812,-1],[0,2,-0.965314810271,-0.259142224812,-1],[0,3,-0.965314810271,-0.259142224812,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,0],[0,1,-0.255896787902,-0.964087110013,1],[0,2,-0.255896787902,-0.964087110013,2],[0,3,-0.255896787902,-0.964087110013,3],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[1,0],[1,2],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,4],[0,1,-0.255896787902,-0.964087110013,5],[0,2,-0.255896787902,-0.964087110013,6],[0,3,-0.255896787902,-0.964087110013,7],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[1,0],[1,2],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,8],[0,1,-0.255896787902,-0.964087110013,9],[0,2,-0.255896787902,-0.964087110013,10],[0,3,-0.255896787902,-0.964087110013,11],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.292821677587,-0.955230249786,-1],[0,3,0.292821677587,-0.955230249786,-1],[1,1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,12],[0,1,-0.255896787902,-0.964087110013,13],[0,2,-0.255896787902,-0.964087110013,14],[0,3,-0.255896787902,-0.964087110013,15],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.292821677587,-0.955230249786,-1],[0,3,0.292821677587,-0.955230249786,-1],[1,1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,16],[0,1,-0.255896787902,-0.964087110013,17],[0,2,-0.255896787902,-0.964087110013,18],[0,3,-0.255896787902,-0.964087110013,19],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[1,0],[1,2],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,20],[0,1,-0.255896787902,-0.964087110013,21],[0,2,-0.255896787902,-0.964087110013,22],[0,3,-0.255896787902,-0.964087110013,23],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[1,0],[1,2],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,24],[0,1,-0.255896787902,-0.964087110013,25],[0,2,-0.255896787902,-0.964087110013,26],[0,3,-0.255896787902,-0.964087110013,27],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.292821677587,-0.955230249786,-1],[0,3,0.292821677587,-0.955230249786,-1],[1,1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,28],[0,1,-0.255896787902,-0.964087110013,29],[0,2,-0.255896787902,-0.964087110013,30],[0,3,-0.255896787902,-0.964087110013,31],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.292821677587,-0.955230249786,-1],[0,3,0.292821677587,-0.955230249786,-1],[1,1],[0,0,-0.98018623998,-0.192530928811,-1],[0,1,-0.98018623998,-0.192530928811,-1],[0,2,-0.98018623998,-0.192530928811,-1],[0,3,-0.98018623998,-0.192530928811,-1],[0,0,0.969018535788,0.246269247079,-1],[0,1,0.969018535788,0.246269247079,-1],[0,2,0.969018535788,0.246269247079,-1],[0,3,0.969018535788,0.246269247079,-1],[0,0,-0.255896787902,-0.964087110013,32],[0,1,-0.255896787902,-0.964087110013,33],[0,2,-0.255896787902,-0.964087110013,34],[0,3,-0.255896787902,-0.964087110013,35],[0,0,-0.936173664986,0.342148268226,-1],[0,1,-0.936173664986,0.342148268226,-1],[0,2,-0.936173664986,0.342148268226,-1],[0,3,-0.936173664986,0.342148268226,-1],[0,0,-0.255896787902,-0.964087110013,36],[0,1,-0.255896787902,-0.964087110013,37],[0,2,-0.255896787902,-0.964087110013,38],[0,3,-0.255896787902,-0.964087110013,39],[0,0,-0.871589183433,-0.488840970768,-1],[0,1,-0.871589183433,-0.488840970768,-1],[0,2,-0.871589183433,-0.488840970768,-1],[0,3,-0.871589183433,-0.488840970768,-1]],"sites":40,"heaters":[{"name":"P0","kind":"phi","row":0,"site":0},{"name":"T0","kind":"theta","row":0,"site":4},{"name":"P1","kind":"phi","row":2,"site":2},{"name":"T1","kind":"theta","row":2,"site":6},{"name":"P2","kind":"phi","row":1,"site":9},{"name":"T2","kind":"theta","row":1,"site":13},{"name":"P3","kind":"phi","row":0,"site":16},{"name":"T3","kind":"theta","row":0,"site":20},{"name":"P4","kind":"phi","row":2,"site":18},{"name":"T4","kind":"theta","row":2,"site":22},{"name":"P5","kind":"phi","row":1,"site":25},{"name":"T5","kind":"theta","row":1,"site":29},{"name":"D0","kind":"out","row":0,"site":32},{"name":"D1","kind":"out","row":1,"site":37},{"name":"D2","kind":"out","row":2,"site":38},{"name":"D3","kind":"out","row":3,"site":35}],"theta":[1,3,5,7,9,11],"phi":[0,2,4,6,8,10],"out":[12,13,14,15],"presets":{"hadamard":{"label":"Hadamard","m":[[[0.5,0.0],[0.5,0.0],[0.5,0.0],[0.5,0.0]],[[0.5,0.0],[-0.5,0.0],[0.5,0.0],[-0.5,0.0]],[[0.5,0.0],[0.5,0.0],[-0.5,0.0],[-0.5,0.0]],[[0.5,0.0],[-0.5,0.0],[-0.5,0.0],[0.5,0.0]]]},"rotation":{"label":"Two rotations","m":[[[0.866025403784,0.0],[-0.5,0.0],[0.0,0.0],[0.0,0.0]],[[0.5,0.0],[0.866025403784,0.0],[0.0,0.0],[0.0,0.0]],[[0.0,0.0],[0.0,0.0],[0.5,0.0],[-0.866025403784,0.0]],[[0.0,0.0],[0.0,0.0],[0.866025403784,0.0],[0.5,0.0]]]},"swap":{"label":"Swap in pairs","m":[[[0.0,0.0],[1.0,0.0],[0.0,0.0],[0.0,0.0]],[[1.0,0.0],[0.0,0.0],[0.0,0.0],[0.0,0.0]],[[0.0,0.0],[0.0,0.0],[0.0,0.0],[1.0,0.0]],[[0.0,0.0],[0.0,0.0],[1.0,0.0],[0.0,0.0]]]},"identity":{"label":"Identity","m":[[[1.0,0.0],[0.0,0.0],[0.0,0.0],[0.0,0.0]],[[0.0,0.0],[1.0,0.0],[0.0,0.0],[0.0,0.0]],[[0.0,0.0],[0.0,0.0],[1.0,0.0],[0.0,0.0]],[[0.0,0.0],[0.0,0.0],[0.0,0.0],[1.0,0.0]]]}},"pieces":[0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3],"notes":{"fit":"The fit starts from the recipe of the paper and takes up what the recipe does not know: the phase of every piece of waveguide, and couplers that are not exactly 50:50.","recipe":"The recipe assumes ideal couplers and no waveguide between them. The drawn mesh has two millimetres of waveguide on every row, whose phases the recipe does not know: its matrix is far from the target."}}</script></section>
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#the-circuit"><i aria-hidden="true"></i>The circuit</a></li>
+        <li><a href="#how-the-mesh-sets-a-matrix"><i aria-hidden="true"></i>How the mesh sets a matrix</a></li>
+        <li><a href="#the-steps"><i aria-hidden="true"></i>The steps</a></li>
+        <li><a href="#run-it"><i aria-hidden="true"></i>Run it</a></li>
+        <li><a href="#step-1-one-block"><i aria-hidden="true"></i>Step 1. One block</a></li>
+        <li><a href="#step-2-a-matrix"><i aria-hidden="true"></i>Step 2. A matrix</a></li>
+        <li><a href="#step-3-the-heat-of-the-neighbours"><i aria-hidden="true"></i>Step 3. The heat of the neighbours</a></li>
+        <li><a href="#step-4-couplers-that-came-out-wrong"><i aria-hidden="true"></i>Step 4. Couplers that came out wrong</a></li>
+        <li><a href="#in-numbers"><i aria-hidden="true"></i>In numbers</a></li>
+        <li><a href="#limits"><i aria-hidden="true"></i>Limits</a></li>
+        <li><a href="#check-yourself"><i aria-hidden="true"></i>Check yourself</a></li>
+        <li><a href="#exercises"><i aria-hidden="true"></i>Exercises</a></li>
+        <li><a href="#references"><i aria-hidden="true"></i>References</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>A mesh of Mach-Zehnder interferometers is a programmable linear circuit. Light enters on N
+waveguides and leaves on N waveguides. In between, every interferometer mixes two neighbouring
+waveguides, by an amount that its heaters set. With enough interferometers in the right
+arrangement, the mesh can be set to any <span class="gloss" tabindex="0" data-def="A matrix U that keeps the total power of the light: U†U = 1. A lossless circuit of couplers and phase shifters is described by one.">unitary</span> matrix: a Fourier transform, a permutation, the
+weights of a layer of a neural network. That makes it the core of optical computing, of
+programmable photonics and of many quantum-optics experiments.</p>
+<p>This chapter builds a 4 × 4 mesh in the arrangement of Clements et al. (2016) from two devices of
+the library: the <a href="../../devices/directional-coupler/index.html">directional coupler</a> and the
+<a href="../../devices/thermo-optic-phase-shifter/index.html">thermo-optic phase shifter</a>. Nothing is simulated
+again at the device level. The circuit takes the kept results of those chapters, and INTERCONNECT
+runs it. The chapter answers four questions: what one interferometer does, how well the mesh holds
+a matrix it is programmed to, what the heat of the neighbours does to it, and how much a
+fabrication error of the couplers costs.</p>
+<hr />
+<h2 id="the-circuit">The circuit <a class="here" href="#the-circuit" aria-label="Link to this section">#</a></h2>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/clements_mesh/figures/fig0_layout.webp" width="2881" height="1228" alt="Layout of the 4 by 4 mesh: four waveguides, six interferometers in four columns, sixteen heaters with trenches, thirty-two pads above and below; and one interferometer enlarged next to the dummy path of an edge row" loading="lazy" decoding="async"></button><figcaption><strong>Figure 0.</strong> The layout, drawn from its <span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span> file. Panel a is the whole mesh, b one interferometer
+and, after it, the dummy path of an edge row (see below).</figcaption></figure>
+<p><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/devices/clements_mesh_builder.py" rel="noopener">devices/clements_mesh_builder.py</a> draws the mesh with the
+<span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span>. From the repository root:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>devices/clements_mesh_builder.py
+</code></pre></div>
+<div class="code code-text"><pre><code>4 x 4 Clements mesh: 6 blocks, 16 heaters, 32 pads; 2.21 mm long, rows 30 um apart, fan bends down to a radius of 27.521 um
+GDS -&gt; devices/gds/clements_mesh.gds   ports: [&#x27;o1&#x27;, &#x27;o2&#x27;, &#x27;o3&#x27;, &#x27;o4&#x27;, &#x27;P0_w&#x27;, &#x27;P0_e&#x27;, &#x27;T0_w&#x27;, ... &#x27;D3_e&#x27;, &#x27;o5&#x27;, &#x27;o6&#x27;, &#x27;o7&#x27;, &#x27;o8&#x27;]
+DRC passed: 0 errors, 0 warnings
+</code></pre></div>
+<p><strong>The arrangement.</strong> The mesh has four waveguides, the rows, and four columns of interferometers
+(the blocks). Column c pairs the rows (p, p + 1) for p = c mod 2, c mod 2 + 2, ...: two blocks in
+columns 0 and 2, one in columns 1 and 3, six in all. The blocks of one column sit between those of
+the next, like bricks. That is what Clements et al. showed: N(N − 1)/2 blocks in N columns reach
+every unitary matrix, with every path through the mesh crossing the same number of columns. The
+older triangle of Reck et al. (1994) needs as many blocks but makes some paths much longer than
+others.</p>
+<p><strong>One block.</strong> Each block is a Mach-Zehnder interferometer:</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>part</th>
+<th>what it is</th>
+<th>from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>coupler</td>
+<td>two of them, 0.2 µm gap over 15 µm, ports 4 µm apart</td>
+<td>the <a href="../../devices/directional-coupler/index.html">directional coupler</a>, unchanged</td>
+</tr>
+<tr>
+<td>fan</td>
+<td>an S-bend, 40 µm long, from a row to a port of the coupler and back</td>
+<td>this builder: it opens the 4 µm of the coupler to the 30 µm between rows</td>
+</tr>
+<tr>
+<td>φ</td>
+<td>a phase shifter on the upper input: the phase between the two inputs</td>
+<td>the heated section of the <a href="../../devices/thermo-optic-phase-shifter/index.html">thermo-optic phase shifter</a></td>
+</tr>
+<tr>
+<td>θ</td>
+<td>the same on the upper arm, between the couplers: the split of the block</td>
+<td>the same</td>
+</tr>
+</tbody>
+</table></div>
+<p>After the last column every row has a phase shifter of its own (the column D of the paper). That
+makes 6 × 2 + 4 = 16 heaters. Each heater is the film of the phase shifter chapter, 100 µm long, with
+its two trenches and its two pads. The coupler is placed exactly as its chapter simulated it, with
+ports 4 µm apart, so that its <span class="gloss" tabindex="0" data-def="The complex amplitudes that a device sends from each of its ports to each port. A circuit simulator joins devices by them.">S-parameters</span> from <span class="gloss" tabindex="0" data-def="Finite-difference time domain: Maxwell&#x27;s equations stepped in time on a 3D grid. Close to exact, and the slowest of the solvers.">FDTD</span> stay valid; the fans do the rest.</p>
+<p><strong>The pads.</strong> The heaters of rows 0 and 1 have their pads above the mesh, those of rows 2 and 3
+below. Each pad stands straight above or below the landing of its wire, so no wire crosses
+another. That needs at least 100 µm between two landings along x, which sets the length of a block
+(458 µm) and of the mesh (2.21 mm). The output heaters of rows 1 and 2 are moved one step along x
+so that their wires pass rows 0 and 3 where those have no heater.</p>
+<p><strong>The dummy path.</strong> In columns 1 and 3, rows 0 and 3 have no block. A first draft of this layout
+ran them straight through. Every other row there goes through two couplers and four fans, which
+are longer than the straight line, so the paths of the mesh differed in length. Step 2 shows what
+that costs: the matrix held over 2 nm of wavelength instead of 13. The drawn mesh gives those rows
+the same four fans and one arm of the coupler alone (<code>coupler_arm</code>), dipped towards the inside of
+the mesh. <code>match_delay=False</code> draws the first draft.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>default</th>
+<th>where it comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n</code></td>
+<td>4</td>
+<td>the size of this chapter; the builder draws any N ≥ 2 (tested up to 6 with the <span class="gloss" tabindex="0" data-def="An automatic check that a layout keeps the minimum widths, spaces and overlaps that the process can make.">DRC</span>)</td>
+</tr>
+<tr>
+<td><code>pitch</code></td>
+<td>30 µm</td>
+<td>rows centre to centre. The trenches of a heater reach 8 µm from its row, and the next row keeps 1.75 µm from them (rule <code>trench_to_waveguide</code>, 1.5 µm). Smaller than 10.25 µm is refused</td>
+</tr>
+<tr>
+<td><code>match_delay</code></td>
+<td>True</td>
+<td>the dummy paths of the edge rows</td>
+</tr>
+</tbody>
+</table></div>
+<p>The ports: light enters at <code>o1</code> to <code>o4</code> (rows 0 to 3, west) and leaves at <code>o5</code> to <code>o8</code> (east). The
+pads are named after their heater and side: <code>P&lt;k&gt;_w</code>, <code>P&lt;k&gt;_e</code> (φ of block k), <code>T&lt;k&gt;_w</code>, <code>T&lt;k&gt;_e</code>
+(θ), <code>D&lt;m&gt;_w</code>, <code>D&lt;m&gt;_e</code> (the output of row m). Blocks are counted column by column, from the top.</p>
+<p>The mesh has no grating or edge couplers: those devices are still on the
+<a href="../../roadmap/index.html">roadmap</a>. Its optical ports are plain waveguide ends.</p>
+<h2 id="how-the-mesh-sets-a-matrix">How the mesh sets a matrix <a class="here" href="#how-the-mesh-sets-a-matrix" aria-label="Link to this section">#</a></h2>
+<p>The heaters do not set the entries of the matrix one by one. Each heater sets one phase, each
+block mixes two rows, and the matrix is the product of all of them. This section goes from a
+matrix to the sixteen voltages: what one block does, how six blocks and four output phases make a
+matrix, how the recipe of Clements et al. finds the phases, and how a phase becomes a voltage.
+Step 2 runs all of it on the drawn mesh.</p>
+<p><strong>One block.</strong> A block is a coupler, a heater on the upper arm, a second coupler, and a heater on
+the upper input before them. Written in the order in which the light meets them, from right to
+left:</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo>&#x0002C;</mo><mi>&#x003C6;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>B</mi><mspace width="0.167em" /><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>B</mi><mspace width="0.167em" /><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003C6;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>B</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msqrt><mrow><mn>2</mn></mrow></msqrt></mrow></mfrac><mo>&#x00028;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mi>i</mi></mtd></mtr><mtr><mtd><mi>i</mi></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>P</mi><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x00028;</mo><mtable><mtr><mtd><msup><mi>e</mi><mrow><mi>i</mi><mi>a</mi></mrow></msup></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>&#x00029;</mo></mrow></math></div>
+<p>B is a coupler of exactly 50:50 (the light that crosses gains a quarter turn, i), and P(a) a phase
+a on the upper waveguide. The rows and columns are the upper and the lower waveguide of the
+block. Multiplied out:</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>T</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo>&#x0002C;</mo><mi>&#x003C6;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>i</mi><mspace width="0.167em" /><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B8;</mi><mo>&#x0002F;</mo><mn>2</mn></mrow></msup><mo>&#x00028;</mo><mtable><mtr><mtd><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003C6;</mi></mrow></msup><mi>sin</mi><mfrac><mrow><mi>&#x003B8;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mtd><mtd><mi>cos</mi><mfrac><mrow><mi>&#x003B8;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mtd></mtr><mtr><mtd><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003C6;</mi></mrow></msup><mi>cos</mi><mfrac><mrow><mi>&#x003B8;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mtd><mtd><mo>&#x02212;</mo><mi>sin</mi><mfrac><mrow><mi>&#x003B8;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mtd></mtr></mtable><mo>&#x00029;</mo></mrow></math></div>
+<p>The two phases do different things. θ sets the split: of the light that enters the upper
+waveguide, sin²(θ/2) stays on it and cos²(θ/2) crosses. At θ = 0 everything crosses, which is the
+mesh with all heaters off; at θ = π everything goes straight (step 1 measures both). φ moves no
+light by itself. It sets the phase of the upper input against the lower one before they meet, and
+so decides how the light of two inputs adds up in the block.</p>
+<p><strong>The mesh.</strong> Block k is the 4 × 4 matrix T<sub>k</sub> that is T(θ<sub>k</sub>, φ<sub>k</sub>)
+on its two rows and leaves the other two alone. Blocks 0 and 1 stand in column 0 (rows 0–1 and
+2–3), block 2 in column 1 (rows 1–2), blocks 3 and 4 in column 2, block 5 in column 3. The heaters
+carry the same numbers: P<sub>k</sub> is the φ of block k, T<sub>k</sub> its θ, and D<sub>m</sub>
+the output phase δ<sub>m</sub> of row m. The light meets the columns in turn, so the mesh is</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>U</mi><mo>&#x0003D;</mo><mi>D</mi><mspace width="0.167em" /><msub><mi>T</mi><mn>5</mn></msub><mspace width="0.167em" /><msub><mi>T</mi><mn>4</mn></msub><mspace width="0.167em" /><msub><mi>T</mi><mn>3</mn></msub><mspace width="0.167em" /><msub><mi>T</mi><mn>2</mn></msub><mspace width="0.167em" /><msub><mi>T</mi><mn>1</mn></msub><mspace width="0.167em" /><msub><mi>T</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mspace width="2em" /><mi>D</mi><mo>&#x0003D;</mo><mo>diag</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msup><mi>e</mi><mrow><mi>i</mi><msub><mi>&#x003B4;</mi><mn>0</mn></msub></mrow></msup><mo>&#x0002C;</mo><mspace width="0.167em" /><msup><mi>e</mi><mrow><mi>i</mi><msub><mi>&#x003B4;</mi><mn>1</mn></msub></mrow></msup><mo>&#x0002C;</mo><mspace width="0.167em" /><msup><mi>e</mi><mrow><mi>i</mi><msub><mi>&#x003B4;</mi><mn>2</mn></msub></mrow></msup><mo>&#x0002C;</mo><mspace width="0.167em" /><msup><mi>e</mi><mrow><mi>i</mi><msub><mi>&#x003B4;</mi><mn>3</mn></msub></mrow></msup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></div>
+<p>That is 6 × 2 + 4 = 16 phases, and a 4 × 4 unitary matrix has exactly 16 real parameters. A mesh
+with fewer phases would miss some matrices; the recipe below shows that these 16 reach every one.
+Every block is lossless, so the mesh keeps the power of the light: U is always unitary, U†U = 1.
+A matrix that is not unitary needs more than one mesh. It is the subject of the next chapter,
+optical computing: two meshes and a column of attenuators set M = U Σ V†, once M is scaled so
+that no entry of Σ exceeds 1.</p>
+<p><strong>The recipe.</strong> The recipe takes a target U apart, one block at a time. Multiplying U from the
+right by T<sup>−1</sup> on columns m and m + 1 mixes those two columns. Its θ and φ can be chosen
+so that one entry of a row becomes zero. Multiplying from the left by T on rows m and m + 1 mixes
+two rows and can zero one entry of a column. For the two entries a and b that are mixed:</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtext>from&#x000A0;the&#x000A0;right:</mtext><mspace width="1em" /><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mi>b</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><msup><mi>T</mi><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mo>&#x0002A;</mo><mo stretchy="false">&#x00029;</mo><mspace width="1em" /><mtext>when</mtext><mspace width="1em" /><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mn>2</mn><mi>arctan</mi><mfrac><mrow><mo stretchy="false">&#x0007C;</mo><mi>b</mi><mo stretchy="false">&#x0007C;</mo></mrow><mrow><mo stretchy="false">&#x0007C;</mo><mi>a</mi><mo stretchy="false">&#x0007C;</mo></mrow></mfrac><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x003C6;</mi><mo>&#x0003D;</mo><mi>&#x003C0;</mi><mo>&#x0002B;</mo><mo>arg</mo><mi>a</mi><mo>&#x02212;</mo><mo>arg</mo><mi>b</mi></mrow></math></div>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtext>from&#x000A0;the&#x000A0;left:</mtext><mspace width="1em" /><mi>T</mi><mo>&#x00028;</mo><mtable><mtr><mtd><mi>a</mi></mtd></mtr><mtr><mtd><mi>b</mi></mtd></mtr></mtable><mo>&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x00028;</mo><mtable><mtr><mtd><mo>&#x0002A;</mo></mtd></mtr><mtr><mtd><mn>0</mn></mtd></mtr></mtable><mo>&#x00029;</mo><mspace width="1em" /><mtext>when</mtext><mspace width="1em" /><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mn>2</mn><mi>arctan</mi><mfrac><mrow><mo stretchy="false">&#x0007C;</mo><mi>a</mi><mo stretchy="false">&#x0007C;</mo></mrow><mrow><mo stretchy="false">&#x0007C;</mo><mi>b</mi><mo stretchy="false">&#x0007C;</mo></mrow></mfrac><mo>&#x0002C;</mo><mspace width="1em" /><mi>&#x003C6;</mi><mo>&#x0003D;</mo><mo>arg</mo><mi>b</mi><mo>&#x02212;</mo><mo>arg</mo><mi>a</mi></mrow></math></div>
+<p>Both follow from the matrix of T above. From the right, (a, b) T<sup>−1</sup> starts with a zero
+when (a, b) is parallel to the second row of T, that is when a/b = −e<sup>iφ</sup> cot(θ/2). From
+the left, the second entry T<sub>21</sub> a + T<sub>22</sub> b has to vanish, that is
+a/b = e<sup>−iφ</sup> tan(θ/2).</p>
+<p>For a 4 × 4 matrix the recipe zeroes the six entries below the diagonal, diagonal by diagonal from
+the corner, alternately from the right and from the left. In that order a zero, once made, stays
+zero:</p>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>null</th>
+<th>side</th>
+<th>mixes</th>
+<th>the entry it zeroes (row, column)</th>
+<th>the block it becomes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>right</td>
+<td>columns 0 and 1</td>
+<td>(3, 0)</td>
+<td>block 0: P0, T0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>left</td>
+<td>rows 1 and 2</td>
+<td>(2, 0)</td>
+<td>block 5: P5, T5, after the move below</td>
+</tr>
+<tr>
+<td>3</td>
+<td>left</td>
+<td>rows 2 and 3</td>
+<td>(3, 1)</td>
+<td>block 4: P4, T4, after the move below</td>
+</tr>
+<tr>
+<td>4</td>
+<td>right</td>
+<td>columns 2 and 3</td>
+<td>(3, 2)</td>
+<td>block 1: P1, T1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>right</td>
+<td>columns 1 and 2</td>
+<td>(2, 1)</td>
+<td>block 2: P2, T2</td>
+</tr>
+<tr>
+<td>6</td>
+<td>right</td>
+<td>columns 0 and 1</td>
+<td>(1, 0)</td>
+<td>block 3: P3, T3</td>
+</tr>
+</tbody>
+</table></div>
+<p>After the six nulls, with T<sub>(n)</sub> the block of null n:</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.278em" /><mi>U</mi><mspace width="0.278em" /><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mspace width="0.167em" /><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mspace width="0.167em" /><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mspace width="0.167em" /><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>6</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mo>&#x0003D;</mo><mi>D</mi></mrow></math></div>
+<p>D is diagonal, because a unitary matrix with nothing below its diagonal has nothing above it
+either. Solved for U:</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>U</mi><mo>&#x0003D;</mo><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mspace width="0.167em" /><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mspace width="0.278em" /><mi>D</mi><mspace width="0.278em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>6</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msub></mrow></math></div>
+<p>The light meets the factors from the right. The two blocks made from the left stand on the wrong
+side of D: the light would meet them after the output phases, where the mesh has no blocks. The last
+step of the recipe moves them through D. For every block and every diagonal there are a new
+diagonal and a new block with</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>T</mi><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo>&#x0002C;</mo><mi>&#x003C6;</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mo>diag</mo><mo stretchy="false">&#x00028;</mo><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mspace width="0.167em" /><msub><mi>d</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>diag</mo><mo stretchy="false">&#x00028;</mo><msubsup><mi>d</mi><mn>1</mn><mi>&#x02032;</mi></msubsup><mo>&#x0002C;</mo><mspace width="0.167em" /><msubsup><mi>d</mi><mn>2</mn><mi>&#x02032;</mi></msubsup><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>T</mi><mo stretchy="false">&#x00028;</mo><msup><mi>&#x003B8;</mi><mi>&#x02032;</mi></msup><mo>&#x0002C;</mo><msup><mi>&#x003C6;</mi><mi>&#x02032;</mi></msup><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+<p>because a diagonal times T(θ′, φ′) covers every 2 × 2 unitary matrix (<code>split</code> in the model solves
+it). Done twice:</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>U</mi><mo>&#x0003D;</mo><msup><mi>D</mi><mi>&#x02033;</mi></msup><mspace width="0.278em" /><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow><mi>&#x02032;</mi></msubsup><mspace width="0.167em" /><msubsup><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow><mi>&#x02032;</mi></msubsup><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>6</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></msub><mspace width="0.167em" /><msub><mi>T</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msub></mrow></math></div>
+<p>Six blocks in the order of the light, then a diagonal: the form of the mesh. Each block goes into
+the first column after the blocks it follows on its two rows, which gives the brick pattern and the
+last column of the table. The phases of D″ are the output phases δ<sub>m</sub>. For the DFT the
+recipe gives θ/π = 0.500, 0.500, 0.392, 0.333, 0.333, 0.608 and φ/π = 1.500, 0.000, 0.750, 0.946,
+0.804, 0.804 for blocks 0 to 5, and δ/π = 1.887, 0.529, 0.779, 0.833 for rows 0 to 3
+(<code>program.txt</code>). For all 41 targets of step 2, the ideal mesh with the phases of the recipe is its
+target to 3.6 × 10⁻¹⁵.</p>
+<p><strong>From a phase to a voltage.</strong> A heater of power P raises the <span class="gloss" tabindex="0" data-def="The speed of the phase of a guided mode, written as an index: the mode gains a phase of 2π n_eff / λ per unit length.">effective index</span> of the 100 µm of
+waveguide under it by dn<sub>eff</sub>/dP = 7.557 × 10⁻⁴ per mW (the
+<a href="../../devices/thermo-optic-phase-shifter/index.html">phase shifter chapter</a>, step 2). The phase it adds is</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x00394;</mi><mi>&#x003D5;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi><mi>L</mi></mrow><mrow><mi>&#x003BB;</mi></mrow></mfrac><mspace width="0.167em" /><mfrac><mrow><mi>&#x00064;</mi><msub><mi>n</mi><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">f</mi></mrow></msub></mrow><mrow><mi>&#x00064;</mi><mi>P</mi></mrow></mfrac><mspace width="0.167em" /><mi>P</mi><mo>&#x0003D;</mo><mi>&#x003C0;</mi><mspace width="0.167em" /><mfrac><mrow><mi>P</mi></mrow><mrow><msub><mi>P</mi><mi>&#x003C0;</mi></msub></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>P</mi><mi>&#x003C0;</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x003BB;</mi></mrow><mrow><mn>2</mn><mi>L</mi><mspace width="0.167em" /><mi>&#x00064;</mi><msub><mi>n</mi><mrow><mi mathvariant="normal">e</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">f</mi></mrow></msub><mo>&#x0002F;</mo><mi>&#x00064;</mi><mi>P</mi></mrow></mfrac><mo>&#x0003D;</mo><mn>10.26</mn><mtext>&#x000A0;</mtext><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">W</mi></mrow></mrow></math></div>
+<p>The film of the heater is a resistor of R = 500 Ω (10 Ω/sq over 100 µm by 2 µm). A voltage V
+across it gives P = V²/R, so</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x00394;</mi><mi>&#x003D5;</mi><mo>&#x0003D;</mo><mi>&#x003C0;</mi><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mi>V</mi></mrow><mrow><msub><mi>V</mi><mi>&#x003C0;</mi></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mrow><mn>2</mn></mrow></msup><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>V</mi><mi>&#x003C0;</mi></msub><mo>&#x0003D;</mo><msqrt><mrow><msub><mi>P</mi><mi>&#x003C0;</mi></msub><mi>R</mi></mrow></msqrt><mo>&#x0003D;</mo><mn>2.26</mn><mtext>&#x000A0;</mtext><mi>&#x00056;</mi></mrow></math></div>
+<p>The phase grows with the square of the voltage: a heater is driven by its power. Half of π takes
+1.60 V, not half of 2.26 V. A heater can only add phase, so every phase is set as its value modulo
+2π, between 0 and 2π: a power between 0 and 2P<sub>π</sub> = 20.5 mW, a voltage between 0 and 3.20 V.</p>
+<p><strong>The DFT, heater by heater.</strong> The recipe is for the ideal block. The drawn mesh adds what the
+recipe does not know: every piece of waveguide adds its own phase, β L over 2 mm of strip on every
+row, and the couplers split 49.86 : 50.07 with a phase of their own. With the powers of the recipe
+alone, the drawn mesh is the DFT with F = 0.27 only. Step 2 starts from those powers and fits all
+sixteen to the drawn circuit, by least squares on the entries:</p>
+<div class="math"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mo>min</mo><mrow><msub><mi>P</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mspace width="0.167em" /><mo>&#x02026;</mo><mo>&#x0002C;</mo><mspace width="0.167em" /><msub><mi>P</mi><mrow><mn>15</mn></mrow></msub><mo>&#x0002C;</mo><mspace width="0.278em" /><mi>a</mi></mrow></msub><mtext>&#x000A0;</mtext><munder><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>j</mi></mrow></munder><mo stretchy="true" fence="true" minsize="1.2em" maxsize="1.2em">|</mo><msub><mi>U</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>P</mi><mn>0</mn></msub><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><msub><mi>P</mi><mrow><mn>15</mn></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mi>a</mi><mspace width="0.167em" /><msub><mi>M</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msup><mo stretchy="true" fence="true" minsize="1.2em" maxsize="1.2em">|</mo><mn>2</mn></msup></mrow></math></div>
+<p>where a is a common phase and loss that the <span class="gloss" tabindex="0" data-def="How close a programmed matrix is to its target, from 0 to 1. It forgives a phase and a loss that are common to all entries.">fidelity</span> ignores too. For the DFT it ends at
+1 − F = 3.5 × 10⁻⁷, with these settings:</p>
+<div class="table table-wide" style="--cols:6"><table>
+<thead>
+<tr>
+<th>heater</th>
+<th>what it sets</th>
+<th class="num">recipe, phase / π</th>
+<th class="num">recipe, mW</th>
+<th class="num">fitted, mW</th>
+<th class="num">fitted, V</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>φ of block 0, row 0</td>
+<td class="num">1.500</td>
+<td class="num">15.38</td>
+<td class="num">15.39</td>
+<td class="num">2.77</td>
+</tr>
+<tr>
+<td>T0</td>
+<td>θ of block 0, row 0</td>
+<td class="num">0.500</td>
+<td class="num">5.13</td>
+<td class="num">5.13</td>
+<td class="num">1.60</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>φ of block 1, row 2</td>
+<td class="num">0.000</td>
+<td class="num">0.00</td>
+<td class="num">0.01</td>
+<td class="num">0.06</td>
+</tr>
+<tr>
+<td>T1</td>
+<td>θ of block 1, row 2</td>
+<td class="num">0.500</td>
+<td class="num">5.13</td>
+<td class="num">5.13</td>
+<td class="num">1.60</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>φ of block 2, row 1</td>
+<td class="num">0.750</td>
+<td class="num">7.69</td>
+<td class="num">7.69</td>
+<td class="num">1.96</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>θ of block 2, row 1</td>
+<td class="num">0.392</td>
+<td class="num">4.02</td>
+<td class="num">4.02</td>
+<td class="num">1.42</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>φ of block 3, row 0</td>
+<td class="num">0.946</td>
+<td class="num">9.70</td>
+<td class="num">11.01</td>
+<td class="num">2.35</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>θ of block 3, row 0</td>
+<td class="num">0.333</td>
+<td class="num">3.42</td>
+<td class="num">17.09</td>
+<td class="num">2.92</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>φ of block 4, row 2</td>
+<td class="num">0.804</td>
+<td class="num">8.25</td>
+<td class="num">6.91</td>
+<td class="num">1.86</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>θ of block 4, row 2</td>
+<td class="num">0.333</td>
+<td class="num">3.42</td>
+<td class="num">17.09</td>
+<td class="num">2.92</td>
+</tr>
+<tr>
+<td>P5</td>
+<td>φ of block 5, row 1</td>
+<td class="num">0.804</td>
+<td class="num">8.25</td>
+<td class="num">6.95</td>
+<td class="num">1.86</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>θ of block 5, row 1</td>
+<td class="num">0.608</td>
+<td class="num">6.24</td>
+<td class="num">6.24</td>
+<td class="num">1.77</td>
+</tr>
+<tr>
+<td>D0</td>
+<td>output phase of row 0</td>
+<td class="num">1.887</td>
+<td class="num">19.36</td>
+<td class="num">2.45</td>
+<td class="num">1.11</td>
+</tr>
+<tr>
+<td>D1</td>
+<td>output phase of row 1</td>
+<td class="num">0.529</td>
+<td class="num">5.43</td>
+<td class="num">9.03</td>
+<td class="num">2.12</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>output phase of row 2</td>
+<td class="num">0.779</td>
+<td class="num">7.99</td>
+<td class="num">11.59</td>
+<td class="num">2.41</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>output phase of row 3</td>
+<td class="num">0.833</td>
+<td class="num">8.55</td>
+<td class="num">13.48</td>
+<td class="num">2.60</td>
+</tr>
+</tbody>
+</table></div>
+<p>The θ heaters keep the split of the recipe. T0, T1, T2 and T5 agree to a hundredth of a milliwatt:
+the two arms of a block are equally long, so the split does not depend on the rows around it. T3
+and T4 sit on the mirror value, (2 − 0.333)π instead of 0.333π. It gives the same split with other
+signs, which the phases after it take up. The φ of the first two columns keep their values too; up
+to there the rows are alike. From column 2 on, the φ and the output phases move: they take up the
+signs of the mirrored blocks and the phases that the drawn rows add. The total is 139 mW.</p>
+<h2 id="the-steps">The steps <a class="here" href="#the-steps" aria-label="Link to this section">#</a></h2>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>step</th>
+<th>folder</th>
+<th>tool</th>
+<th>script</th>
+<th class="long">the question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>1_mzi</code></td>
+<td>INTERCONNECT</td>
+<td><code>mzi_<wbr>interconnect.py</code></td>
+<td class="long">What does one block do, and what limits its <span class="gloss" tabindex="0" data-def="The ratio of the most to the least light at an output, usually in dB: how deep a switch or a modulator can turn the light off.">extinction</span> and its band?</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>2_program</code></td>
+<td>INTERCONNECT, Python</td>
+<td><code>program_<wbr>mesh.py</code></td>
+<td class="long">How well does the drawn mesh hold a matrix, and over which band?</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>3_crosstalk</code></td>
+<td>INTERCONNECT, Python</td>
+<td><code>thermal_<wbr>crosstalk.py</code></td>
+<td class="long">What does the heat of the neighbours do to the matrix, and can a calibration undo it?</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>4_<wbr>coupler_<wbr>errors</code></td>
+<td>INTERCONNECT, Python</td>
+<td><code>coupler_<wbr>errors.py</code></td>
+<td class="long">How much does a fabrication error of the coupler gaps cost, and can the phases make up for it?</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What the circuit is made of.</strong> The scripts read the layout's own description of where every
+piece lies (the <code>info</code> of the builder) and turn it into a chain of pieces along every row:</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>piece</th>
+<th>model</th>
+<th>numbers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>coupler</td>
+<td>INTERCONNECT's &quot;Optical N Port S-Parameter&quot; element, with the complex S-parameters of the FDTD run, 1.5 to 1.6 µm</td>
+<td><a href="../../devices/directional-coupler/index.html">directional coupler</a>, step 3: cross 0.4986, through 0.5007 at 1.55 µm</td>
+</tr>
+<tr>
+<td>waveguide, fan, dummy arm</td>
+<td>&quot;Straight Waveguide&quot; over the length of the path</td>
+<td><a href="../../devices/strip-waveguide/index.html">strip waveguide</a>: n<sub>eff</sub> = 2.44448, n<sub>g</sub> = 4.2387</td>
+</tr>
+<tr>
+<td>heated section</td>
+<td>the same, 100 µm long, its index raised by 7.557 × 10⁻⁴ per mW</td>
+<td><a href="../../devices/thermo-optic-phase-shifter/index.html">phase shifter</a>, step 2: P<sub>π</sub> = 10.26 mW</td>
+</tr>
+<tr>
+<td>loss</td>
+<td>2.2 dB/cm</td>
+<td>an assumption: no chapter measures the loss of the strip; chapter 4 takes this value for the rib of the same process</td>
+</tr>
+</tbody>
+</table></div>
+<p>A heated section lies on every row under every heater position, 40 in all: a heater warms the
+waveguides beside it too (step 3). The FDTD ports of the coupler stood 1 µm beyond each end of the
+cell, so the scripts move its S-parameters inwards by 1 µm of strip. The coupler was simulated
+exciting port 1 only; its two mirror symmetries give the rest of the 4 × 4 matrix.</p>
+<p>The same chain is also a short Python model,
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/scripts/mesh_model.py" rel="noopener">scripts/mesh_model.py</a>. INTERCONNECT runs every case that the chapter
+reports; the model does what INTERCONNECT cannot do quickly, such as fitting the heater powers or
+running hundreds of meshes with random errors. Every step compares the two.</p>
+<h2 id="run-it">Run it <a class="here" href="#run-it" aria-label="Link to this section">#</a></h2>
+<p>You need Lumerical with INTERCONNECT. See the
+<a href="../../course/simulations/index.html#prerequisites">prerequisites of chapter 4</a>. The run times are from the
+author's machine, with Lumerical 2025 R1.</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="nb">cd</span><span class="w"> </span>lumerical_simulations/clements_mesh/scripts
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>mzi_interconnect.py<span class="w">     </span><span class="c1"># step 1, about 1.5 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>program_mesh.py<span class="w">         </span><span class="c1"># step 2, about 8 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>thermal_crosstalk.py<span class="w">    </span><span class="c1"># step 3, about 2 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>coupler_errors.py<span class="w">       </span><span class="c1"># step 4, about 30 minutes</span>
+</code></pre></div>
+<p>Run them in this order: steps 3 and 4 start from the heater powers that step 2 keeps, and step 4
+reads the split of step 1. No step needs a result that is not kept in the repository. The figures
+are redrawn from the kept results, without Lumerical:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/clements_mesh/figures/fig0_layout.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/clements_mesh/figures/fig1_mzi.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/clements_mesh/figures/fig2_program.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/clements_mesh/figures/fig3_crosstalk.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/clements_mesh/figures/fig4_errors.py
+</code></pre></div>
+<hr />
+<h2 id="step-1-one-block">Step 1. One block <a class="here" href="#step-1-one-block" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> What does one interferometer of the mesh do when its heater is turned up, and
+what limits it?</p>
+</div>
+<p><strong>The idea.</strong> Write the coupler as passing τ straight and κ across, with κ = i|κ|. Light that
+enters the upper input of a block leaves it</p>
+<div class="code code-plain"><pre><code>across:    κτ (1 + e^(iθ))
+straight:  τ² e^(iθ) − |κ|²
+</code></pre></div>
+<p>where θ is the phase of the heated arm. With no power, θ = 0, all the light crosses (for a 50:50
+coupler). At θ = π the two paths across cancel exactly, whatever the split: the block passes
+everything straight. The other null, nothing straight at θ = 0, needs τ² = |κ|², a perfect 50:50
+coupler. With the coupler of its chapter, 0.4986 : 0.5007, the leak is</p>
+<div class="code code-plain"><pre><code>((|τ|² − |κ|²) / (|τ|² + |κ|²))² = 4.3 × 10⁻⁶ = −53.7 dB
+</code></pre></div>
+<p><strong>The model.</strong> The 2 × 2 mesh of the builder: one block and two output heaters, 612 µm long. The
+script sweeps the heater on the arm from 0 to 2.2 P<sub>π</sub> in 45 steps and runs the network analyser
+from 1.503 to 1.600 µm at each step, 101 points centred on 1.55 µm.</p>
+<p><strong>The results</strong> (<code>mzi.txt</code>):</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>power for θ = π, the straight state</td>
+<td>10.26 mW, the P<sub>π</sub> of the phase shifter chapter</td>
+</tr>
+<tr>
+<td>leak into the cross port at θ = π</td>
+<td>none: no light reaches the analyser there</td>
+</tr>
+<tr>
+<td>leak into the straight port at θ = 0, over all that passes</td>
+<td>−53.4 dB (the formula gives −53.7 dB)</td>
+</tr>
+<tr>
+<td>through the block</td>
+<td>0.971, or 0.13 dB, over 553 µm of strip and two couplers</td>
+</tr>
+<tr>
+<td>extinction of the cross state above 20 dB</td>
+<td>from 1535 to 1565 nm</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/clements_mesh/figures/fig1_mzi.webp" width="2881" height="976" alt="Power in the cross and the straight output against the heater power, extinction of the cross state against wavelength, and the split of the block set to half against wavelength" loading="lazy" decoding="async"></button><figcaption><strong>Figure 1.</strong> One block. Panel a is the power in the two outputs against the heater power at 1550
+nm. Panel b is the extinction of the cross state against the wavelength, from INTERCONNECT and from
+the formula with the split of the FDTD coupler at each wavelength. Panel c is the block set to a
+half split at 1550 nm, and the split of one coupler, against the wavelength.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, the heater.</em> The two outputs trade light as cos² and sin² of θ/2. The straight output is full
+at P<sub>π</sub> and the cross output at 0 and 2P<sub>π</sub>.</li>
+<li><em>b, the extinction.</em> The peak of 53 dB holds only where the coupler splits 50:50. A few
+nanometres away the coupler has moved, and the leak with it. INTERCONNECT and the formula lie on
+one curve.</li>
+<li><em>c, the half state.</em> One coupler goes from 0.36 to 0.67 across the band. The block set to half
+stays between 0.44 and 0.50: its two couplers drift together, and the second undoes part of
+what the first does.</li>
+</ul>
+<p><strong>What it tells you.</strong> The block is as good as its coupler. The heater sets the split exactly,
+and one of the two nulls, the straight state, is perfect at every wavelength. The other is limited
+by how close the coupler is to 50:50, and that changes by 0.32 percentage points per nanometre
+(the coupler chapter). For a mesh this means that a block can always send all its light straight,
+but never quite all of it across.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>INTERCONNECT against the model.</em> Over all 45 powers and 101 wavelengths the largest difference
+of an entry of the matrix is 2.1 × 10⁻⁴. The rest is the reflection of the couplers (−43 dB),
+which only INTERCONNECT has.</li>
+<li><em>Against the formula.</em> The extinction at every wavelength agrees with
+4κ²(1 − κ²)/(1 − 2κ²)², κ² the split of the FDTD coupler.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>Write the phase of an S-parameter file unwrapped.</em> INTERCONNECT interpolates the phase
+linearly between the samples of the file. A phase wrapped to ±π jumps by 2π somewhere, and every
+frequency of the analyser between those two samples gets a wrong phase. A first run of this step
+showed it as an extinction of 0.5 dB at 1560 nm, where the formula gives 24 dB.</li>
+<li><em>A perfect null has no result.</em> When no light at all reaches an input of the analyser, as at the
+cross port at θ = π, INTERCONNECT writes no result for that input, and asking for it raises an
+error. The scripts read it as zero.</li>
+<li><em>Save the project after the runs.</em> The script saves the circuit at the end, switched back to
+design mode with the heaters off, so that the project carries no results.</li>
+</ul>
+<h2 id="step-2-a-matrix">Step 2. A matrix <a class="here" href="#step-2-a-matrix" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> The mesh is set to a matrix. How close does it come, and over which band of
+wavelengths does it stay close?</p>
+</div>
+<p><strong>The idea.</strong> Clements et al. give a recipe (<a href="#how-the-mesh-sets-a-matrix">How the mesh sets a matrix</a>).
+It removes the entries of the target below its diagonal one at a time, each with one block,
+alternately from the right and from the left, and then moves the blocks of the left through the
+diagonal that remains. The result is θ and φ of
+every block and the four output phases, for an ideal mesh: couplers of exactly 50:50 and nothing
+else. <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/clements_mesh/scripts/mesh_model.py" rel="noopener">scripts/mesh_model.py</a> writes the recipe for the block of this mesh,
+B P(θ) B P(φ), with B the ideal coupler.</p>
+<p>The drawn mesh is not ideal. Its couplers split 49.86 : 50.07, the rows carry fixed phases from
+their own lengths, and the paths lose different amounts of light. So the script corrects the
+heater powers for the drawn circuit with a least-squares fit, starting from the recipe. A heater
+gives a phase between 0 and 2π, for a power between 0 and 2P<sub>π</sub> = 20.5 mW.</p>
+<p>How close the mesh comes is the fidelity</p>
+<div class="code code-plain"><pre><code>F = |Tr(U_target† U)|² / (N Tr(U† U))
+</code></pre></div>
+<p>which is 1 when the mesh is the target up to a phase common to all entries and a loss common to
+all paths. The targets are the 4-point discrete Fourier transform (DFT) and 40 random unitary
+matrices, drawn uniformly over all unitary matrices with a fixed seed.</p>
+<p><strong>The model.</strong> The 4 × 4 mesh with all 16 heaters, set at 1.55 µm. INTERCONNECT runs the DFT and
+three random targets, one input at a time, from 1.503 to 1.600 µm; the model runs all of them.</p>
+<p><strong>The results</strong> (<code>program.txt</code>):</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the recipe, ideal mesh: largest difference from its target, 41 targets</td>
+<td>3.6 × 10⁻¹⁵</td>
+</tr>
+<tr>
+<td>drawn mesh at 1.55 µm, DFT</td>
+<td>1 − F = 3.5 × 10⁻⁷</td>
+</tr>
+<tr>
+<td>drawn mesh at 1.55 µm, 40 random targets</td>
+<td>1 − F from 5 × 10⁻⁸ to 9 × 10⁻⁷, median 3 × 10⁻⁷</td>
+</tr>
+<tr>
+<td>the same, INTERCONNECT, DFT and three random</td>
+<td>F = 0.9999996 and up, within 1 × 10⁻⁷ of the model</td>
+</tr>
+<tr>
+<td>heater power, DFT</td>
+<td>139 mW</td>
+</tr>
+<tr>
+<td>heater power, random targets</td>
+<td>116 to 219 mW, mean 163 mW</td>
+</tr>
+<tr>
+<td>band with F &gt; 0.99, 41 targets</td>
+<td>median 13 nm, from 8 to 21 nm</td>
+</tr>
+</tbody>
+</table></div>
+<p>What is left at 1.55 µm, the worst of six targets:</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>what the model leaves out</th>
+<th>1 − F</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nothing</td>
+<td>9 × 10⁻⁷ for the worst random target</td>
+</tr>
+<tr>
+<td>the propagation loss</td>
+<td>2.8 × 10⁻⁷</td>
+</tr>
+<tr>
+<td>all loss, also that of the couplers</td>
+<td>7.9 × 10⁻⁸</td>
+</tr>
+<tr>
+<td>all loss, and the couplers exactly 50:50</td>
+<td>below 10⁻¹⁵</td>
+</tr>
+</tbody>
+</table></div>
+<p>What sets the band, the width with F &gt; 0.99 for the DFT and ten random targets:</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>case</th>
+<th class="num">DFT</th>
+<th>random, median (range)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the drawn mesh</td>
+<td class="num">13 nm</td>
+<td>13 nm (10 to 19)</td>
+</tr>
+<tr>
+<td>the first draft, edge rows straight</td>
+<td class="num">2 nm</td>
+<td>2 nm (2 to 8)</td>
+</tr>
+<tr>
+<td>the drawn mesh, the split of every coupler held at its value at 1.55 µm</td>
+<td class="num">19 nm</td>
+<td>20 nm (13 to 43)</td>
+</tr>
+<tr>
+<td>the drawn mesh, the coupler given the delay of its dummy arm</td>
+<td class="num">20 nm</td>
+<td>21 nm (18 to 32)</td>
+</tr>
+<tr>
+<td>both</td>
+<td class="num">96 nm</td>
+<td>96 nm: the whole range of the analyser</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/clements_mesh/figures/fig2_program.webp" width="2881" height="1858" alt="The DFT entry by entry as phasors, the heater powers on the mesh, one minus the fidelity against wavelength, and the width of the band for five cases" loading="lazy" decoding="async"></button><figcaption><strong>Figure 2.</strong> A matrix. Panel a is the DFT entry by entry: the ring and its tick are the target,
+the dot and its arrow the mesh in INTERCONNECT at 1550 nm. Panel b is the heater powers of the DFT
+at the places of the heaters. Panel c is 1 − F against the wavelength: the DFT in INTERCONNECT and
+the random targets in the model. Panel d is the width of the band with F &gt; 0.99 for the five cases
+of the table above.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, the DFT.</em> Every entry has a quarter of the power, and the phases step by multiples of
+90° along a row. The arrows end on the rings and on their ticks.</li>
+<li><em>b, the heaters.</em> One heater is almost off: φ of block 1, at 0.01 mW. The largest, θ of blocks 3
+and 4, take 17.1 mW each. The total, 139 mW, is spread over all sixteen.</li>
+<li><em>c, the band.</em> All targets lose fidelity at the same rate away from 1550 nm: 1 − F reaches 1 %
+about 6 nm to each side.</li>
+<li><em>d, the band.</em> The first draft held the matrix over 2 nm. Matching the lengths of the rows gives
+13 nm. Holding the split, or the delay, of the couplers fixed gives about 20 nm each; holding both
+gives the whole band.</li>
+</ul>
+<p><strong>What it tells you.</strong> The recipe of the paper is exact for the ideal mesh, and a short fit makes
+the drawn mesh hold any of these matrices to 1 − F below 10⁻⁶. What is left is mostly loss that
+differs between paths: they cross different numbers of couplers, each losing 0.003 dB, and
+different numbers of fans, each 2.8 µm longer than its run along x. The split of the couplers
+leaves a smaller rest, 8 × 10⁻⁸, that no phase can take up.</p>
+<p>The band is another matter. A mesh is a large interferometer: light that meets again in a later
+block must arrive with the phase it had at the design wavelength. That needs every path to be
+equally long, which the first draft broke by more than 100 µm of strip, and every coupler to keep
+its split. With the delays matched, the coupler is what remains, in two ways at once. Its split
+changes with the wavelength (step 1). And its own delay, 34.47 µm of strip, is shorter than that
+of the arm that stands in for it on the edge rows, 35.38 µm: in the coupled section the light has
+a lower <span class="gloss" tabindex="0" data-def="The index that sets how fast a pulse, or the envelope of the light, travels: n_g = n_eff − λ dn_eff/dλ. It sets delays and the free spectral range.">group index</span>. A path that spans the coupler's 35 µm cannot be shorter than 35 µm, so the
+dummy cannot match it. A broader mesh needs a broader coupler, such as an adiabatic coupler or
+a pair of couplers that compensate each other.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>The recipe.</em> For 41 targets the ideal mesh with the phases of the recipe differs from its target
+by at most 3.6 × 10⁻¹⁵. The tests repeat it for N = 2 to 8, and for targets where blocks cross
+fully or not at all.</li>
+<li><em>INTERCONNECT against the model.</em> The largest difference of an entry over the band is
+6.5 × 10⁻⁴, from the reflections of the couplers.</li>
+<li><em>All heaters off.</em> The mesh then sends input m to output 5 − m: every block passes its light
+across.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>Match the delays, not only the arms.</em> The arms of each block are equal, and still the first
+draft held a matrix over 2 nm only. In a mesh, light from different rows meets in later blocks;
+every path from any input to any output has to be equally long.</li>
+<li><em>The paper's recipe is for an ideal mesh.</em> With the fixed phases of the drawn rows, its phases
+are a starting point and not the answer. Here the fit from that start converged for all 41
+targets.</li>
+<li><em>Fidelity hides a common loss.</em> F is 1 for a mesh that loses 1 dB on every path alike. The
+<span class="gloss" tabindex="0" data-def="The light that a device loses on the way through it, in dB.">insertion loss</span> is a separate number: 0.47 dB for every input of this mesh, mostly the 2.2 dB/cm
+that was assumed.</li>
+</ul>
+<h2 id="step-3-the-heat-of-the-neighbours">Step 3. The heat of the neighbours <a class="here" href="#step-3-the-heat-of-the-neighbours" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> Every heater warms the waveguides around it a little. What does that do to the
+matrix, and can a calibration undo it?</p>
+</div>
+<p><strong>The idea.</strong> The trenches stop the heat that would flow sideways through the oxide. They cannot
+stop the heat that goes down into the silicon substrate, spreads there and comes up under another
+waveguide. Step 4 of the <a href="../../devices/thermo-optic-phase-shifter/index.html">phase shifter chapter</a> estimated
+that path for a wafer 725 µm thick, with a formula for a point source on a thick plate. The script
+applies the same formula to every pair of heater and waveguide in the drawn mesh, with the true
+positions of both. It reproduces the four values of that chapter to six digits.</p>
+<p>The result is a matrix of shares: how much a waveguide warms per milliwatt of a heater, over how
+much the heater's own waveguide warms. A heater's own waveguide gains 3.79 K per mW.</p>
+<p><strong>The model.</strong> The heater powers of step 2, with the heat of the neighbours added on every one of
+the 40 heated sections. Then two calibrations:</p>
+<ul>
+<li><em>linear.</em> Solve a linear system so that each of the 16 heated waveguides gets the phase it was
+meant to have.</li>
+<li><em>fitted.</em> The fit of step 2, with all 40 sections and their heat in the model.</li>
+</ul>
+<p><strong>The results</strong> (<code>crosstalk.txt</code>):</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the largest share</td>
+<td>0.64 %: a heater on the waveguide 30 µm beside it</td>
+</tr>
+<tr>
+<td>the most that one waveguide collects from all heaters</td>
+<td>1.70 % of the phase of one heater</td>
+</tr>
+<tr>
+<td>warming of a waveguide by the others, at the powers of the DFT</td>
+<td>up to 0.95 K</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>1 − F at 1.55 µm</th>
+<th class="num">DFT</th>
+<th>random: median (largest)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>without the heat</td>
+<td class="num">3.5 × 10⁻⁷</td>
+<td>3.3 × 10⁻⁷ (9.1 × 10⁻⁷)</td>
+</tr>
+<tr>
+<td>with the heat, as programmed</td>
+<td class="num">1.1 × 10⁻³</td>
+<td>1.1 × 10⁻³ (2.2 × 10⁻³)</td>
+</tr>
+<tr>
+<td>linear calibration</td>
+<td class="num">3.8 × 10⁻³</td>
+<td>2.9 × 10⁻³ (6.4 × 10⁻³)</td>
+</tr>
+<tr>
+<td>fitted</td>
+<td class="num">4.4 × 10⁻⁷</td>
+<td>3.0 × 10⁻⁷ (9.0 × 10⁻⁷)</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/clements_mesh/figures/fig3_crosstalk.webp" width="2881" height="1889" alt="The mesh at the powers of the DFT with the warming of every heated section by the other heaters, the share against distance for every pair, and one minus the fidelity for four cases" loading="lazy" decoding="async"></button><figcaption><strong>Figure 3.</strong> The heat of the neighbours. Panel a is the mesh at the powers of the DFT: how much
+the other heaters warm every waveguide under a heater position (solid outline: a heater is there;
+dotted: none). Panel b is the share of a heater's phase that a waveguide takes, against the
+distance between their centres, for every pair. Panel c is 1 − F for the 41 targets in the four
+cases; the diamond is the DFT and the bar the median.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, where the heat lands.</em> A waveguide collects most where heaters stand on both sides of it and
+along it; row 0, with heaters on one side only, collects least. Nowhere is it more than 1 K.</li>
+<li><em>b, the distance.</em> The share falls slowly near the heater, about as 1 / d: 0.64 % at 30 µm, 0.26 %
+at 90 µm, 0.1 % at 240 µm. Further out it falls faster, to 0.004 % at 900 µm: there the heat sink
+under the wafer, 725 µm below, takes it away. A waveguide collects from all sixteen heaters at once.</li>
+<li><em>c, the calibrations.</em> The heat costs about 10⁻³. The linear calibration makes it worse, by a
+factor of about three. The fit brings it back to where it was without the heat.</li>
+</ul>
+<p><strong>What it tells you.</strong> The heat is small, 0.64 % at most, and it still costs a thousand times
+more than everything in step 2. A linear calibration is the obvious cure, and here it is the wrong
+one. A heater warms both arms of the block beside it by about as much, and what both arms gain
+cancels in the block: the heat as programmed does less harm than its size suggests. The linear
+calibration takes the heat out of the heated arm only and so leaves the difference. It also asks
+some heaters for less than no power, and those have to go round by a full turn of phase, 20.5 mW
+more, which heats everything else: the DFT takes 159 mW instead of 139.</p>
+<p>The fit has every heated section in the model and moves every heater a little. It brings every
+target back to the level without heat, the DFT to 4.4 × 10⁻⁷ with 143 mW. One heater of the DFT, φ
+of block 1, was set to 0.01 mW; with the heat of its neighbours it would need slightly less than
+nothing, and the fit leaves it at zero and finds a setting of the others around it.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>The formula.</em> It gives the four values of step 4c of the phase shifter chapter, 25 to 250 µm,
+to six digits.</li>
+<li><em>INTERCONNECT against the model.</em> The DFT in the three cases agrees with the model to the sixth
+digit of F: 0.99892, 0.99617 and 0.9999995 in INTERCONNECT.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>A heater cannot cool.</em> A fit over heater powers must never let a power go below zero. Without
+crosstalk a power of −0.1 mW is the same phase as 2P<sub>π</sub> − 0.1 mW and nothing is lost. With
+crosstalk it is not: the heater at 20.4 mW warms its neighbours. A first version of this step let
+the fit go below zero and wrapped the powers afterwards; the DFT then ended at 1 − F = 2.7 × 10⁻⁴
+instead of 4.4 × 10⁻⁷. The fit now evaluates the circuit at the powers a heater can have.</li>
+<li><em>Calibrate the circuit, not the heaters.</em> The heated sections without a heater have phases too,
+and those are what the linear calibration forgets.</li>
+</ul>
+<h2 id="step-4-couplers-that-came-out-wrong">Step 4. Couplers that came out wrong <a class="here" href="#step-4-couplers-that-came-out-wrong" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> The gap of a coupler comes out a few nanometres wider or narrower than drawn,
+and the coupler no longer splits 50:50. How much does that cost, and can the phases make up for it?</p>
+</div>
+<p><strong>The idea.</strong> The coupling length grows exponentially with the gap: L<sub>π</sub> = 6.72 µm × exp(gap /
+115.7 nm), from the <span class="gloss" tabindex="0" data-def="A mode of two coupled waveguides taken together. The even and the odd supermode travel at different speeds; their beat moves light from one guide to the other.">supermodes</span> of the <a href="../../devices/directional-coupler/index.html">coupler chapter</a>. A coupler
+passes across sin²ψ of the light, with ψ = π/2 (L + L<sub>bends</sub>)/L<sub>π</sub>. A gap wider by Δg scales ψ by
+exp(−Δg / 115.7 nm). The script keeps the FDTD coupler and changes only its split, at every
+wavelength.</p>
+<p>Miller (2015) asked whether a mesh of imperfect parts can still be perfect. For a Clements mesh
+the limit is the block: with couplers of cross power f, a block passes at most 4f(1 − f) of its
+light across. A matrix that needs a block near full crossing is then out of reach.</p>
+<p><strong>The model.</strong> Two cases, each with the powers of the error-free mesh (as programmed) and with
+powers fitted to the mesh as it came out (fitted). The fit assumes the errors are known, for
+example from a measurement of each block.</p>
+<ul>
+<li><em>every gap off by the same Δg</em>, from −20 to +20 nm: a wafer whose gaps all came out wider or
+narrower. The DFT and ten random targets of step 2.</li>
+<li><em>every gap off by its own Δg</em>, drawn from a normal distribution of width σ = 2.5, 5, 10 and 20 nm:
+30 meshes for each σ, each with a random target of its own.</li>
+</ul>
+<p><strong>The results</strong> (<code>errors.txt</code>):</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>change of the split per nm of gap</td>
+<td>−0.68 percentage points</td>
+</tr>
+<tr>
+<td>the same as a change of wavelength</td>
+<td>2.1 nm of wavelength per nm of gap</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>every gap off by</th>
+<th class="num">split</th>
+<th class="num">1 − F as programmed, random median</th>
+<th class="num">fitted: DFT</th>
+<th>fitted: random median (worst)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>−20 nm</td>
+<td class="num">0.645</td>
+<td class="num">0.17</td>
+<td class="num">3 × 10⁻⁷</td>
+<td>2.0 × 10⁻³ (1.8 × 10⁻²)</td>
+</tr>
+<tr>
+<td>−10 nm</td>
+<td class="num">0.570</td>
+<td class="num">0.039</td>
+<td class="num">3 × 10⁻⁷</td>
+<td>2 × 10⁻⁷ (1.0 × 10⁻³)</td>
+</tr>
+<tr>
+<td>−5 nm</td>
+<td class="num">0.534</td>
+<td class="num">0.0094</td>
+<td class="num">3 × 10⁻⁷</td>
+<td>2 × 10⁻⁷ (7 × 10⁻⁷)</td>
+</tr>
+<tr>
+<td>+5 nm</td>
+<td class="num">0.466</td>
+<td class="num">0.0084</td>
+<td class="num">4 × 10⁻⁷</td>
+<td>3 × 10⁻⁷ (5 × 10⁻⁷)</td>
+</tr>
+<tr>
+<td>+10 nm</td>
+<td class="num">0.434</td>
+<td class="num">0.031</td>
+<td class="num">3 × 10⁻⁷</td>
+<td>3 × 10⁻⁷ (7.6 × 10⁻⁴)</td>
+</tr>
+<tr>
+<td>+20 nm</td>
+<td class="num">0.376</td>
+<td class="num">0.11</td>
+<td class="num">4 × 10⁻⁷</td>
+<td>7.8 × 10⁻⁴ (8.8 × 10⁻³)</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>random errors, σ</th>
+<th class="num">1 − F as programmed, median</th>
+<th class="num">fitted, median</th>
+<th class="num">fitted, worst</th>
+<th>fitted with F &gt; 0.999</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.5 nm</td>
+<td class="num">1.6 × 10⁻³</td>
+<td class="num">3 × 10⁻⁷</td>
+<td class="num">8 × 10⁻⁷</td>
+<td>30 of 30</td>
+</tr>
+<tr>
+<td>5 nm</td>
+<td class="num">5.5 × 10⁻³</td>
+<td class="num">3 × 10⁻⁷</td>
+<td class="num">8 × 10⁻⁷</td>
+<td>30 of 30</td>
+</tr>
+<tr>
+<td>10 nm</td>
+<td class="num">2.5 × 10⁻²</td>
+<td class="num">4 × 10⁻⁷</td>
+<td class="num">7.6 × 10⁻³</td>
+<td>27 of 30</td>
+</tr>
+<tr>
+<td>20 nm</td>
+<td class="num">0.11</td>
+<td class="num">6 × 10⁻⁷</td>
+<td class="num">5.5 × 10⁻²</td>
+<td>20 of 30</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/clements_mesh/figures/fig4_errors.webp" width="2881" height="976" alt="The split of a coupler against the error of its gap, one minus the fidelity against an error common to all gaps, and one minus the fidelity for random errors of four widths" loading="lazy" decoding="async"></button><figcaption><strong>Figure 4.</strong> Couplers that came out wrong. Panel a is the split of one coupler at 1550 nm against
+the error of its gap. Panel b is 1 − F with every gap off by the same amount, as programmed and
+fitted; the line is the median of ten random targets, the shading their range, the diamonds the
+DFT. Panel c is 1 − F for random errors, 30 meshes for each width, as programmed (orange) and
+fitted (blue); the bars are the medians.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, the gap.</em> The split moves almost linearly, by 0.68 points per nanometre. A narrower gap
+couples more.</li>
+<li><em>b, a common error.</em> As programmed, 5 nm already cost 1 %. Fitted, nothing is lost up to ±5 nm,
+and the median holds to ±10 nm. Beyond it some targets fail, and they fail more for a narrower
+gap, where the couplers pass more than half. The DFT never fails: it needs no block near full
+crossing.</li>
+<li><em>c, random errors.</em> As programmed, the loss grows as σ². Fitted, the median stays at the level of
+step 2 for every σ, and the spread grows from 10 nm on.</li>
+</ul>
+<p><strong>What it tells you.</strong> The phases make up for a great deal, but only once the errors are known. As
+programmed, a mesh needs gaps within a few nanometres to hold a matrix to 10⁻³; fitted, it holds
+most matrices with errors of 10 nm. What the fit cannot reach is a block near full crossing: the
+couplers of a block with an error of 20 nm pass at most 94 % across. A random matrix needs such a
+block often enough that a third of the meshes with σ = 20 nm fail. The knowledge of the errors is
+the hard part in practice. Every block has to be measured, for example by sweeping its heater and
+reading the extinction, which is what step 1 shows depends on the split.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>INTERCONNECT against the model.</em> One mesh with σ = 10 nm, with a coupler file of its own for
+each of the twelve couplers: F = 0.983448 as programmed (model 0.983432) and 0.999999 fitted
+(model 0.999999).</li>
+<li><em>No error.</em> The row Δg = 0 gives the results of step 2.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>A fit needs the circuit as it is.</em> The fitted results assume that the split of every coupler is
+known. A mesh programmed with the powers of the ideal one loses a hundred times more at σ = 5 nm.</li>
+<li><em>Gap errors and wavelength are the same thing to a coupler.</em> One nanometre of gap moves the split
+as far as 2.1 nm of wavelength. A mesh that tolerates 10 nm of gap error in this way does not
+thereby gain 20 nm of band: the fit is made at one wavelength.</li>
+</ul>
+<hr />
+<h2 id="in-numbers">In numbers <a class="here" href="#in-numbers" aria-label="Link to this section">#</a></h2>
+<div class="table table-nohead" style="--cols:2"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mesh</td>
+<td>4 × 4, Clements arrangement: 6 interferometers in 4 columns, 16 heaters, 32 pads</td>
+</tr>
+<tr>
+<td>size</td>
+<td>2.21 mm long, rows 30 µm apart, pads 100 µm apart in two rows</td>
+</tr>
+<tr>
+<td>one interferometer</td>
+<td>P<sub>π</sub> = 10.26 mW; straight state without leak; cross state −53.4 dB at 1550 nm, above 20 dB from 1535 to 1565 nm</td>
+</tr>
+<tr>
+<td>programmed to the DFT</td>
+<td>1 − F = 3.5 × 10⁻⁷ at 1550 nm, 139 mW in all</td>
+</tr>
+<tr>
+<td>programmed to random unitaries</td>
+<td>1 − F below 10⁻⁶, 116 to 219 mW</td>
+</tr>
+<tr>
+<td>band with F &gt; 0.99</td>
+<td>13 nm (2 nm in the first draft, without matched delays)</td>
+</tr>
+<tr>
+<td>heat of the neighbours</td>
+<td>1 − F = 1 × 10⁻³ as programmed; back below 10⁻⁶ with a fit, worse with a linear calibration</td>
+</tr>
+<tr>
+<td>coupler gap error</td>
+<td>−0.68 points of split per nm; fitted, F &gt; 0.999 for all meshes with σ = 5 nm and two thirds with σ = 20 nm</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="limits">Limits <a class="here" href="#limits" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>The circuit takes the devices as their chapters simulated them. The fans and the dummy arms are
+straight strip in the model, without the small change of index in a bend.</li>
+<li>The propagation loss, 2.2 dB/cm, is an assumption. It lowers all paths alike to first order; its
+differences between paths set the floor of step 2.</li>
+<li>The heat of the neighbours through the substrate is an estimate by formula, for one wafer on a
+perfect heat sink, not a three-dimensional simulation. The carrier below the chip, the wires and
+the pads are not in it.</li>
+<li>The coupler errors change the split only, not the phase of the coupled section, and not the
+width of the waveguide.</li>
+<li>The phases are set at 1550 nm and for TE light. Time is not in the model: the heaters take some
+50 µs to settle (the phase shifter chapter, step 3), so the mesh can be reset a few thousand times
+a second.</li>
+<li>The mesh has no grating or edge couplers, and no measured device stands behind any of these
+numbers.</li>
+</ul>
+<h2 id="check-yourself">Check yourself <a class="here" href="#check-yourself" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>A block passes κτ(1 + e^(iθ)) across. Why is its straight state perfect at any split, and its
+cross state not?</li>
+<li>The arms of every block are equal, yet the first draft held a matrix over 2 nm only. Which
+lengths have to be equal in a mesh?</li>
+<li>Why can the dummy arm not have the delay of the coupler it stands in for?</li>
+<li>The linear calibration gives each heated waveguide exactly its intended phase, and the fidelity
+gets worse. Why?</li>
+<li>With every gap 20 nm too wide, the DFT can still be set exactly and some random matrices cannot.
+What does the DFT not need?</li>
+</ol>
+<details>
+<summary>Answers</summary>
+<ol>
+<li>At θ = π the two paths across are κτ and κτe^(iπ) = −κτ: equal and opposite whatever the split,
+so they cancel. Straight, the two paths are τ²e^(iθ) and −|κ|², which cancel only when
+τ² = |κ|², a 50:50 coupler.</li>
+<li>Every path from any input to any output, because light from different rows meets again in later
+blocks. In the first draft the edge rows ran straight through two columns without a block and
+were shorter than the rows through blocks.</li>
+<li>A path that spans the 35 µm of the coupler is at least 35 µm long, and the light in it travels
+with the group index of the strip. In the coupled section the light has a lower group index, so
+the coupler's delay is that of 34.47 µm of strip.</li>
+<li>A heater warms both arms of the block beside it by about as much, and that cancels in the block.
+The linear calibration removes the heat from the heated arm only and so creates the difference
+it meant to remove. It also sends some heaters round a full turn of phase, which heats the rest.</li>
+<li>A block near full crossing. Its blocks are all set to about half, θ between 0.3π and 0.6π, which
+couplers of 0.38 can still reach.</li>
+</ol>
+</details>
+<h2 id="exercises">Exercises <a class="here" href="#exercises" aria-label="Link to this section">#</a></h2>
+<ol>
+<li><strong>A wider pitch.</strong> Draw the mesh with <code>pitch=60</code> and run step 3 with that layout (change
+<code>LAYOUT</code> in <code>scripts/common.py</code> to <code>cm.clements_mesh(pitch=60).info</code>). How much does the largest
+share fall? Copy the folders of steps 2 and 3 first, because the runs overwrite their results,
+and restore them afterwards.</li>
+<li><strong>The first draft in INTERCONNECT.</strong> Build the circuit of <code>cm.clements_mesh(match_delay=False)</code>
+with <code>interconnect.Mesh</code>, program the DFT and look at its band. Does INTERCONNECT agree with the
+2 nm of the table?</li>
+<li><strong>A larger mesh.</strong> Run the decomposition and the fit of <code>mesh_model.py</code> for the 6 × 6 mesh of the
+builder. How does the band with F &gt; 0.99 change? Which of the effects of step 2 grows with N?</li>
+<li><strong>Set the mesh by hand.</strong> With the heaters of the DFT from <code>2_program/program.npz</code>, turn one
+heater up by 1 % and compute 1 − F with the model. Which heater matters most, and why?</li>
+</ol>
+<h2 id="references">References <a class="here" href="#references" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>W. R. Clements, P. C. Humphreys, B. J. Metcalf, W. S. Kolthammer and I. A. Walmsley, &quot;Optimal
+design for universal multiport interferometers&quot;, Optica 3, 1460 (2016),
+<a href="https://doi.org/10.1364/OPTICA.3.001460" rel="noopener">doi:10.1364/OPTICA.3.001460</a></li>
+<li>M. Reck, A. Zeilinger, H. J. Bernstein and P. Bertani, &quot;Experimental realization of any discrete
+unitary operator&quot;, Physical Review Letters 73, 58 (1994),
+<a href="https://doi.org/10.1103/PhysRevLett.73.58" rel="noopener">doi:10.1103/PhysRevLett.73.58</a></li>
+<li>D. A. B. Miller, &quot;Perfect optics with imperfect components&quot;, Optica 2, 747 (2015)</li>
+<li>R. Burgwal, W. R. Clements, D. H. Smith, J. C. Gates, W. S. Kolthammer, J. J. Renema and
+I. A. Walmsley, &quot;Using an imperfect photonic network to implement random unitaries&quot;, Optics
+Express 25, 28236 (2017)</li>
+<li>S. Pai, B. Bartlett, O. Solgaard and D. A. B. Miller, &quot;Matrix optimization on universal unitary
+photonic devices&quot;, Physical Review Applied 11, 064044 (2019)</li>
+<li>S. Bandyopadhyay, R. Hamerly and D. Englund, &quot;Hardware error correction for programmable
+photonics&quot;, Optica 8, 1247 (2021)</li>
+<li>A. Ribeiro, A. Ruocco, L. Vanacker and W. Bogaerts, &quot;Demonstration of a 4×4-port universal linear
+circuit&quot;, Optica 3, 1348 (2016)</li>
+<li>Y. Shen, N. C. Harris, S. Skirlo et al., &quot;Deep learning with coherent nanophotonic circuits&quot;,
+Nature Photonics 11, 441 (2017)</li>
+</ul>
+<hr />
+<p><em>The figures are drawn from the result files kept in this repository. Ansys and Lumerical are
+trademarks of ANSYS, Inc. This chapter has no affiliation with or endorsement by Ansys.</em></p>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<span></span><a class="card pager-next" href="../svd-multiplier/index.html"><span>Next</span><b>Real matrix multiplier</b></a>
+</nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../../course/pdk/index.html">1. The PDK</a><a href="../../course/device/index.html">2. The device</a><a href="../../course/process-file/index.html">3. The process file</a><a href="../../course/simulations/index.html">4. The simulations</a><a href="../../course/your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../../devices/strip-waveguide/index.html">Strip waveguide</a><a href="../../devices/rib-waveguide/index.html">Rib waveguide</a><a href="../../devices/directional-coupler/index.html">Directional coupler</a><a href="../../devices/mmi1x2/index.html">1×2 MMI splitter</a><a href="../../devices/thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../../devices/index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../index.html">The chip</a><a href="index.html">Clements mesh</a><a href="../svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="../../more/cornerstone-soi220a/index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/sources.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/programmer.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

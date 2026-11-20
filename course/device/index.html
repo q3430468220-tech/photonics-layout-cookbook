@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The device · photonics-layout-cookbook</title>
+<meta name="description" content="This chapter draws one device from first principles. The device is a microring modulator. A ring is a closed rib waveguide next to a straight bus.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/course/device/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The device: drawing a heater-tuned ring modulator, and checking it">
+<meta property="og:description" content="This chapter draws one device from first principles. The device is a microring modulator. A ring is a closed rib waveguide next to a straight bus.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/course/device/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/course-device.jpg?v=9d2f1b05">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The device, with the device seen from above">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"The device: drawing a heater-tuned ring modulator, and checking it","description":"This chapter draws one device from first principles. The device is a microring modulator. A ring is a closed rib waveguide next to a straight bus.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/course/device/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/course-device.jpg?v=9d2f1b05"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"The device","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/course/device/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course" aria-current="true">Course</a>
+      <a href="../../devices/index.html">Devices</a>
+<a href="../../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="g-active-ring_modulator" viewBox="0 0 420 312"><path class="m-slab" fill-rule="evenodd" d="M84.1,209.4 87.6,209.0 91.0,208.0 95.6,205.2 98.1,202.7 100.1,199.7 101.8,194.6 102.1,191.0 101.6,187.5 95.8,171.9 92.7,160.2 91.4,153.5 90.2,141.0 90.0,134.8 90.6,122.7 92.7,109.8 94.2,103.7 97.9,92.2 100.5,86.0 106.0,75.2 113.1,64.3 116.9,59.3 125.0,50.3 129.9,45.7 139.3,38.1 150.2,31.0 161.0,25.5 166.8,23.1 179.2,19.0 185.3,17.6 197.2,15.7 204.0,15.2 216.0,15.2 229.0,16.5 241.3,19.2 247.3,21.0 258.6,25.3 270.2,31.2 280.7,38.1 290.5,46.0 299.0,54.5 303.1,59.3 310.8,69.8 317.0,80.7 322.1,92.2 326.0,104.2 328.6,116.5 329.8,129.0 330.0,135.2 329.4,147.3 327.4,159.7 324.2,171.9 321.9,178.2 318.9,185.7 318.1,189.2 318.0,192.8 318.6,196.3 319.9,199.7 321.9,202.7 324.4,205.2 327.4,207.2 330.6,208.6 334.2,209.3 420.0,209.4 420.0,269.4 0.0,269.4 0.0,209.4ZM257.7,129.5 256.8,124.6 255.5,119.7 253.6,115.1 251.8,111.4 249.1,107.2 247.0,104.4 243.6,100.7 239.8,97.4 235.7,94.5 231.4,92.0 226.8,90.0 222.9,88.8 218.0,87.7 213.0,87.1 208.0,87.1 204.5,87.3 199.6,88.2 194.7,89.5 190.1,91.4 186.4,93.2 182.2,95.9 179.4,98.0 175.7,101.4 172.4,105.2 169.5,109.3 167.0,113.6 165.4,117.4 163.8,122.1 162.7,127.0 162.1,132.0 162.1,137.0 162.3,140.5 163.2,145.4 164.5,150.3 166.4,154.9 168.2,158.6 170.9,162.8 173.0,165.6 176.4,169.3 180.2,172.6 183.5,175.0 187.8,177.5 192.4,179.6 197.1,181.2 200.5,182.0 205.5,182.8 210.5,183.0 215.5,182.7 220.4,181.8 225.3,180.5 229.9,178.6 233.6,176.8 237.8,174.1 241.8,171.0 244.3,168.6 247.6,164.8 250.5,160.7 253.0,156.4 254.6,152.6 256.2,147.9 257.3,143.0 257.9,138.0 257.9,133.0Z"/><path class="m-p" fill-rule="evenodd" d="M284.8,173.1 288.4,165.1 289.9,161.0 292.2,152.5 293.0,148.1 293.9,139.4 294.0,135.0 293.5,126.2 292.2,117.5 289.9,109.0 288.4,104.9 284.8,96.9 282.7,93.0 278.0,85.6 275.3,82.1 269.4,75.6 262.9,69.7 255.7,64.6 252.0,62.3 244.2,58.3 236.0,55.1 227.5,52.8 223.1,52.0 218.8,51.5 210.0,51.0 201.2,51.5 192.5,52.8 184.0,55.1 175.8,58.3 168.0,62.3 160.6,67.0 157.1,69.7 150.6,75.6 144.7,82.1 139.6,89.3 135.2,96.9 131.6,104.9 130.1,109.0 127.8,117.5 127.0,121.9 126.5,126.2 126.0,135.0 126.5,143.8 127.0,148.1 128.9,156.7 131.6,165.1 135.2,173.1 137.3,177.0 106.1,195.0 103.1,189.5 98.0,178.0 94.1,166.1 91.5,153.8 90.7,147.5 90.0,135.0 90.7,122.5 92.6,110.1 95.9,97.9 98.0,92.0 103.1,80.5 109.4,69.6 116.7,59.5 125.1,50.1 134.5,41.7 144.6,34.4 150.0,31.1 161.2,25.4 172.9,20.9 185.1,17.6 197.5,15.7 210.0,15.0 222.5,15.7 234.9,17.6 247.1,20.9 253.0,23.0 264.5,28.1 275.4,34.4 285.5,41.7 294.9,50.1 299.2,54.7 307.1,64.5 313.9,75.0 316.9,80.5 322.0,92.0 325.9,103.9 328.5,116.2 329.3,122.5 330.0,135.0 329.3,147.5 327.4,159.9 324.1,172.1 322.0,178.0 316.9,189.5 313.9,195.0 282.7,177.0Z"/><path class="m-n" fill-rule="evenodd" d="M251.6,159.0 254.8,152.2 257.0,145.0 257.9,137.5 257.9,132.5 257.0,125.0 254.8,117.8 252.8,113.2 248.8,106.8 243.9,101.1 240.2,97.7 234.0,93.4 227.2,90.2 222.4,88.6 215.0,87.3 207.5,87.1 202.5,87.6 197.6,88.6 192.8,90.2 188.2,92.2 181.8,96.2 176.1,101.1 172.7,104.8 169.7,108.9 167.2,113.2 165.2,117.8 163.0,125.0 162.1,132.5 162.1,137.5 162.6,142.5 163.6,147.4 165.2,152.2 168.4,159.0 137.3,177.0 135.2,173.1 131.6,165.1 128.9,156.7 127.0,148.1 126.5,143.8 126.0,135.0 126.5,126.2 127.8,117.5 130.1,109.0 131.6,104.9 135.2,96.9 139.6,89.3 144.7,82.1 150.6,75.6 157.1,69.7 160.6,67.0 168.0,62.3 175.8,58.3 184.0,55.1 192.5,52.8 196.9,52.0 205.6,51.1 214.4,51.1 223.1,52.0 231.7,53.9 240.1,56.6 248.1,60.2 255.7,64.6 259.4,67.0 266.2,72.6 269.4,75.6 275.3,82.1 280.4,89.3 284.8,96.9 288.4,104.9 289.9,109.0 292.2,117.5 293.0,121.9 293.9,130.6 293.9,139.4 293.0,148.1 292.2,152.5 289.9,161.0 288.4,165.1 284.8,173.1 282.7,177.0Z"/><path class="m-si" fill-rule="evenodd" d="M0.0,247.2 0.0,231.6 420.0,231.6 420.0,247.2ZM295.7,167.9 291.8,176.7 287.0,185.0 281.3,192.8 274.9,199.9 267.8,206.3 264.0,209.3 255.9,214.5 247.3,218.9 238.4,222.3 229.1,224.8 224.4,225.7 214.8,226.7 205.2,226.7 195.6,225.7 186.2,223.7 177.1,220.7 168.3,216.8 160.0,212.0 152.2,206.3 145.1,199.9 138.7,192.8 133.0,185.0 130.5,180.9 126.1,172.3 122.7,163.4 120.2,154.1 118.7,144.6 118.3,139.8 118.3,130.2 119.3,120.6 121.3,111.2 124.3,102.1 128.2,93.3 133.0,85.0 135.7,81.0 141.8,73.6 148.6,66.8 156.0,60.7 164.1,55.5 172.7,51.1 181.6,47.7 190.9,45.2 200.4,43.7 205.2,43.3 214.8,43.3 224.4,44.3 233.8,46.3 242.9,49.3 251.7,53.2 260.0,58.0 267.8,63.7 274.9,70.1 281.3,77.2 287.0,85.0 289.5,89.1 293.9,97.7 297.3,106.6 299.8,115.9 301.3,125.4 301.7,130.2 301.7,139.8 300.7,149.4 298.7,158.8ZM282.5,111.5 279.6,104.0 276.0,96.9 271.6,90.2 266.6,84.0 261.0,78.4 254.8,73.4 248.1,69.0 241.0,65.4 233.5,62.5 229.7,61.4 221.9,59.7 214.0,58.9 206.0,58.9 198.1,59.7 190.3,61.4 182.7,63.9 175.4,67.1 168.5,71.1 162.0,75.8 156.1,81.1 150.8,87.0 146.1,93.5 144.0,96.9 140.4,104.0 137.5,111.5 135.5,119.2 134.2,127.0 133.8,135.0 134.2,143.0 135.5,150.8 136.4,154.7 138.9,162.3 142.1,169.6 146.1,176.5 150.8,183.0 156.1,188.9 162.0,194.2 168.5,198.9 175.4,202.9 179.0,204.6 186.5,207.5 194.2,209.5 202.0,210.8 210.0,211.2 218.0,210.8 221.9,210.3 229.7,208.6 237.3,206.1 244.6,202.9 251.5,198.9 258.0,194.2 263.9,188.9 266.6,186.0 271.6,179.8 276.0,173.1 279.6,166.0 282.5,158.5 284.5,150.8 285.8,143.0 286.2,135.0 285.8,127.0 284.5,119.2Z"/><path class="m-heater" fill-rule="evenodd" d="M137.1,192.7 132.0,185.7 127.1,177.2 123.2,168.3 120.2,159.1 119.0,154.3 117.5,144.7 117.0,135.0 117.5,125.3 119.0,115.7 121.6,106.3 125.0,97.2 129.5,88.5 132.0,84.3 137.7,76.5 144.2,69.2 151.5,62.7 159.3,57.0 167.8,52.1 176.7,48.2 185.9,45.2 190.7,44.0 200.3,42.5 210.0,42.0 219.7,42.5 229.3,44.0 238.7,46.6 247.8,50.0 256.5,54.5 264.7,59.8 268.5,62.7 275.8,69.2 282.3,76.5 285.2,80.3 290.5,88.5 295.0,97.2 296.8,101.7 299.8,110.9 301.0,115.7 302.5,125.3 302.9,130.1 302.9,139.9 302.5,144.7 301.0,154.3 298.4,163.7 296.8,168.3 292.9,177.2 288.0,185.7 282.9,192.7 302.5,212.2 287.2,227.5 255.4,195.7 265.7,185.2 270.7,179.1 272.9,175.8 275.0,172.5 278.5,165.5 280.0,161.9 282.4,154.4 283.4,150.6 284.6,142.8 284.9,138.9 284.9,131.1 284.6,127.2 283.4,119.4 281.3,111.8 280.0,108.1 278.5,104.5 275.0,97.5 270.7,90.9 268.3,87.8 263.0,82.0 257.2,76.7 250.8,72.1 244.0,68.2 236.9,65.0 233.2,63.7 225.6,61.6 217.8,60.4 213.9,60.1 206.1,60.1 202.2,60.4 194.4,61.6 186.8,63.7 183.1,65.0 179.5,66.5 172.5,70.0 169.2,72.1 162.8,76.7 157.0,82.0 154.3,84.8 151.7,87.8 147.1,94.2 145.0,97.5 141.5,104.5 138.7,111.8 136.6,119.4 135.4,127.2 135.1,131.1 135.1,138.9 135.9,146.7 137.6,154.4 140.0,161.9 141.5,165.5 145.0,172.5 147.1,175.8 151.7,182.2 157.0,188.0 164.6,195.7 132.8,227.5 117.5,212.2Z"/><path class="m-metal" fill-rule="evenodd" d="M263.9,143.5 262.7,149.1 261.0,154.6 257.3,162.3 254.2,167.1 250.6,171.5 246.5,175.6 242.1,179.2 237.3,182.3 232.2,184.9 226.9,186.9 221.4,188.4 215.7,189.3 210.0,189.6 201.5,188.9 195.9,187.7 190.4,186.0 185.2,183.6 180.3,180.8 175.6,177.4 171.4,173.6 165.8,167.1 161.4,159.8 159.0,154.6 157.3,149.1 156.1,143.5 155.5,137.9 155.5,132.1 156.1,126.5 157.3,120.9 159.0,115.4 161.4,110.2 164.2,105.3 167.6,100.6 171.4,96.4 177.9,90.8 185.2,86.4 190.4,84.0 195.9,82.3 201.5,81.1 207.1,80.5 212.9,80.5 218.5,81.1 226.9,83.1 232.2,85.1 237.3,87.7 242.1,90.8 246.5,94.4 250.6,98.5 254.2,102.9 258.6,110.2 261.0,115.4 262.7,120.9 263.9,126.5 264.5,132.1 264.5,137.9ZM313.6,181.1 317.8,170.0 320.9,158.6 322.8,146.9 323.4,135.0 322.8,123.1 320.9,111.4 319.5,105.6 315.9,94.4 311.0,83.5 305.1,73.2 298.1,63.6 290.2,54.8 281.4,46.9 271.8,39.9 261.5,34.0 256.1,31.4 250.6,29.1 239.4,25.5 227.7,23.0 221.9,22.2 215.9,21.8 204.1,21.8 198.1,22.2 186.4,24.1 175.0,27.2 169.4,29.1 158.5,34.0 153.3,36.8 148.2,39.9 138.6,46.9 134.1,50.7 125.7,59.1 118.3,68.3 111.8,78.3 109.0,83.5 104.1,94.4 100.5,105.6 99.1,111.4 97.2,123.1 96.6,135.0 97.2,146.9 98.0,152.7 100.5,164.4 104.1,175.6 109.0,186.5 111.8,191.7 98.8,199.2 95.6,193.3 90.1,181.0 86.0,168.2 83.2,155.1 81.8,141.7 81.6,135.0 82.3,121.6 84.4,108.3 87.9,95.3 92.7,82.8 98.8,70.8 106.1,59.5 110.2,54.2 119.2,44.2 129.2,35.2 140.1,27.3 151.7,20.6 164.0,15.1 170.3,12.9 183.3,9.4 196.6,7.3 210.0,6.6 223.4,7.3 236.7,9.4 249.7,12.9 262.2,17.7 274.2,23.8 285.5,31.1 295.9,39.6 305.4,49.1 313.9,59.5 321.2,70.8 327.3,82.8 332.1,95.3 335.6,108.3 337.7,121.6 338.4,135.0 337.7,148.4 335.6,161.7 332.1,174.7 327.3,187.2 321.2,199.2 308.2,191.7Z"/></symbol></svg>
+<header class="page-head has-art">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../../index.html#course">Course</a>        <i>·</i> Chapter 2</p>
+      <h1 class="display page-title" data-words aria-label="The device"><span class="w" style="--n:0">The</span> <span class="w" style="--n:1">device</span></h1>
+<p class="page-sub">Drawing a heater-tuned ring modulator, and checking it</p>      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>28 min read</span>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/docs/device.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+    <div class="page-art" aria-hidden="true"><svg class="glyph" viewBox="0 0 134.6 100"><use href="#g-active-ring_modulator" width="100%" height="100%"/></svg></div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#1-the-device-in-one-picture"><i aria-hidden="true"></i>1. The device in one picture</a></li>
+        <li><a href="#2-the-design-decisions"><i aria-hidden="true"></i>2. The design decisions</a></li>
+        <li><a href="#3-how-the-builder-is-organised"><i aria-hidden="true"></i>3. How the builder is organised</a></li>
+        <li><a href="#4-the-layers-in-the-order-of-the-figure"><i aria-hidden="true"></i>4. The layers, in the order of the figure</a></li>
+        <li><a href="#5-lessons-the-code-carries"><i aria-hidden="true"></i>5. Lessons the code carries</a></li>
+        <li><a href="#6-parameters-and-what-the-builder-rejects"><i aria-hidden="true"></i>6. Parameters and what the builder rejects</a></li>
+        <li><a href="#7-the-design-rule-check"><i aria-hidden="true"></i>7. The design-rule check</a></li>
+        <li><a href="#8-writing-the-gds-for-the-simulator"><i aria-hidden="true"></i>8. Writing the GDS for the simulator</a></li>
+        <li><a href="#9-the-tests-that-guard-the-layout"><i aria-hidden="true"></i>9. The tests that guard the layout</a></li>
+        <li><a href="#check-yourself"><i aria-hidden="true"></i>Check yourself</a></li>
+        <li><a href="#exercises"><i aria-hidden="true"></i>Exercises</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>This chapter draws one device from first principles. The device is a microring modulator. A
+ring is a closed <span class="gloss" tabindex="0" data-def="A silicon core that stands on a thin slab of the same silicon. The slab lets doped regions and contacts reach the core.">rib waveguide</span> next to a straight bus. A PN junction in the ring changes the
+refractive index when a voltage is applied, and a heater above the ring shifts the resonance
+with heat. The layout comes from one Python file, <code>devices/ring_modulator_builder.py</code>, which uses the process
+defined in chapter 1, <code>gsip_technology.py</code>.</p>
+<p>By the end you should be able to:</p>
+<ul>
+<li>say why every polygon of the device is where it is;</li>
+<li>change the radius, the gap or the angles, and keep the device clean in the <span class="gloss" tabindex="0" data-def="An automatic check that a layout keeps the minimum widths, spaces and overlaps that the process can make.">design-rule check</span>;</li>
+<li>write a builder for your own device in the same style;</li>
+<li>run a design-rule check (DRC) and read its output.</li>
+</ul>
+<p>Two words first. A <strong>DRC</strong> is a program that measures a layout against a list of rules, such as
+the minimum width of a wire or the enclosure of a via. A <strong><span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span></strong> file is the standard binary
+file that holds mask layouts. Each polygon in it sits on a layer, identified by two numbers,
+<code>layer/datatype</code>.</p>
+<p>Commands in this chapter run from the repository root, with the environment made by <code>uv</code>.</p>
+<h2 id="1-the-device-in-one-picture">1. The device in one picture <a class="here" href="#1-the-device-in-one-picture" aria-label="Link to this section">#</a></h2>
+<figure class="fig fig-paper fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/assets/ring_modulator_layout.webp" width="2881" height="1700" alt="The ring modulator in five panels: the whole device with its pads, the silicon and implants, the contacts, metal 1 and heater, via 1 with metal 2, and all layers together." loading="lazy" decoding="async"></button><figcaption><strong>Figure 1.</strong> The device taken apart, layer group by layer group. Panel a shows the whole device
+with the five pads. Panels b to e zoom into the ring and add one group of layers at a time. The
+figure is drawn from <code>devices/gds/ring_modulator.gds</code>, so every number in it comes from the layout.</figcaption></figure>
+<p>Read the device as a stack of jobs. Each part has one job, and each job uses one or two layers.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>part</th>
+<th>layers</th>
+<th>job</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ring</td>
+<td>WG, SLAB90, N, P, NP, PP, NPP, PPP</td>
+<td>Guides the light around a 10 µm circle. The arc of 240° carries the PN junction.</td>
+</tr>
+<tr>
+<td>bus</td>
+<td>WG, SLAB90</td>
+<td>The straight waveguide that feeds light past the ring. Ports o1 (in) and o2 (through).</td>
+</tr>
+<tr>
+<td>coupler</td>
+<td>WG, SLAB90 (where the two slabs meet)</td>
+<td>The 0.37 µm gap where the ring and bus cores run close enough to exchange light.</td>
+</tr>
+<tr>
+<td>contact vias</td>
+<td>VIAC</td>
+<td>Connect the implants of the junction to metal 1.</td>
+</tr>
+<tr>
+<td>metal 1 disc and arc</td>
+<td>M1</td>
+<td>The electrodes of the junction. The disc inside the ring is signal (S). The arc outside is ground (G).</td>
+</tr>
+<tr>
+<td>heater</td>
+<td>HEATER</td>
+<td>A TiN film above the core, 270° of arc. Resistive, so current through it heats the core.</td>
+</tr>
+<tr>
+<td>via 1</td>
+<td>VIA1</td>
+<td>Connects metal 1 and the heater to metal 2.</td>
+</tr>
+<tr>
+<td>metal 2</td>
+<td>M2</td>
+<td>Routes the electrodes and the heater to the pads, 6 µm wide.</td>
+</tr>
+<tr>
+<td>via 2</td>
+<td>VIA2</td>
+<td>Connects metal 2 to the pads.</td>
+</tr>
+<tr>
+<td>pads</td>
+<td>M3, PADOPEN</td>
+<td>Five 80 µm pads for probing or bonding. G S G in the north, H H in the south.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The layer numbers are in the <code>LayerMapGSiP</code> class of <code>gsip_technology.py</code>, which chapter 1
+explains. The layer names in this table are the names the code uses.</p>
+<h2 id="2-the-design-decisions">2. The design decisions <a class="here" href="#2-the-design-decisions" aria-label="Link to this section">#</a></h2>
+<p>A layout is a list of decisions. For each decision the table gives the value, the reason and the
+place where the decision is tested later in the course. Read the reason as the question a student
+would ask. The simulation column points to the chapter 4 step that checks the decision.</p>
+<div class="table table-wide" style="--cols:4"><table>
+<thead>
+<tr>
+<th>decision</th>
+<th class="long">value</th>
+<th class="long">reason</th>
+<th class="long">tested later</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ring radius</td>
+<td class="long">10 µm (circumference 62.83 µm)</td>
+<td class="long">The rule <code>rib_<wbr>bend_<wbr>radius</code> in <code>DESIGN_RULES</code> is 10 µm. It is a teaching value, and the builder refuses a smaller ring. Tighter bends lose much more light.</td>
+<td class="long">Step 2: bend loss is 15.2 dB/cm at 4 µm, 0.56 dB/cm at 5 µm, and below the solver floor from 6 µm up.</td>
+</tr>
+<tr>
+<td>rib waveguide</td>
+<td class="long">0.5 µm core, 220 nm, on a 90 nm slab 6 µm wide</td>
+<td class="long">A rib keeps a slab for the implants and the contacts.</td>
+<td class="long">Step 2: at 0.5 µm the second TE mode (TE1) is guided, but barely: n<sub>eff</sub> 2.115 against the slab mode 2.104.</td>
+</tr>
+<tr>
+<td>PN junction</td>
+<td class="long">240° of the ring, centred on north, 41.89 µm (67 %)</td>
+<td class="long">Most of the ring is modulated, the bottom stays free for the bus.</td>
+<td class="long">Step 3: the junction is 5 nm from the drawn position.</td>
+</tr>
+<tr>
+<td>coupler undoped</td>
+<td class="long">no implant at the bottom of the ring</td>
+<td class="long">The implants stop short of the bus side, so the coupler region has no doping.</td>
+<td class="long">Steps 1 and 6: the coupling and the loss are computed for the layout as drawn.</td>
+</tr>
+<tr>
+<td>n inside, p outside</td>
+<td class="long">n (signal) inside the ring, p (ground) outside</td>
+<td class="long">The signal disc is the inner electrode, the ground arc is the outer one.</td>
+<td class="long">Step 3: n core at 4.977e17 against 5e17 in the process.</td>
+</tr>
+<tr>
+<td>contact vias</td>
+<td class="long">0.5 µm squares, near edge 1.9 µm from the core centre line</td>
+<td class="long">The via sits 0.65 µm inside the N++ edge and 0.6 µm from the slab edge, so both margins hold.</td>
+<td class="long">Step 3: the doping seen by the solver matches the process within 0.5 %.</td>
+</tr>
+<tr>
+<td>metal 1 disc and arc</td>
+<td class="long">disc edge 1.6 µm inside the core centre line, arc from 1.6 µm to 3.6 µm outside</td>
+<td class="long">The metal keeps 0.8 µm from the heater, and the contact vias lie inside the metal.</td>
+<td class="long">Step 4: the electrodes cost 21 % of the heater's efficiency.</td>
+</tr>
+<tr>
+<td>TiN heater</td>
+<td class="long">arc 1.6 µm wide above the core, 270°, free filament 44.72 µm, 280 Ω</td>
+<td class="long">The free filament is 71 % of the ring: the 270° arc less the two landings. The landings are where via 1 connects it.</td>
+<td class="long">Step 4: 2.35 K/mW in the heated section. Step 5: 123.6 pm/mW for the ring.</td>
+</tr>
+<tr>
+<td>metal 1 to heater distance</td>
+<td class="long">0.8 µm in the layout, 0.6 µm rule</td>
+<td class="long">The two films lie in one plane. They must not touch or come close.</td>
+<td class="long">DRC: 0 errors (section 7).</td>
+</tr>
+<tr>
+<td>metal 2 routing</td>
+<td class="long">6 µm wide wires, S crosses the ring</td>
+<td class="long">The signal must reach the pad in the north, across the heater and metal 1.</td>
+<td class="long">Layer order: metal 2 is above both.</td>
+</tr>
+<tr>
+<td>GSG pads</td>
+<td class="long">80 µm, 100 µm pitch, 95 µm from the centre</td>
+<td class="long">Three pads in a row give a ground-signal-ground arrangement for the junction.</td>
+<td class="long">Not simulated: the circuit model has no RF model of pads.</td>
+</tr>
+<tr>
+<td>two heater pads</td>
+<td class="long">H1, H2 south, 80 µm</td>
+<td class="long">The heater needs two contacts, one at each landing.</td>
+<td class="long">Step 4: 10 mW needs 1.67 V and 6.0 mA in the free filament.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The question &quot;why is the heater not on metal 1?&quot; comes up first. The answer is in the process.
+The heater is a thin film (TiN, 0.15 µm thick, from z = 1.10 µm to 1.25 µm). Metal 1 is an
+aluminium layer of 0.7 µm, from z = 1.10 µm to 1.80 µm. Both start on the same oxide surface.
+A heater is a resistor: current must flow through its filament from one landing to the other. If
+metal 1 touched the heater, it would short the filament. The builder keeps 0.8 µm between the two,
+and the DRC requires 0.6 µm. This is why the metal 1 electrodes stop short of the heater, and why
+the heater is an arc of its own.</p>
+<p>The other question is &quot;why two descriptions of one process?&quot; The layout needs geometry and rules.
+The simulator needs thicknesses, materials and doping. Chapter 3 writes the same process as tables
+for the simulator. Both use the same numbers. Chapter 1 explains where those numbers come from.</p>
+<h2 id="3-how-the-builder-is-organised">3. How the builder is organised <a class="here" href="#3-how-the-builder-is-organised" aria-label="Link to this section">#</a></h2>
+<p><code>devices/ring_modulator_builder.py</code> has five cells and a set of helpers. Each cell is a function decorated with
+<code>@gf.cell</code>. A cell is built once and cached. The cells are:</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>cell</th>
+<th>what it draws</th>
+<th>ports</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ring</code></td>
+<td>the closed ring, the slab of the ring and the six implants</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>bus</code></td>
+<td>a straight rib waveguide, 120 µm long, centred on the origin</td>
+<td>o1, o2</td>
+</tr>
+<tr>
+<td><code>pn_contacts</code></td>
+<td>the contact vias, metal 1 disc and arc, and via 1 on the disc and the arc</td>
+<td>S, G1, G2 (on metal 2)</td>
+</tr>
+<tr>
+<td><code>heater</code></td>
+<td>the TiN arc and its two landings, with via 1 on each landing</td>
+<td>H1, H2 (on metal 2)</td>
+</tr>
+<tr>
+<td><code>ring_modulator</code></td>
+<td>assembles the four cells above, places the bus, draws the metal 2 traces and the pads</td>
+<td>G1, S, G2, H1, H2 (on metal 3), o1, o2</td>
+</tr>
+</tbody>
+</table></div>
+<p>The device cell is the one you call. The others are its parts. Here is how <code>ring_modulator</code>
+assembles them. These lines are quoted from the file:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Component</span><span class="p">()</span>
+<span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">ring</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">pn_angle</span><span class="o">=</span><span class="n">pn_angle</span><span class="p">,</span> <span class="n">p_inside</span><span class="o">=</span><span class="n">p_inside</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">bus</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">bus_length</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+<span class="n">b</span><span class="o">.</span><span class="n">dmovey</span><span class="p">(</span><span class="n">y_bus</span><span class="p">)</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">pn_contacts</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">pn_angle</span><span class="o">=</span><span class="n">pn_angle</span><span class="p">)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">heater</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">heater_angle</span><span class="o">=</span><span class="n">heater_angle</span><span class="p">)</span>
+</code></pre></div>
+<p>The bus is moved down with <code>dmovey(y_bus)</code>. <code>y_bus</code> is the height of the bus centre line,
+<code>-(radius + width + gap)</code>. The top edge of the bus core then sits <code>gap</code> below the outer edge of the
+ring core. The gap is the edge-to-edge distance.</p>
+<p>The <code>ring</code> cell builds its geometry in one extrusion:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_angles</span><span class="p">(</span><span class="n">pn_angle</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">passive</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">get_cross_section</span><span class="p">(</span><span class="s2">"rib"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">width_slab</span><span class="o">=</span><span class="n">SLAB_WIDTH</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">)</span>
+<span class="n">loop</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">extrude</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">_arc_points</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="mf">269.5</span><span class="p">,</span> <span class="mf">630.5</span><span class="p">)),</span> <span class="n">cross_section</span><span class="o">=</span><span class="n">passive</span><span class="p">)</span>
+</code></pre></div>
+<p><code>_angles</code> turns the angles around north into start and end angles. Read it once. The angle 90° is
+north, and each angle is measured counter-clockwise from the east. A <code>pn_angle</code> of 240° gives
+<code>a0 = -30</code> and <code>a1 = 210</code>, an arc from south-east to south-west through north.</p>
+<p>Helpers that you will reuse in your own builder:</p>
+<ul>
+<li><code>_arc_points(radius, a0, a1)</code> returns points on a circle, at 0.5° steps.</li>
+<li><code>_sector(r0, r1, a0, a1)</code> returns an annular sector, the shape of a heater arc.</li>
+<li><code>_via_row(c, layer, radius, a0, a1, size, pitch)</code> places squares along an arc (section 5).</li>
+</ul>
+<p>Two more are in <code>devices/wiring.py</code>, which the builders of the library share:</p>
+<ul>
+<li><code>box(centre, radial, tangential, angle)</code> returns a rectangle that points along an angle.</li>
+<li><code>wire(c, points, start_reach, end_reach=0.0, width=6.0)</code> draws a metal 2 wire through a list of
+points (section 5).</li>
+</ul>
+<h2 id="4-the-layers-in-the-order-of-the-figure">4. The layers, in the order of the figure <a class="here" href="#4-the-layers-in-the-order-of-the-figure" aria-label="Link to this section">#</a></h2>
+<p>The figure is built in the order a process is built: silicon first, then contacts, then the
+metals. Read each panel with the question &quot;what does this layer do?&quot;</p>
+<p><strong>Panel a, the whole device.</strong> Five pads of metal 3 (light squares), the metal 2 traces that
+connect them, and the ring with its bus in the middle. The thin inner outline of each pad is the
+passivation opening (PADOPEN). The letters G, S and H name the ports. The <code>in</code> and <code>through</code>
+labels mark o1 and o2.</p>
+<p><strong>Panel b, silicon and implants.</strong> The grey slab is SLAB90, the 90 nm slab of the rib. The core
+(WG) is drawn as an outline on top of it. The six implants are opaque and nested. On the n side,
+going outwards from the core: N (light blue), then N+ (NP), then N++ (NPP, dark blue). The p side
+is mirrored: P (light red), then P+ (PP), then P++ (PPP, dark red). N covers the whole n side,
+N+ covers everything beyond 0.65 µm from the core centre, and N++ covers everything beyond
+1.25 µm. The nesting follows the cross-section <code>rib_pn</code> in <code>gsip_technology.py</code>.</p>
+<p><strong>Panel c, contacts, metal 1 and heater.</strong> Two rows of black squares are the contact vias
+(VIAC): one inside the ring, one outside. Metal 1 (yellow) is the disc inside and the arc outside.
+The purple arc is the heater (HEATER). Its landings reach out at the ends. The heater and metal 1
+start at the same height, z = 1.10 µm, but they are separate films, and the 0.8 µm distance keeps
+them apart.</p>
+<p><strong>Panel d, via 1 and metal 2.</strong> Dark squares are via 1 (VIA1). They land on metal 1 at the disc
+and the arc, and on the heater landings. Metal 2 (orange) carries the signal straight up over the
+ring, and the two ground wires sideways above the outer electrode, then up to their pads. The two
+heater wires leave the landings downwards, below this window. Panel a shows them crossing the bus
+to the heater pads.</p>
+<p><strong>Panel e, all layers.</strong> Every layer stacked, bottom to top, with opaque fills, so that a layer
+above hides the layers below it where they overlap. Metal 2 is drawn as an outline here so that
+the ring and the crossings stay visible. The outline of the signal wire crosses the heater, and
+the outlines of the heater wires cross the bus at the bottom.</p>
+<p>Metal 2 lies from z = 2.30 µm to 3.00 µm, which is 2.1 µm above the top of the core. The signal
+wire crosses the ring at that height, and the heater wires cross the bus. The figure is a plan
+view, so it cannot show this. The absorption of the metal 2 wires, and of the heater and the
+metal 1 electrodes, is not modelled in any simulation of this course. The mode solver window ends
+0.88 µm of oxide above the core, below these metals, and the optical results hold only for the
+structure as the simulations draw it.</p>
+<p>Because the figure shows one device, not a process, the colours follow the <span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span> colours of the
+layer table. The table in panel a is the legend for all five panels.</p>
+<h2 id="5-lessons-the-code-carries">5. Lessons the code carries <a class="here" href="#5-lessons-the-code-carries" aria-label="Link to this section">#</a></h2>
+<p>The comments and tests in the code teach more than the parameters do. Four of them are worth
+reading closely.</p>
+<p><strong>Exact polygons where the slabs meet, not a boolean clean-up.</strong> The ring slab is an annulus, and
+the bus slab is a band. Where the outer circle of the ring crosses the upper edge of the bus
+slab, the two outlines separate at a shallow angle. They leave a thin wedge of missing slab. The
+wedge is narrower than the minimum space of 0.3 µm, so the DRC would flag it. The function
+<code>_slab_fillets</code> fills each wedge with an explicit four-point polygon. The fillet overlaps both
+slabs, so that the merged outline has no seam.</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="k">for</span> <span class="n">fillet</span> <span class="ow">in</span> <span class="n">_slab_fillets</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">y_bus</span><span class="p">):</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">add_polygon</span><span class="p">(</span><span class="n">fillet</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">SLAB90</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">slab</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_region</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">SLAB90</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p>Why not let a boolean operation clean up the wedge? A union of two slabs gives an outline with
+many small vertices, and the result depends on the tolerance. Explicit fillets give the same
+outline each time, and a reader can check the numbers in the code.</p>
+<p><strong>An odd number of vias, so that one sits on the symmetry axis.</strong> The cross-section figures of
+chapter 4 cut the device at x = 0. A via must be on that line to show in every row. <code>_via_row</code>
+computes how many squares fit along the arc, then makes the count odd. An even count would leave
+the middle of the row empty:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="n">count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">//</span> <span class="n">pitch</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">count</span> <span class="o">%</span> <span class="mi">2</span>
+<span class="n">start</span> <span class="o">=</span> <span class="p">(</span><span class="n">length</span> <span class="o">-</span> <span class="p">(</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pitch</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+</code></pre></div>
+<p>The first line counts the squares that fit. The second line subtracts one when the count is even.
+The third line centres the row on the arc. The via centres are at 7.85 µm and 12.15 µm from the
+ring centre. Their near edges are 1.9 µm from the core centre line at 10 µm. The test
+<code>test_a_contact_via_sits_on_the_symmetry_axis</code> checks that both rows have a via at x = 0.</p>
+<p><strong>Constant-width Manhattan wires on metal 2.</strong> <code>wire</code> draws each segment as a rectangle of the
+same width, with square corners. A diagonal segment is refused with an error. A wire of one width
+along its whole length is easy to check, and its width matches the width of the port.</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-9</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"a wire segment must be horizontal or vertical"</span><span class="p">)</span>
+</code></pre></div>
+<p>The two free ends of a wire need care. A wire that ran half its width past its last via 1 can
+come too close to a neighbour. In one tested variant with a 120° junction, such a wire came to
+0.83 µm from its neighbour, below the 1.0 µm metal 2 space. So each free end stops where the
+enclosure rule needs it to stop, plus 0.1 µm. The function <code>reach_beyond</code> measures that distance
+from the corners of the via 1 squares, rotated squares included.</p>
+<p><strong>One more lesson in the ring itself.</strong> The ring is extruded as one closed path, from 269.5° to
+630.5°. The path overlaps itself by 1°, and the result is merged. This removes the seam where a
+closed path starts and ends. The implant arcs are extruded separately and then clipped to the
+slab, because the end faces of two extrusions can differ by 1 nm.</p>
+<h2 id="6-parameters-and-what-the-builder-rejects">6. Parameters and what the builder rejects <a class="here" href="#6-parameters-and-what-the-builder-rejects" aria-label="Link to this section">#</a></h2>
+<p><code>ring_modulator</code> takes these parameters. Each one has a default that matches the simulated
+device.</p>
+<div class="table" style="--cols:4"><table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>default</th>
+<th>what it changes</th>
+<th>checked by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>radius</code></td>
+<td>10.0 µm</td>
+<td>ring radius, centre line</td>
+<td>at least the rib bend radius of 10 µm</td>
+</tr>
+<tr>
+<td><code>width</code></td>
+<td>0.5 µm</td>
+<td>core width of ring and bus</td>
+<td>none directly</td>
+</tr>
+<tr>
+<td><code>gap</code></td>
+<td>0.37 µm</td>
+<td>edge-to-edge gap between ring and bus</td>
+<td>at least the minimum space of 0.2 µm</td>
+</tr>
+<tr>
+<td><code>pn_angle</code></td>
+<td>240.0°</td>
+<td>the doped arc, centred on north</td>
+<td>heater clearance to the outer electrode</td>
+</tr>
+<tr>
+<td><code>heater_angle</code></td>
+<td>270.0°</td>
+<td>the heater arc, centred on north</td>
+<td>heater clearance to the electrode and to the bus</td>
+</tr>
+<tr>
+<td><code>p_inside</code></td>
+<td>False</td>
+<td>False: n inside. True: p inside.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>bus_length</code></td>
+<td>120.0 µm</td>
+<td>length of the bus, ports at its ends</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>pad_size</code></td>
+<td>80.0 µm</td>
+<td>pad edge length</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>pad_pitch</code></td>
+<td>100.0 µm</td>
+<td>spacing of pads within a row</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>pad_distance</code></td>
+<td>95.0 µm</td>
+<td>distance of the pad centres from the ring centre</td>
+<td>none</td>
+</tr>
+</tbody>
+</table></div>
+<p>The builder refuses four kinds of input. Each one raises a <code>ValueError</code>, with a message that
+tells you what to change. The checks run in this order, and the first one that fails raises.</p>
+<ul>
+<li><strong><code>radius ... is below the rib bend radius</code>.</strong> The radius must be at least 10 µm, the value of
+<code>DESIGN_RULES[&quot;rib_bend_radius&quot;]</code>. For <code>radius=8.0</code> the message is <code>radius 8.0 um is below the rib bend radius, 10.0 um (gsip_technology.DESIGN_RULES['rib_bend_radius'])</code>.</li>
+<li><strong><code>heater_angle must exceed pn_angle by more</code>.</strong> The outer electrode of metal 1 ends at
+<code>pn_angle</code>. The heater landing must stay clear of it by at least 0.8 µm (the rule of 0.6 µm
+plus 0.2 µm of margin). For <code>pn_angle=240.0</code> and <code>heater_angle=240.0</code> the message is <code>heater_angle must exceed pn_angle by more: -1.20 um between the outer electrode and a heater landing, need 0.80 um</code>. The message gives the clearance it found.</li>
+<li><strong><code>gap ... is below the minimum space of the waveguide layer</code>.</strong> The gap must be at least 0.2 µm.
+For <code>gap=0.15</code> the message is <code>gap 0.15 um is below the minimum space of the waveguide layer</code>.</li>
+<li><strong><code>the clearance between the heater and the bus core is ...</code>.</strong> The heater is drawn as a
+polygon, with its two landings, and the lowest point of that polygon must lie at least 0.5 µm
+above the top edge of the bus core. The message gives the measured clearance, the rule, the
+lowest point of the heater and the top of the bus core. For <code>pn_angle=280.0</code> and
+<code>heater_angle=320.0</code> it reads: <code>the clearance between the heater and the bus core is -1.44 um, the rule needs 0.50 um: the lowest point of the heater (heater_angle 320.0, radius 10.0) is at y = -12.06 um, and the top of the bus core, set by the radius and the gap 0.37 um, is at y = -10.62 um</code>.</li>
+</ul>
+<p>At the defaults the two clearance checks leave these margins. The metal 1 arc and the nearest
+heater landing are 1.84 µm apart, against 0.8 µm required. The lowest point of the heater is at
+y = −9.62 µm, and the top of the bus core at y = −10.62 µm, so the heater clears the bus by
+1.00 µm, against 0.50 µm required. With the pn angle fixed at 240° and a gap of 0.37 µm, the
+heater angle can grow until the bus check fails, at about 277.6°. It can shrink until the
+electrode check fails, at about 259.8°. Between these two limits the device builds. At a gap of
+0.2 µm the bus clearance is 0.83 µm, so that gap also builds with the default heater.</p>
+<p>The builder does not check the metal 2 wires against each other or against the ring. Only the DRC
+does that, on the finished layout.</p>
+<h2 id="7-the-design-rule-check">7. The design-rule check <a class="here" href="#7-the-design-rule-check" aria-label="Link to this section">#</a></h2>
+<p>A DRC does not know what a device is for. It knows rules. <code>gsip_drc.py</code> has a handful of them, the
+ones a device builder trips over first. A foundry's rule deck has hundreds of rules. This one is
+small on purpose, so that &quot;the layout passes DRC&quot; means something in the exercises.</p>
+<p>The check covers four families of rules:</p>
+<ol>
+<li><strong>Width and space</strong> of each mask layer, from <code>MIN_WIDTH_SPACE</code>. For example, the core must be
+at least 0.2 µm wide and at least 0.2 µm from another core. The heater film must be 0.8 µm wide.</li>
+<li><strong>Enclosures.</strong> A contact via must lie inside N++ or P++ with 0.2 µm of margin, and inside
+metal 1 with 0.1 µm. Via 1 must lie inside metal 1 or the heater with 0.2 µm, and inside metal 2
+with 0.2 µm. Via 2 and the pad opening have their own margins.</li>
+<li><strong>Rules between layers.</strong> Metal 1 and the heater must not touch and must keep 0.6 µm. N++ and
+P++ must not overlap, and N and P must not overlap.</li>
+<li><strong>Warnings</strong>, which do not fail the check. An implant drawn where there is no silicon, and an
+N++ or P++ implant closer than 0.4 µm to a waveguide core (optical loss).</li>
+</ol>
+<p>The rules are read from <code>DESIGN_RULES</code> and <code>MIN_WIDTH_SPACE</code> in <code>gsip_technology.py</code>. The DRC
+does not hold a copy of the numbers, so a change of a rule in one place changes the check. The
+check holds two small tolerances of its own, which the code explains: a 5 nm tolerance on the
+silicon outlines, and a 1 nm shrink on the N and P overlap, so that the junction itself does not
+count as an overlap.</p>
+<p><strong>Run it on a component.</strong> This is the usual way. The check reads the component directly:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="kn">from</span><span class="w"> </span><span class="nn">devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">ring_modulator_builder</span> <span class="k">as</span> <span class="n">rm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gsip_drc</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_drc</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">ring_modulator</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_drc</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+<p>The default device prints <code>DRC passed: 0 errors, 0 warnings</code>. Pass <code>rdb_path=</code> to save the
+markers, as the builder does with <code>build/drc/ring_modulator.lyrdb</code>.</p>
+<p><strong>Run it on a GDS file.</strong> This is the way to check any layout, including one from another tool:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>gsip_drc.py<span class="w"> </span>devices/gds/ring_modulator.gds
+</code></pre></div>
+<p>The check writes <code>ring_modulator_drc.lyrdb</code> next to the file. The exit code is 0 when the layout passes.</p>
+<p><strong>What the output means.</strong> The summary has one line for each rule that fired, with the number of
+places where it fired. The count is of distinct places, not of edge pairs. A rule that fires at
+one place counts as 1, even when the check finds several edges there.</p>
+<div class="code code-text"><pre><code>DRC FAILED: 7 errors, 1 warnings
+  error       1  WG: narrower than 0.2 um
+  error       1  WG: space smaller than 0.2 um
+  error       1  contact via not enclosed by metal 1 with 0.1 um margin
+  error       1  via 1 not enclosed by metal 1 or the heater with 0.2 um margin
+  error       1  via 1 not enclosed by metal 2 with 0.2 um margin
+  error       1  metal 1 closer than 0.6 um to the heater film
+  error       1  N++ overlaps P++
+  warning     1  implant drawn where there is no silicon
+</code></pre></div>
+<p>This is the actual output of the self-test. The self-test is the second way to run the check.</p>
+<p><strong>The self-test with planted violations.</strong> <code>gsip_drc.py --demo</code> builds a small layout with one
+violation per rule family, and checks that the DRC finds them. Each line in the output above
+corresponds to a planted shape:</p>
+<ul>
+<li>a core 0.15 µm wide (narrower than 0.2 µm);</li>
+<li>two cores 0.1 µm apart (space smaller than 0.2 µm);</li>
+<li>a contact via whose metal 1 reaches only 0.05 µm beyond it on one side;</li>
+<li>a via 1 that sticks out of the heater, with no metal 2 above it and no metal 1 under it;</li>
+<li>a metal 1 shape 0.2 µm from the heater;</li>
+<li>an N++ implant that overlaps a P++ implant;</li>
+<li>an N implant with no silicon under it (the warning).</li>
+</ul>
+<p>The self-test passes when at least seven error rules fire and the warning fires too.</p>
+<p><strong>Reading the marker file in KLayout.</strong> The DRC writes a KLayout report database (<code>.lyrdb</code>). Open
+the layout in KLayout and load the report in KLayout's marker browser. Each marker sits on the
+place where the rule failed. Each rule is a category, named <code>error: &lt;rule&gt;</code> or <code>warning: &lt;rule&gt;</code>.
+Use the markers when a count tells you that a rule failed but not where.</p>
+<p>A lone via row is a good first case to check. The snippet below draws nine contact vias on an
+arc, with no implant and no metal around them, and runs the check:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="kn">import</span><span class="w"> </span><span class="nn">gdsfactory</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gsip_technology</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">ring_modulator_builder</span> <span class="k">as</span> <span class="n">rm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gsip_drc</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_drc</span>
+
+<span class="nd">@gf</span><span class="o">.</span><span class="n">cell</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">contact_arc</span><span class="p">(</span><span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">a0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">a1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">120.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gf</span><span class="o">.</span><span class="n">Component</span><span class="p">:</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Component</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">"vias"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">_via_row</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">VIAC</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">rm</span><span class="o">.</span><span class="n">VIA_SIZE</span><span class="p">,</span> <span class="n">rm</span><span class="o">.</span><span class="n">VIA_PITCH</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">run_drc</span><span class="p">(</span><span class="n">contact_arc</span><span class="p">())</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</code></pre></div>
+<p>It prints <code>DRC FAILED: 18 errors, 0 warnings</code>, with one line for each of the two contact rules:
+nine places for <code>contact via not enclosed by N++ / P++ with 0.2 um margin</code> and nine for
+<code>contact via not enclosed by metal 1 with 0.1 um margin</code>. Each of the nine vias fails both rules.
+This is the point of the check: a via is not wrong by itself, but a via without the implant and
+the metal around it is.</p>
+<h2 id="8-writing-the-gds-for-the-simulator">8. Writing the GDS for the simulator <a class="here" href="#8-writing-the-gds-for-the-simulator" aria-label="Link to this section">#</a></h2>
+<p>Chapter 4 simulates the device in Lumerical. Lumerical reads one cell of one flat GDS file. The
+function <code>write_gds_for_lumerical</code> in <code>gsip_technology.py</code> writes that file. It places the
+component in a new cell, flattens it, names the cell and writes the file without the metadata
+cell that gdsfactory adds. The builder calls it at its end, through <code>write_device</code> in
+<code>devices/__init__.py</code>. Every builder of the device library ends with that function: it writes the
+layout, runs the DRC and draws a preview image.</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="n">gds</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">write_gds_for_lumerical</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">GDS</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.gds"</span><span class="p">,</span> <span class="n">cellname</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div>
+<p>Run the builder to make the file:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>devices/ring_modulator_builder.py
+</code></pre></div>
+<p>The command writes <code>devices/gds/ring_modulator.gds</code>, the DRC report <code>build/drc/ring_modulator.lyrdb</code>, and two
+preview images in <code>build/previews/</code>. It prints the lengths the simulations need, the file it wrote and the
+DRC summary:</p>
+<div class="code code-text"><pre><code>ring 62.832 um, PN section 41.888 um, heater 44.724 um
+GDS -&gt; devices/gds/ring_modulator.gds   ports: [&#x27;G1&#x27;, &#x27;S&#x27;, &#x27;G2&#x27;, &#x27;H1&#x27;, &#x27;H2&#x27;, &#x27;o1&#x27;, &#x27;o2&#x27;]
+DRC passed: 0 errors, 0 warnings
+</code></pre></div>
+<p>The <span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span> (chapter 3) and the GDS are loaded together into the <span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span>. The GDS gives
+the shapes, the process file gives the materials and the thicknesses. Neither file has the other's
+numbers. The simulation scripts contain no thickness, no material and no doping.</p>
+<p>The <code>info</code> dictionary carries the lengths the simulations need: <code>length_ring</code>, <code>length_pn</code> and
+<code>length_heater</code>. The heater length is the free filament. It is the arc less half a landing width
+(1.2 µm) at each end, 2.4 µm in all. The dictionary also holds <code>radius</code>, <code>width</code> and <code>gap</code>. The figure script
+reads the lengths from <code>info</code>, so they are computed once from the parameters.</p>
+<h2 id="9-the-tests-that-guard-the-layout">9. The tests that guard the layout <a class="here" href="#9-the-tests-that-guard-the-layout" aria-label="Link to this section">#</a></h2>
+<p><code>tests/test_layout.py</code> has eleven tests, and <code>tests/test_connectivity.py</code> has four test cases
+(three functions, one of them run for two values of <code>p_inside</code>). They run without Lumerical. Run
+them from the root:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_layout.py
+uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_connectivity.py
+</code></pre></div>
+<p>Each test guards one claim about the device.</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>test</th>
+<th>what it guarantees</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_default_ring_modulator_is_drc_clean</code></td>
+<td>The default device has no errors and no warnings, and the DRC writes its report.</td>
+</tr>
+<tr>
+<td><code>test_ports_and_info</code></td>
+<td>The seven ports exist, and the lengths in <code>info</code> match the geometry.</td>
+</tr>
+<tr>
+<td><code>test_device_uses_the_whole_back_end</code></td>
+<td>Sixteen layers are used, so no layer of the back end is left out by accident.</td>
+</tr>
+<tr>
+<td><code>test_gap_is_the_edge_to_edge_distance</code></td>
+<td>The gap is measured edge to edge, at 0.25 µm and 0.37 µm.</td>
+</tr>
+<tr>
+<td><code>test_a_contact_via_sits_on_the_symmetry_axis</code></td>
+<td>Both via rows have a via at x = 0, where the figure cuts the device.</td>
+</tr>
+<tr>
+<td><code>test_other_sizes_stay_drc_clean</code></td>
+<td>Radius 12, gap 0.25, angles 220 and 260, and <code>p_inside=True</code> all stay clean.</td>
+</tr>
+<tr>
+<td><code>test_rejected_parameters</code></td>
+<td>The refusals of section 6 are raised, with their messages.</td>
+</tr>
+<tr>
+<td><code>test_heater_clearance_is_measured_on_the_drawn_heater</code></td>
+<td>At a gap of 0.2 µm the device builds clean.</td>
+</tr>
+<tr>
+<td><code>test_parameter_sweep_builds_clean_or_is_refused</code></td>
+<td>A grid of radius, gap, angles and <code>p_inside</code>: each variant builds DRC clean with intact nets, or is refused with a stated reason.</td>
+</tr>
+<tr>
+<td><code>test_drc_finds_the_planted_violations</code></td>
+<td>The self-test finds the planted violations.</td>
+</tr>
+<tr>
+<td><code>test_drc_reads_a_gds_file</code></td>
+<td>The DRC gives the same result on a GDS file as on the component.</td>
+</tr>
+<tr>
+<td><code>test_pads_reach_the_junction_and_the_heater</code></td>
+<td>Traced through the vias, the signal pad reaches the inner implant and the ground pads reach the outer one, and the heater pads reach the heater film. Run for both polarities.</td>
+</tr>
+<tr>
+<td><code>test_three_nets_and_no_short</code></td>
+<td>The two ground pads share one net, the two heater pads share one, and signal, ground and heater are three different nets.</td>
+</tr>
+<tr>
+<td><code>test_every_via_lands_on_both_levels</code></td>
+<td>No via touches only one of the two levels it connects.</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>test_connectivity.py</code> does not look at the shapes alone. It follows the conductors through the
+vias listed in <code>LAYER_CONNECTIVITY</code> in <code>gsip_technology.py</code>. A DRC cannot see a wrong connection,
+for example a signal pad wired to the ground implant. This test can.</p>
+<p>When you change the builder, run the tests first. A failure in one test tells you which claim
+broke. The default device test is the main one: if it fails, a rule of the process is broken.</p>
+<h2 id="check-yourself">Check yourself <a class="here" href="#check-yourself" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>Why does the heater sit on its own arc instead of sharing the arc of metal 1? Give the reason
+from the process, not from the code.</li>
+<li>What happens to the layout if the bus is moved so that the gap is 0.15 µm? Which error message
+does the builder give, and where is the minimum set?</li>
+<li>Why does the builder place an odd number of contact vias on each row? Which test checks it?</li>
+<li>Where does a 0.6 µm rule between metal 1 and the heater come from, and which file holds it?</li>
+<li>A GDS file from another tool fails the DRC with <code>via 1 not enclosed by metal 2</code>. Which command
+gives you the marker positions?</li>
+</ol>
+<details>
+<summary>Answers</summary>
+<ol>
+<li>The heater is a resistive film on the same oxide surface as metal 1. If it touched metal 1, the
+metal would short the filament. The layout keeps 0.8 µm between them, and the DRC requires
+0.6 µm.</li>
+<li>The gap is below the minimum space of 0.2 µm, so <code>ring_modulator</code> raises
+<code>gap 0.15 um is below the minimum space of the waveguide layer</code>. The minimum is <code>MIN_WIDTH_SPACE</code>
+in <code>gsip_technology.py</code>, for the layer WG.</li>
+<li>So that one via sits on the axis x = 0, where the cross-sections of the figure are cut. The
+test <code>test_a_contact_via_sits_on_the_symmetry_axis</code> checks it.</li>
+<li><code>DESIGN_RULES[&quot;m1_to_heater&quot;]</code> in <code>gsip_technology.py</code>. The DRC reads it, and the builder reads
+it for its clearance check.</li>
+<li><code>uv run python gsip_drc.py chip.gds</code> writes <code>chip_drc.lyrdb</code>. Open the layout in KLayout and
+load that report in the marker browser.</li>
+</ol>
+</details>
+<h2 id="exercises">Exercises <a class="here" href="#exercises" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>
+<p><strong>Radius 12.</strong> Run <code>uv run python devices/ring_modulator_builder.py</code> after changing <code>radius</code> to 12.0 in the
+<code>ring_modulator</code> defaults in <code>devices/ring_modulator_builder.py</code>. Read the lengths printed on the first line and
+check them against the circumference, 2π × 12 µm. Run the DRC on the component and confirm
+that it passes. Then ask: how much room is there now between the heater landings and the bus?
+Work it out from <code>y_bus</code>, the radius and the lowest point of the heater, and compare the result
+with the 0.5 µm that the builder requires. Passing at radius 12 does not tell you the margin.</p>
+</li>
+<li>
+<p><strong>A gap sweep on one mask.</strong> Keep the mask fixed and change only the gap. In a Python shell at
+the repository root, run:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="kn">from</span><span class="w"> </span><span class="nn">devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">ring_modulator_builder</span> <span class="k">as</span> <span class="n">rm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gsip_drc</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_drc</span>
+
+<span class="k">for</span> <span class="n">gap</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.31</span><span class="p">,</span> <span class="mf">0.34</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">,</span> <span class="mf">0.40</span><span class="p">,</span> <span class="mf">0.43</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">gap</span><span class="p">,</span> <span class="n">run_drc</span><span class="p">(</span><span class="n">rm</span><span class="o">.</span><span class="n">ring_modulator</span><span class="p">(</span><span class="n">gap</span><span class="o">=</span><span class="n">gap</span><span class="p">))</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+<p>All seven pass with 0 errors and 0 warnings. Then compare the gaps with the <span class="gloss" tabindex="0" data-def="The ratio of the most to the least light at an output, usually in dB: how deep a switch or a modulator can turn the light off.">extinction</span> in
+chapter 4, step 6: 46 dB at 370 nm, and about 15 dB at 340 and at 400 nm. The DRC does not
+measure extinction. It only says the layout is legal. This is the point of the exercise: a
+legal gap is not a good gap.</p>
+</li>
+<li>
+<p><strong><code>p_inside=True</code>.</strong> Edit nothing. Build the device with <code>rm.ring_modulator(p_inside=True)</code> and
+run the DRC. It passes. Now look at the figure in panel b of <code>assets/ring_modulator_layout.png</code>, and think
+about which side of the junction the signal disc now sits on. The DRC checks enclosure by N++
+or P++ and does not check which side the signal is on. The CHARGE step of chapter 4 (step 3)
+would show it, because it simulates the doping as drawn. To return to the device that is
+simulated, pass <code>p_inside=False</code>, or change the default of <code>p_inside</code> in <code>devices/ring_modulator_builder.py</code>.</p>
+</li>
+<li>
+<p><strong>A heater angle that the builder rejects.</strong> Build the device with <code>pn_angle=240.0</code> and
+<code>heater_angle=240.0</code>. The builder raises <code>heater_angle must exceed pn_angle by more: -1.20 um between the outer electrode and a heater landing, need 0.80 um</code>. Explain in your own words why
+a heater of the same angle as the junction is refused. Then find the range of heater angles
+that the builder accepts for <code>pn_angle=240.0</code>, by trying values through
+<code>ring_modulator(heater_angle=...)</code>. The lower limit is set by the electrode check, at about
+259.8°. The upper limit is set by the bus check, at about 277.6°. Confirm both limits, and say
+which check gives each one.</p>
+</li>
+<li>
+<p><strong>Your own builder.</strong> Copy the <code>contact_arc</code> snippet of section 7 into a new file
+<code>devices/my_device_builder.py</code>. Take the first lines, with the imports, from
+<code>devices/strip_waveguide_builder.py</code>. Add a second cell that places a row of vias on the other
+side of the ring, and a <code>__main__</code> block that ends with <code>write_device</code>, as in section 8.
+Predict the DRC result before you run it, then check the marker file in KLayout.</p>
+</li>
+</ol>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<a class="card pager-prev" href="../pdk/index.html"><span>Previous</span><b>The PDK</b></a><a class="card pager-next" href="../process-file/index.html"><span>Next</span><b>The process file</b></a>
+</nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../pdk/index.html">1. The PDK</a><a href="index.html">2. The device</a><a href="../process-file/index.html">3. The process file</a><a href="../simulations/index.html">4. The simulations</a><a href="../your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../../devices/strip-waveguide/index.html">Strip waveguide</a><a href="../../devices/rib-waveguide/index.html">Rib waveguide</a><a href="../../devices/directional-coupler/index.html">Directional coupler</a><a href="../../devices/mmi1x2/index.html">1×2 MMI splitter</a><a href="../../devices/thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../../devices/index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../../circuits/index.html">The chip</a><a href="../../circuits/clements-mesh/index.html">Clements mesh</a><a href="../../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="../../more/cornerstone-soi220a/index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

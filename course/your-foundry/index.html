@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your foundry · photonics-layout-cookbook</title>
+<meta name="description" content="The first four chapters built one process twice: once as a gdsfactory technology for the layout, once as a Lumerical process file for the simulator.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/course/your-foundry/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Your foundry: porting the flow to a real PDK">
+<meta property="og:description" content="The first four chapters built one process twice: once as a gdsfactory technology for the layout, once as a Lumerical process file for the simulator.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/course/your-foundry/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/course-your-foundry.jpg?v=e79064b1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Your foundry, with a wafer whose dies are the devices of the library">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Your foundry: porting the flow to a real PDK","description":"The first four chapters built one process twice: once as a gdsfactory technology for the layout, once as a Lumerical process file for the simulator.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/course/your-foundry/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/course-your-foundry.jpg?v=e79064b1"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"Your foundry","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/course/your-foundry/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course" aria-current="true">Course</a>
+      <a href="../../devices/index.html">Devices</a>
+<a href="../../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+
+<header class="page-head">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../../index.html#course">Course</a>        <i>·</i> Chapter 5</p>
+      <h1 class="display page-title" data-words aria-label="Your foundry"><span class="w" style="--n:0">Your</span> <span class="w" style="--n:1">foundry</span></h1>
+<p class="page-sub">Porting the flow to a real PDK</p>      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>27 min read</span>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/docs/your_foundry.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#1-what-stays-and-what-changes"><i aria-hidden="true"></i>1. What stays and what changes</a></li>
+        <li><a href="#2-why-two-descriptions-of-one-process"><i aria-hidden="true"></i>2. Why two descriptions of one process</a></li>
+        <li><a href="#3-mapping-the-manual-to-this-repository"><i aria-hidden="true"></i>3. Mapping the manual to this repository</a></li>
+        <li><a href="#4-the-order-of-work"><i aria-hidden="true"></i>4. The order of work</a></li>
+        <li><a href="#5-the-validation-ladder"><i aria-hidden="true"></i>5. The validation ladder</a></li>
+        <li><a href="#6-what-a-real-process-has-that-the-teaching-one-lacks"><i aria-hidden="true"></i>6. What a real process has that the teaching one lacks</a></li>
+        <li><a href="#7-when-the-foundry-ships-its-own-layer-builder-process-file"><i aria-hidden="true"></i>7. When the foundry ships its own Layer Builder process file</a></li>
+        <li><a href="#8-keeping-nda-data-safe"><i aria-hidden="true"></i>8. Keeping NDA data safe</a></li>
+        <li><a href="#9-the-private-twin-and-the-public-repository"><i aria-hidden="true"></i>9. The private twin and the public repository</a></li>
+        <li><a href="#10-rehearsal-on-public-data-cornerstone-soi220a"><i aria-hidden="true"></i>10. Rehearsal on public data: CORNERSTONE SOI220A</a></li>
+        <li><a href="#check-yourself"><i aria-hidden="true"></i>Check yourself</a></li>
+        <li><a href="#exercises"><i aria-hidden="true"></i>Exercises</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>The first four chapters built one process twice: once as a gdsfactory technology for the layout,
+once as a Lumerical <span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span> for the simulator. Both descriptions were made from the same
+numbers. This chapter is about the day you hold the design manual of a real foundry, under a
+non-disclosure agreement (NDA), and have to make those two descriptions of its process.</p>
+<p>When you finish, you should be able to:</p>
+<ul>
+<li>copy this repository's flow into a private repository for your foundry;</li>
+<li>find each number you need in the manual, and know which file and symbol it goes into;</li>
+<li>build the two descriptions in a sensible order, and check each stage against something
+independent;</li>
+<li>keep the NDA material out of every public place.</li>
+</ul>
+<p>The examples use the teaching process of this repository: <code>gsip_technology.py</code> and its tables. For
+a rehearsal on a real public process, see the last section of this chapter.</p>
+<h2 id="1-what-stays-and-what-changes">1. What stays and what changes <a class="here" href="#1-what-stays-and-what-changes" aria-label="Link to this section">#</a></h2>
+<p>The flow, the scripts and the tests are the same for every process. The numbers, the names and the
+rules are the part that belongs to the foundry.</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>stays the same</th>
+<th>changes with the foundry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the flow: technology file, device builder, process tables, compiler, <span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span>, simulations</td>
+<td>the layer numbers and names</td>
+</tr>
+<tr>
+<td>the scripts <code>devices/ring_modulator_builder.py</code>, <code>gsip_drc.py</code> and the step scripts</td>
+<td>the stack heights and the materials</td>
+</tr>
+<tr>
+<td>the tests, which check that the two descriptions agree</td>
+<td>the cross-sections: widths, slabs, implant masks</td>
+</tr>
+<tr>
+<td>the structure of the device: ring, junction, heater, pads</td>
+<td>the design rules</td>
+</tr>
+<tr>
+<td>the checks of chapter 4: the compiler QA, the doping check, the energy balance of the heat step</td>
+<td>the doping, the implant profiles, the heater film</td>
+</tr>
+</tbody>
+</table></div>
+<p>The scripts stay because they read the process through two doors: the process file and the
+technology file. They take no thickness, material or doping from their own text. A few places in
+the scripts do name process layers. They are listed in section 4, step 6.</p>
+<h2 id="2-why-two-descriptions-of-one-process">2. Why two descriptions of one process <a class="here" href="#2-why-two-descriptions-of-one-process" aria-label="Link to this section">#</a></h2>
+<p>The layout and the simulation need different things from the same process.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th></th>
+<th>for the layout</th>
+<th>for the simulator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>written from</td>
+<td>the foundry's design manual (NDA)</td>
+<td>the same manual</td>
+</tr>
+<tr>
+<td>file</td>
+<td><code>&lt;foundry&gt;_technology.py</code></td>
+<td><code>&lt;foundry&gt;_csv/*.csv</code></td>
+</tr>
+<tr>
+<td>what it holds</td>
+<td>layers, rules, stack, cross-sections, cells</td>
+<td>the same stack, doping and materials as tables, with the column names of the Layer Builder template</td>
+</tr>
+<tr>
+<td>what is made from it</td>
+<td>the device layout (<code>.gds</code>)</td>
+<td><code>&lt;process&gt;.lbr</code>, by the compiler</td>
+</tr>
+</tbody>
+</table></div>
+<p>The two results meet in the Layer Builder. It takes the <code>.gds</code> and the <code>.lbr</code>, and builds the structure
+for <span class="gloss" tabindex="0" data-def="Finite-difference time domain: Maxwell&#x27;s equations stepped in time on a 3D grid. Close to exact, and the slowest of the solvers.">FDTD</span>, MODE, CHARGE and HEAT. INTERCONNECT builds no structure: it works with the numbers that those
+solvers computed.</p>
+<p>The layout needs layer numbers, rules and cross-sections, so that the masks are drawn right. The
+simulator needs heights, materials and doping, so that the structure is right. A number that is in
+both places must be the same in both. That is why the tests compare the two descriptions:
+<code>tests/test_process_tables.py</code> fails when the stack in the tables and the stack in the technology
+file disagree. Each description checks the other.</p>
+<p>Figure 1 shows the whole process in one picture. The cross-section drawing in your foundry's manual
+is the same kind of picture, and it is the first thing to compare your stack with.</p>
+<figure class="fig fig-paper fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/assets/pdk_stack.webp" width="2881" height="1669" alt="Cross-section of the teaching process: full stack to scale, and the front end at five times the vertical scale" loading="lazy" decoding="async"></button><figcaption><strong>Figure 1.</strong> The teaching process. (a) The full stack to scale, with the back end of seven building
+blocks. (b) The front end with the vertical scale multiplied by five. The layers in ink are the ones
+the ring modulator uses.</figcaption></figure>
+<h2 id="3-mapping-the-manual-to-this-repository">3. Mapping the manual to this repository <a class="here" href="#3-mapping-the-manual-to-this-repository" aria-label="Link to this section">#</a></h2>
+<p>Read this table with your manual open. The left column is what you need. The middle column is where
+it usually sits in a design manual. Section names vary between foundries, so search for the words in
+the middle column. The right column is where the number goes in this repository.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>what you need</th>
+<th>where it usually is in the manual</th>
+<th>file and symbol here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span> layer numbers and names</td>
+<td>layer table, GDS layer map</td>
+<td><code>gsip_technology.py</code>: <code>LayerMapGSiP</code>, <code>LAYER_INFO</code>; <code>layer_number</code> in <code>process_layers.csv</code></td>
+</tr>
+<tr>
+<td>layer thicknesses and heights</td>
+<td>process flow, cross-section drawing</td>
+<td><code>T_*</code> constants and <code>STACK</code> in <code>gsip_technology.py</code>; <code>start_position</code> and <code>thickness</code> in <code>process_layers.csv</code></td>
+</tr>
+<tr>
+<td>sidewall angle</td>
+<td>etch section, process flow</td>
+<td><code>sidewall_angle</code> column of <code>process_layers.csv</code>. The constant <code>SIDEWALL_ANGLE</code> is read only by the test that compares the column with it</td>
+</tr>
+<tr>
+<td>implant doses (peak concentrations)</td>
+<td>implant table</td>
+<td><code>DOPING</code> in <code>gsip_technology.py</code>; <code>concentration</code> in <code>doping_process_layers.csv</code></td>
+</tr>
+<tr>
+<td>implant depth profile</td>
+<td>implant section: range, straggle</td>
+<td><code>z surface position</code>, <code>range</code>, <code>straggle</code>, <code>skewness</code>, <code>kurtosis</code>, <code>function</code> in <code>doping_process_layers.csv</code></td>
+</tr>
+<tr>
+<td>implant mask edges from the core</td>
+<td>implant mask drawing</td>
+<td><code>PN_GAP_MEDIUM</code>, <code>PN_GAP_HIGH</code>, <code>rib_pn</code> in <code>gsip_technology.py</code></td>
+</tr>
+<tr>
+<td>waveguide widths, etch depths, slab width</td>
+<td>passive waveguide section</td>
+<td><code>strip</code>, <code>rib</code>, <code>rib_pn</code> in <code>gsip_technology.py</code>; <code>ETCH_RIB</code>, <code>T_SLAB90</code></td>
+</tr>
+<tr>
+<td>minimum widths and spaces</td>
+<td>design rules, <span class="gloss" tabindex="0" data-def="An automatic check that a layout keeps the minimum widths, spaces and overlaps that the process can make.">DRC</span> deck</td>
+<td><code>MIN_WIDTH_SPACE</code> and <code>DESIGN_RULES</code>; checked by <code>gsip_drc.py</code></td>
+</tr>
+<tr>
+<td>bend radius limits</td>
+<td>passive component specifications</td>
+<td><code>DESIGN_RULES[&quot;rib_bend_radius&quot;]</code>, <code>DESIGN_RULES[&quot;strip_bend_radius&quot;]</code></td>
+</tr>
+<tr>
+<td>optical index of each material</td>
+<td>material and optical data</td>
+<td><code>MATERIALS</code> in <code>gsip_technology.py</code>; <code>dielectric_materials.csv</code>; <code>index_perturbation_data.csv</code></td>
+</tr>
+<tr>
+<td>heater film: thickness, resistivity</td>
+<td>heater section, sheet resistance</td>
+<td><code>T_HEATER</code>, <code>TIN_RESISTIVITY</code>, <code>HEATER_SHEET_RESISTANCE</code>; the <code>Heater</code> row</td>
+</tr>
+<tr>
+<td>heater thermal and electrical model</td>
+<td>thermal properties</td>
+<td><code>material_property_overrides.csv</code> (rows <code>HT</code> and <code>CT</code>)</td>
+</tr>
+<tr>
+<td>metal and via thicknesses and materials</td>
+<td>back-end section</td>
+<td><code>Metal1</code> to <code>Metal3</code> and <code>Via*</code> rows of <code>process_layers.csv</code>; <code>metal1</code> to <code>metal3</code> cross-sections</td>
+</tr>
+<tr>
+<td>pads and passivation openings</td>
+<td>back end, passivation</td>
+<td><code>pad</code> cell; <code>PADOPEN</code>; the <code>Pad_opening</code> row</td>
+</tr>
+<tr>
+<td>process variations and corners</td>
+<td>statistics or corners section</td>
+<td><code>pattern_variations.csv</code>, <code>stack_variations.csv</code>, <code>STATISTICAL_PROCESS_FILE</code></td>
+</tr>
+<tr>
+<td>reference numbers for checking</td>
+<td>characterisation data, building-block measurements</td>
+<td>not code: compare with the <code>.txt</code> results of the step folders in <code>lumerical_simulations/ring_modulator/</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The last row is the one most often forgotten. The manual's process numbers tell you what to build.
+The manual's measured or simulated reference data tell you whether you built it right. Section 5
+uses them.</p>
+<h2 id="4-the-order-of-work">4. The order of work <a class="here" href="#4-the-order-of-work" aria-label="Link to this section">#</a></h2>
+<p>Build the layout description first, then the simulation description. Check each stage before the
+next one starts, because every stage uses the stages above it. Work in a private copy of the
+repository, and read section 8 before the first commit.</p>
+<ol>
+<li>
+<p><strong>Copy the technology file and the tables under a new name.</strong> Copy <code>gsip_technology.py</code> to
+<code>&lt;foundry&gt;_technology.py</code>, and the folder <code>gsip_process_file_py/gsip_csv/</code> to <code>&lt;foundry&gt;_csv/</code>.
+Then change the import line in every file that imports the module. The list is short:
+<code>grep -rl &quot;gsip_technology&quot; --include=*.py .</code> shows it. Change the paths that the compiler and the
+tests read: <code>CSV_DIR</code> and <code>OUTPUT_LBR</code> in the compiler, and <code>CSV_DIR</code> in
+<code>tests/test_process_tables.py</code>. The process name is set once, by <code>PROCESS_NAME</code> in the compiler;
+<code>PREFIX</code> is built from it. Rename the process at the end, when everything runs.</p>
+</li>
+<li>
+<p><strong>Layer map first.</strong> Replace the numbers and names in <code>LayerMapGSiP</code>, and the descriptions and
+colours in <code>LAYER_INFO</code>. Change the <code>layer_number</code> expressions in <code>process_layers.csv</code>, and the
+<code>mask layer number</code> expressions in <code>doping_process_layers.csv</code>, to the same numbers. Run
+<code>uv run python &lt;foundry&gt;_technology.py</code>. It lists the layers and writes the KLayout technology.
+Then run <code>uv run pytest tests/test_process_tables.py::test_layer_expressions_use_fabricated_gds_layers_only</code>.
+It checks that every expression uses a fabricated layer and that every fabricated layer appears
+in the process. The layers that are not fabricated (the floor plan, text and device recognition
+in this repository) are kept apart from the rest.</p>
+</li>
+<li>
+<p><strong>Stack.</strong> Set the heights in the <code>T_*</code> constants and in <code>STACK</code>. Then make the rows of
+<code>process_layers.csv</code> agree with them. Both places are needed: the technology file uses the stack
+for the 3D preview, and the process file uses it for the simulation. The test
+<code>test_stack_heights_equal_the_technology_file</code> fails until the two agree. Check the result
+against the cross-section drawing in the manual.</p>
+</li>
+<li>
+<p><strong>Cross-sections.</strong> Write the waveguide cross-sections (strip, rib, the doped rib), the heater
+and the metal cross-sections from the manual's passive and back-end sections. Keep the
+cross-section names that your device builder uses, or change the builder with them. Then run
+<code>uv run python devices/ring_modulator_builder.py</code>. A wrong name shows up here as an error from the cell.</p>
+</li>
+<li>
+<p><strong>Design rules.</strong> Fill <code>MIN_WIDTH_SPACE</code> and <code>DESIGN_RULES</code> from the DRC deck. Run
+<code>uv run python gsip_drc.py --demo</code>: the checker finds the violations that the demo plants. Then
+run the checker on your layout. Your foundry's own DRC is the authority. The checker here is a
+fast first pass.</p>
+</li>
+<li>
+<p><strong>Process tables.</strong> Fill <code>process_layers.csv</code>, <code>doping_process_layers.csv</code>, the materials and the
+heater film. Keep the source tags of chapter 1: every number gets a source, and every value you
+had to guess gets a flag. Some scripts name process layers, so they change when your names
+differ:</p>
+<ul>
+<li><code>heat_profile.py</code> names the solids <code>Si_Substrate</code> (the heat sink) and <code>Heater</code> (the heat
+source);</li>
+<li><code>charge_profile.py</code> names the contacts <code>Via_contact_P</code> and <code>Via_contact_N</code>.</li>
+</ul>
+<p>The probes of <code>layer_builder_check.py</code> are numbers of this stack as well. Its ten probe points
+sit at z = −5.00 µm (substrate), −1.00 µm (<span class="gloss" tabindex="0" data-def="The silicon dioxide under the silicon layer of an SOI wafer, 2 µm in GSiP. It keeps the light from leaking into the substrate.">buried oxide</span>), 0.11 µm (core), 0.05 µm (slab), 0.15 µm
+(oxide above the slab), 0.60 µm (contact via), 1.17 µm (heater), 1.45 µm (metal 1), 2.00 µm (oxide
+between the levels) and 2.65 µm (metal 2). Recompute the heights from your stack, and check that
+each probe lands in the layer that the manual puts it in.</p>
+</li>
+<li>
+<p><strong>Compile.</strong> Run <code>uv run python gsip_process_file_py/gsip_process_file_compiler.py</code>, or the copy
+of it that your foundry's folder holds. It needs a Lumerical licence with FDTD and CHARGE. The
+compiler writes the <code>.lbr</code> file, reloads it, and compares it with the tables: the process layers,
+the doping layers, the material models and the overridden properties. It does not read back the
+index-perturbation and dielectric materials; steps 0 and 5 exercise those. The exit code is 1 on
+any mismatch, and each printed line names the layer and the property.</p>
+</li>
+<li>
+<p><strong>Structure check.</strong> Run <code>layer_builder_check.py</code> (step 0). It loads the layout and the process
+file, and reads the refractive index at ten points of the finished structure. The silicon, the
+oxide, the aluminium and the TiN must be where the manual says they are. This is the first check
+that uses the whole structure.</p>
+</li>
+<li>
+<p><strong>One known waveguide.</strong> Run the passive mode step (step 2) on the straight waveguide of your
+foundry's standard width. Compare the <span class="gloss" tabindex="0" data-def="The speed of the phase of a guided mode, written as an index: the mode gains a phase of 2π n_eff / λ per unit length.">effective index</span> and the <span class="gloss" tabindex="0" data-def="The index that sets how fast a pulse, or the envelope of the light, travels: n_g = n_eff − λ dn_eff/dλ. It sets delays and the free spectral range.">group index</span> with the values the
+foundry states, if it states them, and with the bend loss in the manual. A wrong width, etch depth
+or silicon model shows up here first.</p>
+</li>
+<li>
+<p><strong>The junction.</strong> Run the doping check and the capacitance step (step 3), then the active mode
+step (step 5). Compare the doping with the implant table, and the capacitance and the V<sub>π</sub>·L with
+a reference modulator from the foundry's building blocks, if the manual has one.</p>
+</li>
+<li>
+<p><strong>The heater.</strong> Run the heat step (step 4). Compare the kelvin per milliwatt, or the resonance
+shift per milliwatt, with a reference heater. Check the energy balance: the heat that reaches the
+heat sink must equal the power you set. Chapter 4 explains why that check matters.</p>
+</li>
+<li>
+<p><strong>The device.</strong> Run the circuit step (step 6). Compare the <span class="gloss" tabindex="0" data-def="The ratio of the most to the least light at an output, usually in dB: how deep a switch or a modulator can turn the light off.">extinction</span>, the <span class="gloss" tabindex="0" data-def="The wavelength of a resonance over its width: roughly how many periods the light stays in the resonator before it leaks or is absorbed.">quality factor</span> and the
+<span class="gloss" tabindex="0" data-def="The spacing between two neighbouring resonances of a ring, or fringes of an interferometer: λ² / (n_g L), with L the round trip or the difference of the arms.">free spectral range</span> with the foundry's reference ring or measured data, if you have them.</p>
+</li>
+</ol>
+<p>Each step gives a yes or no before the next one starts. Do not move to the junction before the
+waveguide is right: a wrong core height changes the optical mode, the doping and the heater.</p>
+<h2 id="5-the-validation-ladder">5. The validation ladder <a class="here" href="#5-the-validation-ladder" aria-label="Link to this section">#</a></h2>
+<p>Each stage has a number to compare with that does not come from your own tables. The last column
+says what a mismatch usually means, and which check in this repository already looks for it.</p>
+<div class="table table-wide" style="--cols:4"><table>
+<thead>
+<tr>
+<th>stage</th>
+<th class="long">compare with</th>
+<th class="long">a mismatch usually means</th>
+<th class="long">check in this repository</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. layer map</td>
+<td class="long">the foundry's layer table</td>
+<td class="long">a number in the wrong place, for example the heater on the metal 1 layer</td>
+<td class="long"><code>test_<wbr>layer_<wbr>expressions_<wbr>use_<wbr>fabricated_<wbr>gds_<wbr>layers_<wbr>only</code></td>
+</tr>
+<tr>
+<td>B. stack</td>
+<td class="long">the cross-section drawing or a TEM image in the manual</td>
+<td class="long">a thickness or height typed in one place only</td>
+<td class="long"><code>test_<wbr>stack_<wbr>heights_<wbr>equal_<wbr>the_<wbr>technology_<wbr>file</code></td>
+</tr>
+<tr>
+<td>C. structure</td>
+<td class="long">the material you expect at a point of the structure</td>
+<td class="long">a layer with the wrong material or height; stale probe heights</td>
+<td class="long">step 0, <code>layer_<wbr>builder_<wbr>check.py</code>: ten probe points</td>
+</tr>
+<tr>
+<td>D. waveguide</td>
+<td class="long">the foundry's stated effective or group index, loss, bend loss</td>
+<td class="long">a wrong core width, etch depth or slab; wrong silicon data; a mesh without a line on every interface</td>
+<td class="long">step 2, <code>passive_<wbr>mode_<wbr>fde.py</code> with <code>common.add_<wbr>rib_<wbr>mesh</code></td>
+</tr>
+<tr>
+<td>E. rules and nets</td>
+<td class="long">the DRC deck, the foundry's own DRC on your layout, and the connections you intend</td>
+<td class="long">a unit slip (µm for nm), a rule taken from the wrong section, a via on one level only, a pad on the wrong net</td>
+<td class="long"><code>gsip_<wbr>drc.py --demo</code>, <code>run_drc</code> on <code>devices/<wbr>gds/<wbr>ring_<wbr>modulator.gds</code>; the nets test <code>tests/<wbr>test_<wbr>connectivity.py</code></td>
+</tr>
+<tr>
+<td>F. doping</td>
+<td class="long">the implant table, and any reference profile</td>
+<td class="long">a net dose taken as a gross dose; nested masks that add up differently from the table</td>
+<td class="long">step 3, the doping check (within 0.5 % in this repository)</td>
+</tr>
+<tr>
+<td>G. junction</td>
+<td class="long">a reference modulator: capacitance against bias, V<sub>π</sub>·L</td>
+<td class="long">the junction at the wrong place, a wrong doping, a missing contact</td>
+<td class="long">step 3 (C against V), step 5 (V<sub>π</sub>·L)</td>
+</tr>
+<tr>
+<td>H. heater</td>
+<td class="long">a reference heater: kelvin or picometres per milliwatt</td>
+<td class="long">the film thickness or resistivity is wrong, the electrodes are missing from the model, or the heat source or sink is set up wrong</td>
+<td class="long">step 4, energy balance (<code>P_sink_mW</code>)</td>
+</tr>
+<tr>
+<td>I. device</td>
+<td class="long">the reference ring: quality factor, extinction, free spectral range</td>
+<td class="long">the gap or radius on the mask, or a loss that is missing</td>
+<td class="long">step 6</td>
+</tr>
+</tbody>
+</table></div>
+<p>Three cautions about the ladder. First, a number that is close is not proof, and a number that is
+off by a little is not always an error. In this repository the abrupt-junction formula gives
+0.356 fF/µm at 0 V, and the simulation gives 0.398 fF/µm, 12 % higher. The formula is
+one-dimensional and leaves out the field around the 220 nm high junction. That is the likely
+reason, and it has not been tested. A factor of two is an error. A few per cent is usually the
+physics of the model. Second, a mismatch at stage D is often a wrong layer, and a mismatch at
+stage H is often the electrodes. Read the stage above the one that failed before you change a number.</p>
+<p>Third, make the mesh right before you compare an effective index. A mode solver meshes the window
+into cells. If no mesh line lies on an interface, such as the top of a 90 nm slab or the side of a
+core, the solver's index depends on where the window starts. In this repository the same undoped
+rib, bent to a 10 µm radius, gave an effective index that differed by 0.007 between two windows.
+That is more than a 10 mW heater produces. With a mesh line on every silicon surface
+(<code>common.add_rib_mesh</code>), the two windows agree to 2 × 10⁻⁵. The absolute index is good to about
+5 × 10⁻⁴. Differences, such as the shift with bias or heat, are much less sensitive. So before you
+compare an effective index with the foundry's number, put a mesh line on every interface, and run a
+second window to see whether the answer moves.</p>
+<p>Stage F is worth a worked case. The public rehearsal in section 10 gives a net concentration of
+1.1e18 cm⁻³ for the low-dose n region, after compensating a background p implant of 5.7e17 cm⁻³.
+The donor density that goes into the process table is the sum of the two, 1.67e18 cm⁻³. A manual
+that gives a net value and a table that wants a gross value is the most common doping mistake. Write
+a test for every number that the manual gives as net, gross or averaged. The rehearsal's
+<code>test_doping_reproduces_the_published_concentrations</code> is one such test.</p>
+<h2 id="6-what-a-real-process-has-that-the-teaching-one-lacks">6. What a real process has that the teaching one lacks <a class="here" href="#6-what-a-real-process-has-that-the-teaching-one-lacks" aria-label="Link to this section">#</a></h2>
+<p>The teaching process of this repository is deliberately simple: vertical sidewalls, flat implants,
+aluminium everywhere, no silicide, a planar top oxide. The <a href="../process-file/index.html">process file README</a> lists some
+of the same simplifications (vertical sidewalls, flat profiles, aluminium as the passage metal).
+Each row says how the feature enters the tables.</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>feature</th>
+<th>what it changes</th>
+<th>how it enters the tables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sidewall angle</td>
+<td>the shape of every etched edge, and the height the drawn edge refers to</td>
+<td>the <code>sidewall_angle</code> column of <code>process_layers.csv</code>, in degrees per layer. The compiler setting <code>SIDEWALL_POSITION_REF</code> says which height of a slanted wall the GDS edge refers to; it is <code>&quot;middle&quot;</code> here. The constant <code>SIDEWALL_ANGLE</code> in the technology file feeds one test, which requires every row to equal it: change the constant and the column together</td>
+</tr>
+<tr>
+<td>implant profiles in depth</td>
+<td>the junction depth, and the doping under the core</td>
+<td><code>range</code>, <code>straggle</code>, <code>skewness</code>, <code>kurtosis</code> and <code>function</code> in <code>doping_process_layers.csv</code>. The rehearsal fits a Gaussian to two published averages; see <code>test_doping_reproduces_the_published_concentrations</code></td>
+</tr>
+<tr>
+<td>silicide</td>
+<td>a thin, low-resistance layer on the contacts</td>
+<td>a new row of <code>process_layers.csv</code> with its GDS expression, thickness and material. A material that the Lumerical CHARGE or HEAT database lacks is set up as the TiN heater is: a model in <code>active_material_models.csv</code>, and its missing properties in <code>material_property_overrides.csv</code></td>
+</tr>
+<tr>
+<td>tungsten plugs, copper</td>
+<td>the via resistance and the heat path through the back end</td>
+<td>the via rows take the plug material; a metal row takes the metal. Tungsten conducts heat differently from aluminium, so check the heater (stage H) after you change a via</td>
+</tr>
+<tr>
+<td>liners and several oxides</td>
+<td>the optical cladding and the stress</td>
+<td>one row per layer in <code>process_layers.csv</code>, each with its own height and material. The stack test checks every row</td>
+</tr>
+<tr>
+<td>fill and exclusion layers</td>
+<td>nothing in the simulation, but they must follow the foundry's rules</td>
+<td>they stay in the layout and the DRC; they are not process rows. An exclusion layer that keeps metal away from a waveguide becomes a rule in <code>DESIGN_RULES</code>, checked by <code>gsip_drc.py</code></td>
+</tr>
+<tr>
+<td>process corners</td>
+<td>the spread of every result</td>
+<td><code>pattern_variations.csv</code> and <code>stack_variations.csv</code>, switched on by <code>STATISTICAL_PROCESS_FILE = True</code>. The sigmas must come from wafer data. The compiler appends the variation block, but its QA does not read that block back, so check it in the Layer Builder</td>
+</tr>
+</tbody>
+</table></div>
+<p>Some layers in the manual are in the mask set but are not process layers. The teaching process
+defines a text layer (66/0), a floor plan layer (64/0) and a device recognition layer (68/0). The
+device draws none of them, and none of them is in the process. The rehearsal has a label-etch layer
+(100/0) that the foundry merges into the silicon etch. Its technology file adds that layer to the
+etched trench region, and the process table has no row for it. Read the process section of
+the manual before you decide whether a mask layer is a process layer.</p>
+<h2 id="7-when-the-foundry-ships-its-own-layer-builder-process-file">7. When the foundry ships its own Layer Builder process file <a class="here" href="#7-when-the-foundry-ships-its-own-layer-builder-process-file" aria-label="Link to this section">#</a></h2>
+<p>Some foundries give you a <code>.lbr</code> file with the process already built, or compact models for their
+devices. Then use theirs. Do not replace it with the file your compiler makes.</p>
+<ul>
+<li>Load their file in the Layer Builder. The simulation scripts do not change, because they read the
+process only through <code>LBR</code> in <code>lumerical_simulations/flow.py</code>. The names they use for solids and contacts (section 4,
+step 6) must exist in that file.</li>
+<li>Keep your technology file consistent with their file: the same layer numbers, the same heights,
+the same materials. Their file is the reference, and your tables become a cross-check.</li>
+<li>Check your tables against their file. The compiler's QA function <code>qa_process_layers</code> reads a
+process file and compares every layer with a table. Point it at their file: set <code>OUTPUT_LBR</code> to
+their file, and set <code>PROCESS_NAME</code> to the process name inside their file. <code>PREFIX</code> follows from
+<code>PROCESS_NAME</code> when the module is imported, so do not set it by hand. Call <code>qa_process_layers</code> from
+a short script that opens FDTD. Do not run the compiler itself on their file, because it writes
+<code>OUTPUT_LBR</code>.</li>
+<li>If they ship compact models for the junction or the heater, use them instead of the models
+attached through <code>active_material_models.csv</code>, and write down that you did.</li>
+</ul>
+<h2 id="8-keeping-nda-data-safe">8. Keeping NDA data safe <a class="here" href="#8-keeping-nda-data-safe" aria-label="Link to this section">#</a></h2>
+<p>The NDA covers more than the design manual. It covers every number, name and rule taken from it,
+and every file that contains one. Treat these as NDA material:</p>
+<ul>
+<li>the manual and the foundry's <span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span> files;</li>
+<li>the layer names, layer numbers and rules of the foundry;</li>
+<li>the <code>.lbr</code> file, the <code>.gds</code> files, and the <code>.lyrdb</code> DRC reports made with the foundry's layers;</li>
+<li>your tables, your technology file, and the notes that quote the manual.</li>
+</ul>
+<p>The rules below follow from that.</p>
+<p><strong>Use a private repository.</strong> Create a new repository, set to private, for your foundry's work. A
+private repository on a hosting service is still visible to the service and to its collaborators.
+Check that the NDA allows that service.</p>
+<p><strong>Never fork a public repository for NDA work.</strong> A fork of a public repository stays public, and it
+keeps the public history. Start the private repository from a copy of the code: run <code>git init</code> in a
+new folder, then copy the files you need. Before the first push, run <code>git remote -v</code> and check that
+the remote is the private one.</p>
+<p><strong>Keep the data outside the code.</strong> The safest layout keeps the manual and the foundry's files in a
+folder that is not under version control at all, and the scripts read them from there. If the data
+must sit inside the repository, put it in one folder that is ignored as a whole.</p>
+<p><strong>Write the <code>.gitignore</code> for the private repository, not copied from the public one.</strong> The public
+<code>.gitignore</code> keeps the <code>.npz</code> files of the tutorial device through a negation line. Remove that
+negation in the private repository. A starting point:</p>
+<div class="code code-plain"><pre><code># NDA material: never in git
+foundry/
+*.lbr
+*.gds
+*.lyrdb
+*.fsp
+*.ldev
+*.npz
+*.mat
+</code></pre></div>
+<p>A <code>.gitignore</code> stops new files from being added. It does not remove a file that is already tracked,
+and it does not clean the history. Check after every change:</p>
+<div class="code code-plain"><pre><code>git check-ignore -v path/to/file    # which rule ignores the file, if any
+git ls-files                        # every tracked file: look for data you did not mean to add
+git status --ignored                # ignored files: are the right ones ignored?
+</code></pre></div>
+<p>If a data file was committed once, treat it as published. Removing it from the history does not undo
+a clone that someone made in the meantime. Report the leak as the NDA requires, and follow the
+foundry's instructions.</p>
+<p><strong>Scan before every commit.</strong> Keep a list of your foundry's own words (its layer names, its names
+for its processes, its rule names) in a file outside the repository. Then check the staged changes
+against it:</p>
+<div class="code code-plain"><pre><code>git diff --cached -U0 | grep -F -f ../foundry_terms.txt
+</code></pre></div>
+<p>No output means no match. A match means you stop, and you do not push.</p>
+<p><strong>No foundry numbers in issues, screenshots, commit messages or AI chats.</strong> Issues, commit messages
+and screenshots are seen by everyone who can read the repository, and they stay in the history.
+Write &quot;the heater film is too thin&quot;, not the film's thickness. A screenshot of KLayout with the layer
+table is foundry data. Before you paste a manual page or a number into an AI assistant, read the NDA:
+many NDAs forbid sending the manual to a third-party service. The <code>CONTRIBUTING.md</code> of this
+repository states the same rule for public work: never commit numbers received under an NDA, not
+even &quot;anonymised&quot;.</p>
+<p><strong>Cite by identifier, not by number.</strong> A comment such as &quot;heater thickness: see the manual, process
+section&quot; tells a colleague where to look, and it leaks nothing. A comment that carries the number
+turns the code into a copy of the manual.</p>
+<h2 id="9-the-private-twin-and-the-public-repository">9. The private twin and the public repository <a class="here" href="#9-the-private-twin-and-the-public-repository" aria-label="Link to this section">#</a></h2>
+<p>This repository is public, and its teaching PDK is built from public sources. Your private
+repository is a twin of it: the same structure, the same functions, the same tests, and different
+numbers.</p>
+<ul>
+<li>The two repositories share their structure. The file names, the folders, the tests and the scripts
+match, so that a reader of this repository can find everything in the twin.</li>
+<li>The numbers, the names and the rules differ. Everything the foundry gave you lives only in the
+private repository.</li>
+<li>Information flows one way. Improvements to the code can go from the public repository to the
+private one. Data never goes back. A change from the private repository to the public one must
+contain no NDA material, and you should review it as a public contribution, because it becomes one.</li>
+<li>The tests are the bridge. The same test suite runs in both repositories. When the private twin
+passes the tests, its two descriptions agree with each other. That does not show that they agree
+with the foundry. The validation ladder of section 5 does that.</li>
+</ul>
+<h2 id="10-rehearsal-on-public-data-cornerstone-soi220a">10. Rehearsal on public data: CORNERSTONE SOI220A <a class="here" href="#10-rehearsal-on-public-data-cornerstone-soi220a" aria-label="Link to this section">#</a></h2>
+<p>Before you open the manual of a real foundry, run the whole port once on a process whose data are
+public. The folder <code>more_processes/cornerstone_soi220a/</code> is a second, self-contained example of the
+flow on the open CORNERSTONE SOI220A process. It has its own technology file, process tables,
+compiler, tests and simulation steps. Nothing in it is NDA material, so you can practise there
+without risk.</p>
+<p>The header of <code>cornerstone_technology.py</code> tags every number with its source: <code>[YAML]</code> for the
+official PDK repository, <code>[XS]</code> for its cross-section file, <code>[DG]</code> for the design guidelines of the public call, <code>[MZM]</code> and <code>[HTR]</code> for
+measured building blocks, and <code>[assumed]</code> for values that are not published. Read the tags first.
+An <code>[assumed]</code> tag says what to replace first.</p>
+<p>Follow the order of section 4 on this folder:</p>
+<ol>
+<li>
+<p>Run the tests:</p>
+<div class="code code-plain"><pre><code>cd more_processes/cornerstone_soi220a
+uv run pytest
+</code></pre></div>
+<p>The result is 24 passed and 1 skipped. The skipped test compares the layer table with a checkout
+of the official repository. It runs only when the environment variable <code>CORNERSTONE_PDK</code> points to
+that checkout.</p>
+</li>
+<li>
+<p>Find the public inconsistencies. The public sources disagree on three points, and the README of
+the process tables lists them:</p>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>design guidelines</th>
+<th>process overview</th>
+<th class="num">used here</th>
+<th>where in the code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buried oxide</td>
+<td>2 µm</td>
+<td>3.0 µm</td>
+<td class="num">2 µm</td>
+<td><code>T_BOX</code> in <code>cornerstone_<wbr>technology.py</code>; the <code>BOX</code> row of <code>process_<wbr>layers.csv</code></td>
+</tr>
+<tr>
+<td>top cladding</td>
+<td>1 µm ± 100 nm</td>
+<td>2.0 µm ± 0.2 µm</td>
+<td class="num">1 µm</td>
+<td><code>T_TOX</code>; the <code>TOX</code> row</td>
+</tr>
+<tr>
+<td>electrode minimum gap</td>
+<td>2 µm</td>
+<td>4.0 µm, and the official DRC deck</td>
+<td class="num">4 µm</td>
+<td><code>MIN_<wbr>WIDTH_<wbr>SPACE[&quot;ELECTRODE_<wbr>LF&quot;]</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>This is the situation of a real port: two documents from the same foundry, and one of them is
+out of date or wrong. Write down which one you chose and why, and find the check that would show
+a wrong choice. For the buried oxide, the stack test is that check.</p>
+</li>
+<li>
+<p>Make the disagreement visible. In <code>cornerstone_technology.py</code>, change <code>T_BOX</code> from 2.0 to 3.0, and
+run <code>uv run pytest</code> again. The stack test fails, because the process table still says 2 µm. Change
+the <code>BOX</code> and <code>Si_Substrate</code> rows to match, and the test passes again. This is the loop you will
+run with your foundry's numbers.</p>
+</li>
+<li>
+<p>Look at what the rehearsal does that the teaching process does not. The low-dose n region is given
+as a net concentration, and the process table takes the gross donor density (stage F of section 5).
+The n-side junction does not sit at the drawn mask edge. The foundry implants through the sidewall
+at 45°, and the Layer Builder cannot derive that strip, so <code>write_gds_for_lumerical()</code> computes it
+and writes it to the simulation-only layer 208/0. That is a process step that the masks do not
+show. The way to add it is a derived layer in the technology file.</p>
+</li>
+<li>
+<p>Check the passive waveguide against the step-2 summary. The file
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/more_processes/cornerstone_soi220a/lumerical_simulations/ring_modulator/2_passive_mode_properties/rib_w450_passive.txt" rel="noopener">rib_w450_passive.txt</a>
+gives, for the 0.45 µm rib on a 100 nm slab at 1.55 µm, n<sub>eff</sub> = 2.55145, n<sub>g</sub> = 3.9117 and a TE
+fraction of 0.986. The repository does not claim that the foundry states these values. In your own
+port, the comparison with the foundry's stated index is the step that counts.</p>
+</li>
+</ol>
+<p>The rehearsal shows the whole loop on public data. Your port will be harder, in the manual and under
+the NDA, but the loop is the same.</p>
+<p>The rehearsal is the second example as it was released in v0.2. Its scripts do not have the
+corrections of the teaching process. Its passive index is computed on a uniform 20 nm mesh, so its
+absolute effective index can be off by several 10⁻³ (the mesh caution of section 5). Its heat source
+is a thermal power boundary condition, which is the pitfall of chapter 4. Until you have fixed both,
+compare its differences, such as the shift with bias or heat, and not its absolute indices.</p>
+<h2 id="check-yourself">Check yourself <a class="here" href="#check-yourself" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>Which part of the flow changes when you port it to a foundry, and which parts stay? Name two of
+each.</li>
+<li>In what order do you build the layer map, the stack, the cross-sections, the rules and the process
+tables, and why does the order matter?</li>
+<li>Which scripts name process layers, and what breaks if your foundry calls its heater film <code>HTR_FILM</code>
+and you change only the process table? Where else must the name change?</li>
+<li>A foundry gives a net dose of 1.1e18 cm⁻³ after compensating a background implant of 5.7e17 cm⁻³.
+What donor density goes into the process table, and which check catches a mistake?</li>
+<li>Why must a fork of a public repository not hold NDA data, and what does a <code>.gitignore</code> not do?</li>
+<li>What is the difference between a mismatch at stage D and a mismatch at stage H of the validation
+ladder, and which stage do you read first?</li>
+</ol>
+<h2 id="exercises">Exercises <a class="here" href="#exercises" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>
+<p><strong>One number, two places.</strong> In <code>gsip_technology.py</code>, change <code>SIDEWALL_ANGLE</code> from <code>90.0</code> to <code>85.0</code>
+and run <code>uv run pytest tests/test_process_tables.py::test_sidewall_angle_is_the_technology_value</code>.
+The test fails and names the first row that differs, because the table still says 90. Then change
+the <code>sidewall_angle</code> column of <code>gsip_process_file_py/gsip_csv/process_layers.csv</code> to 85 in every
+row, and the test passes. Read the compiler: it takes its sidewall angle from the column, not from
+the constant. Reset the constant to <code>90.0</code> and the column to 90.</p>
+</li>
+<li>
+<p><strong>The heater tests.</strong> In <code>gsip_technology.py</code>, change <code>T_HEATER</code> from <code>0.15</code> to <code>0.20</code>, and run
+<code>uv run pytest tests/test_process_tables.py</code>.
+Three tests fail: the stack test for the <code>Heater</code> row, <code>test_layers_the_stack_table_cannot_express</code>
+(via 1 on the heater starts at the top of the film), and <code>test_heater_film_properties</code>. Read the
+lines that compare the heater of the table with the constant. Reset the constant.</p>
+</li>
+<li>
+<p><strong>Rehearse the stack on CORNERSTONE.</strong> In
+<code>more_processes/cornerstone_soi220a/cornerstone_technology.py</code>, change <code>T_BOX</code> from <code>2.0</code> to <code>3.0</code>,
+and run <code>uv run pytest</code> in that folder. Find the failing test and the line that checks the buried
+oxide. Then change the <code>BOX</code> and <code>Si_Substrate</code> rows of
+<code>more_processes/cornerstone_soi220a/cornerstone_process_file_py/cornerstone_csv/process_layers.csv</code>
+to the 3 µm stack, and check that the test passes.</p>
+</li>
+<li>
+<p><strong>Write your own stage F check.</strong> Pick one implant of <code>gsip_process_file_py/gsip_csv/doping_process_layers.csv</code>,
+for example <code>N_plus</code>. Write a test in the style of <code>test_doping_tables_follow_the_technology_file</code>
+in <code>tests/test_process_tables.py</code> that checks its concentration against <code>DOPING</code>. Add a second
+check that its mask layer number is the layer of <code>LAYER</code>. Run it with <code>uv run pytest</code>, and observe
+that it passes.</p>
+</li>
+</ol>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<a class="card pager-prev" href="../simulations/index.html"><span>Previous</span><b>The simulations</b></a><a class="card pager-next" href="../../devices/index.html"><span>Next</span><b>The device library</b></a>
+</nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../pdk/index.html">1. The PDK</a><a href="../device/index.html">2. The device</a><a href="../process-file/index.html">3. The process file</a><a href="../simulations/index.html">4. The simulations</a><a href="index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../../devices/strip-waveguide/index.html">Strip waveguide</a><a href="../../devices/rib-waveguide/index.html">Rib waveguide</a><a href="../../devices/directional-coupler/index.html">Directional coupler</a><a href="../../devices/mmi1x2/index.html">1×2 MMI splitter</a><a href="../../devices/thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../../devices/index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../../circuits/index.html">The chip</a><a href="../../circuits/clements-mesh/index.html">Clements mesh</a><a href="../../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="../../more/cornerstone-soi220a/index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

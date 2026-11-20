@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Directional coupler · photonics-layout-cookbook</title>
+<meta name="description" content="Two waveguides brought close together exchange their light. A short stretch taps off a few per cent into the neighbour, and a longer one splits the light in half.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/directional-coupler/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Directional coupler">
+<meta property="og:description" content="Two waveguides brought close together exchange their light. A short stretch taps off a few per cent into the neighbour, and a longer one splits the light in half.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/directional-coupler/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/devices-directional-coupler.jpg?v=2beb4eed">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Directional coupler, with the device seen from above">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Directional coupler","description":"Two waveguides brought close together exchange their light. A short stretch taps off a few per cent into the neighbour, and a longer one splits the light in half.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/directional-coupler/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/devices-directional-coupler.jpg?v=2beb4eed"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"Device library","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/"},{"@type":"ListItem","position":3,"name":"Directional coupler","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/directional-coupler/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course">Course</a>
+      <a href="../index.html" aria-current="true">Devices</a>
+<a href="../../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="g-passive-directional_coupler" viewBox="0 0 600 240"><path class="m-si" fill-rule="evenodd" d="M109.3,172.7 118.1,168.6 127.2,163.6 160.1,142.4 174.8,133.9 184.6,129.4 190.1,127.3 199.9,124.5 205.2,123.5 210.4,122.9 216.0,122.7 389.0,122.9 394.8,123.5 404.8,125.7 410.4,127.5 420.4,131.6 425.4,134.1 435.2,139.6 468.3,160.8 477.4,166.2 486.3,170.8 495.0,174.4 503.5,176.8 507.7,177.6 516.1,178.2 600.0,178.2 600.0,193.8 515.7,193.8 505.7,193.1 495.2,190.8 484.6,187.1 479.6,184.9 469.9,179.9 460.0,174.0 427.2,152.9 413.7,145.7 405.0,142.1 396.5,139.7 388.1,138.5 383.9,138.3 216.1,138.3 207.7,138.9 203.5,139.7 195.0,142.1 190.7,143.8 181.9,147.9 168.3,155.7 140.0,174.0 130.1,179.9 120.4,184.9 115.4,187.1 104.8,190.8 94.3,193.1 84.3,193.8 0.0,193.8 0.0,178.2 88.1,178.0 96.5,176.8 100.7,175.7ZM99.5,47.9 104.8,49.2 110.4,51.0 115.4,52.9 125.4,57.6 140.0,66.0 172.8,87.1 186.3,94.3 195.0,97.9 203.5,100.3 211.9,101.5 216.1,101.7 383.9,101.7 388.1,101.5 396.5,100.3 400.7,99.2 409.3,96.2 413.7,94.3 422.6,89.7 431.7,84.3 464.8,63.1 474.6,57.6 479.6,55.1 489.6,51.0 495.2,49.2 505.2,47.0 510.4,46.4 516.0,46.2 600.0,46.2 600.0,61.8 516.1,61.8 507.7,62.4 499.3,64.3 490.7,67.3 486.3,69.2 477.4,73.8 468.3,79.2 435.2,100.4 425.4,105.9 420.1,108.5 409.9,112.7 400.1,115.5 394.3,116.6 389.0,117.1 384.0,117.3 216.0,117.3 211.0,117.1 205.7,116.6 199.9,115.5 190.1,112.7 184.6,110.6 174.8,106.1 160.1,97.6 136.4,82.1 122.6,73.8 113.7,69.2 109.3,67.3 100.7,64.3 92.3,62.4 83.9,61.8 0.0,61.8 0.0,46.2 84.0,46.2 89.6,46.4Z"/></symbol></svg>
+<header class="page-head">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../index.html">Device library</a>        <i>·</i> Passive device</p>
+      <h1 class="display page-title" data-words aria-label="Directional coupler"><span class="w" style="--n:0">Directional</span> <span class="w" style="--n:1">coupler</span></h1>
+      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>13 min read</span>
+<span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-mode"/></svg>MODE</span><span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-fdtd"/></svg>FDTD</span>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/README.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+    <figure class="headfield headfield-band" data-travel><div class="headfield-view"><div class="headfield-pic" style="aspect-ratio: 1400 / 257"><img src="../../assets/img/fields/directional-coupler.png" alt="Field strength in a directional coupler at 1550 nm, seen from above: light enters at the lower left, and about half of it leaves in the upper waveguide." width="1400" height="257" decoding="async"><span class="headfield-fringes" aria-hidden="true" style="--period: 1.62585cqw; background-image: linear-gradient(to right, rgba(0,0,0,0.0000) 0.00%, rgba(0,0,0,0.0051) 4.17%, rgba(0,0,0,0.0201) 8.33%, rgba(0,0,0,0.0439) 12.50%, rgba(0,0,0,0.0750) 16.67%, rgba(0,0,0,0.1112) 20.83%, rgba(0,0,0,0.1500) 25.00%, rgba(0,0,0,0.1888) 29.17%, rgba(0,0,0,0.2250) 33.33%, rgba(0,0,0,0.2561) 37.50%, rgba(0,0,0,0.2799) 41.67%, rgba(0,0,0,0.2949) 45.83%, rgba(0,0,0,0.3000) 50.00%, rgba(0,0,0,0.2949) 54.17%, rgba(0,0,0,0.2799) 58.33%, rgba(0,0,0,0.2561) 62.50%, rgba(0,0,0,0.2250) 66.67%, rgba(0,0,0,0.1888) 70.83%, rgba(0,0,0,0.1500) 75.00%, rgba(0,0,0,0.1112) 79.17%, rgba(0,0,0,0.0750) 83.33%, rgba(0,0,0,0.0439) 87.50%, rgba(0,0,0,0.0201) 91.67%, rgba(0,0,0,0.0051) 95.83%, rgba(0,0,0,0.0000) 100.00%)"></span></div></div><figcaption>Field |E| in the coupler at 1550&nbsp;nm, by FDTD (<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/3_coupler_fdtd/coupler_fdtd.npz" rel="noopener">coupler_fdtd.npz</a>). Black below 5 % of peak. Fringes: direction only, 0.63&nbsp;µm guide period.</figcaption></figure>
+  </div>
+  <div class="wrap">
+    <div class="src-group">
+    <dl class="nums nums-head">
+      <div><dt>π length: all light has crossed</dt><dd data-count data-source="src-0" data-source-label="Where 35.81 µm comes from">35.81<small>µm</small></dd></div>
+      <div><dt>what the bends add</dt><dd data-count data-source="src-1" data-source-label="Where 2.88 µm comes from">2.88<small>µm</small></dd></div>
+      <div><dt>length of the 50:50 split</dt><dd data-count data-source="src-2" data-source-label="Where 15.03 µm comes from">15.03<small>µm</small></dd></div>
+    </dl>
+<aside class="src-panel" id="src-panel" role="region" aria-label="Where the number comes from" hidden tabindex="-1"><span class="src-caret" aria-hidden="true"></span><div class="src-body"></div></aside><p class="src-line"><span>Numbers from</span> <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/2_coupling_length/coupling_length.txt">2_coupling_length/coupling_length.txt</a></p><template id="src-0"><p class="src-head"><b>35.81</b><small>µm</small><span>π length: all light has crossed</span></p><p class="src-k">Line 9 of the kept summary</p><pre class="src-quote" tabindex="0">fit of the cross fraction: L_pi = <mark>35.81</mark> um, the S-bends are worth L_bends = 2.88 um of straight coupler (largest deviation from the points 0.0001)</pre><p class="src-k">How the run was made</p><p class="src-how">Directional coupler, gap 0.2 um, W = 0.5 um, strip (gsip_process.lbr), 1.55 um; 3D FDTD, mesh accuracy 2, 20 nm over the gap; 35 min for 4 lengths</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/2_coupling_length/coupling_length.txt">result file<span>coupling_length.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/scripts/coupling_length_fdtd.py">script<span>coupling_length_fdtd.py</span></a></p></template><template id="src-1"><p class="src-head"><b>2.88</b><small>µm</small><span>what the bends add</span></p><p class="src-k">Line 9 of the kept summary</p><pre class="src-quote" tabindex="0">fit of the cross fraction: L_pi = 35.81 um, the S-bends are worth L_bends = <mark>2.88</mark> um of straight coupler (largest deviation from the points 0.0001)</pre><p class="src-k">How the run was made</p><p class="src-how">Directional coupler, gap 0.2 um, W = 0.5 um, strip (gsip_process.lbr), 1.55 um; 3D FDTD, mesh accuracy 2, 20 nm over the gap; 35 min for 4 lengths</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/2_coupling_length/coupling_length.txt">result file<span>coupling_length.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/scripts/coupling_length_fdtd.py">script<span>coupling_length_fdtd.py</span></a></p></template><template id="src-2"><p class="src-head"><b>15.03</b><small>µm</small><span>length of the 50:50 split</span></p><p class="src-k">Line 11 of the kept summary</p><pre class="src-quote" tabindex="0">50:50 at 1.55 um:  L = L_pi / 2 - L_bends = <mark>15.03</mark> um</pre><p class="src-k">How the run was made</p><p class="src-how">Directional coupler, gap 0.2 um, W = 0.5 um, strip (gsip_process.lbr), 1.55 um; 3D FDTD, mesh accuracy 2, 20 nm over the gap; 35 min for 4 lengths</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/2_coupling_length/coupling_length.txt">result file<span>coupling_length.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/directional_coupler/scripts/coupling_length_fdtd.py">script<span>coupling_length_fdtd.py</span></a></p></template>    </div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#the-device"><i aria-hidden="true"></i>The device</a></li>
+        <li><a href="#the-steps"><i aria-hidden="true"></i>The steps</a></li>
+        <li><a href="#run-it"><i aria-hidden="true"></i>Run it</a></li>
+        <li><a href="#step-1-the-supermodes-by-mode"><i aria-hidden="true"></i>Step 1. The supermodes, by MODE</a></li>
+        <li><a href="#step-2-the-length-by-fdtd"><i aria-hidden="true"></i>Step 2. The length, by FDTD</a></li>
+        <li><a href="#step-3-the-device-by-fdtd"><i aria-hidden="true"></i>Step 3. The device, by FDTD</a></li>
+        <li><a href="#in-numbers"><i aria-hidden="true"></i>In numbers</a></li>
+        <li><a href="#limits"><i aria-hidden="true"></i>Limits</a></li>
+        <li><a href="#exercises"><i aria-hidden="true"></i>Exercises</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>Two waveguides brought close together exchange their light. A short stretch taps off a few per cent
+into the neighbour, and a longer one splits the light in half. This chapter draws a directional coupler
+with the <span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span> and finds the length that gives a 50:50 split at 1.55 µm. It also shows how far the split
+moves when the wavelength changes.</p>
+<p>The work takes three steps: the cross-section first, then the length, then the finished device. Each
+step checks the one before it.</p>
+<hr />
+<h2 id="the-device">The device <a class="here" href="#the-device" aria-label="Link to this section">#</a></h2>
+<figure class="plate"><div class="plate-drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240"><path class="m-si" fill-rule="evenodd" d="M109.3,172.7 118.1,168.6 127.2,163.6 160.1,142.4 174.8,133.9 184.6,129.4 190.1,127.3 199.9,124.5 205.2,123.5 210.4,122.9 216.0,122.7 389.0,122.9 394.8,123.5 404.8,125.7 410.4,127.5 420.4,131.6 425.4,134.1 435.2,139.6 468.3,160.8 477.4,166.2 486.3,170.8 495.0,174.4 503.5,176.8 507.7,177.6 516.1,178.2 600.0,178.2 600.0,193.8 515.7,193.8 505.7,193.1 495.2,190.8 484.6,187.1 479.6,184.9 469.9,179.9 460.0,174.0 427.2,152.9 413.7,145.7 405.0,142.1 396.5,139.7 388.1,138.5 383.9,138.3 216.1,138.3 207.7,138.9 203.5,139.7 195.0,142.1 190.7,143.8 181.9,147.9 168.3,155.7 140.0,174.0 130.1,179.9 120.4,184.9 115.4,187.1 104.8,190.8 94.3,193.1 84.3,193.8 0.0,193.8 0.0,178.2 88.1,178.0 96.5,176.8 100.7,175.7ZM99.5,47.9 104.8,49.2 110.4,51.0 115.4,52.9 125.4,57.6 140.0,66.0 172.8,87.1 186.3,94.3 195.0,97.9 203.5,100.3 211.9,101.5 216.1,101.7 383.9,101.7 388.1,101.5 396.5,100.3 400.7,99.2 409.3,96.2 413.7,94.3 422.6,89.7 431.7,84.3 464.8,63.1 474.6,57.6 479.6,55.1 489.6,51.0 495.2,49.2 505.2,47.0 510.4,46.4 516.0,46.2 600.0,46.2 600.0,61.8 516.1,61.8 507.7,62.4 499.3,64.3 490.7,67.3 486.3,69.2 477.4,73.8 468.3,79.2 435.2,100.4 425.4,105.9 420.1,108.5 409.9,112.7 400.1,115.5 394.3,116.6 389.0,117.1 384.0,117.3 216.0,117.3 211.0,117.1 205.7,116.6 199.9,115.5 190.1,112.7 184.6,110.6 174.8,106.1 160.1,97.6 136.4,82.1 122.6,73.8 113.7,69.2 109.3,67.3 100.7,64.3 92.3,62.4 83.9,61.8 0.0,61.8 0.0,46.2 84.0,46.2 89.6,46.4Z"/></svg>
+</div><figcaption>Directional coupler, seen from above. <span class="legend"><span class="chip"><i class="swatch si"></i>silicon</span></span></figcaption></figure><p><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/devices/directional_coupler_builder.py" rel="noopener">devices/directional_coupler_builder.py</a> draws two
+<span class="gloss" tabindex="0" data-def="A silicon core etched down to the oxide and surrounded by cladding: the tightest confinement, and the sharpest bends.">strip waveguides</span>, 0.5 µm wide, that run side by side over a straight section. An S-bend at each of
+the four ends takes them apart again. From the repository root:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>devices/directional_coupler_builder.py
+</code></pre></div>
+<div class="code code-text"><pre><code>coupler: gap 0.2 um over 15 um, S-bends 10 um long (tightest radius 11.744 um), ports 4 um apart
+GDS -&gt; devices/gds/directional_coupler.gds   ports: [&#x27;o1&#x27;, &#x27;o2&#x27;, &#x27;o3&#x27;, &#x27;o4&#x27;]
+DRC passed: 0 errors, 0 warnings
+</code></pre></div>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>parameter</th>
+<th class="num">default</th>
+<th>where it comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gap</code></td>
+<td class="num">0.20 µm</td>
+<td>the minimum space of the waveguide layer: the strongest coupling the process allows</td>
+</tr>
+<tr>
+<td><code>length</code></td>
+<td class="num">15 µm</td>
+<td>step 2: the 50:50 length at 1.55 µm is 15.03 µm</td>
+</tr>
+<tr>
+<td><code>port_spacing</code></td>
+<td class="num">4 µm</td>
+<td>centre to centre, at both ends</td>
+</tr>
+<tr>
+<td><code>bend_length</code></td>
+<td class="num">10 µm</td>
+<td>each S-bend; its tightest radius, 11.7 µm, is above the 5 µm rule</td>
+</tr>
+</tbody>
+</table></div>
+<p>Light enters at <code>o1</code>. The waveguide it stays in ends at <code>o4</code>, the through port. The other waveguide
+ends at <code>o3</code>, the cross port. The builder refuses a gap below the minimum space, and S-bends that
+curve tighter than the bend radius of the design rules.</p>
+<figure class="solid" data-solid="passive/directional_coupler" data-src="../../assets/data/solid-passive-directional_coupler.js"><div class="solid-stage"><canvas class="solid-canvas" role="img" aria-label="The directional coupler in three dimensions; drag to turn it"></canvas><p class="solid-hint">point at a waveguide for its section · click to hold it · drag to turn · pinch or + − to zoom</p><div class="solid-zoom"><button type="button" data-zoom="1.25" aria-label="Closer">+</button><button type="button" data-zoom="0.8" aria-label="Further">−</button></div><p class="solid-flat">This browser draws no WebGL, so the solid cannot be shown here.</p></div><div class="solid-bar"><div class="solid-chips" role="group" aria-label="Show or hide a layer"><button type="button" data-family="silicon" aria-pressed="true"><i style="--c:#5ee7f5"></i>silicon</button><button type="button" data-family="implant" aria-pressed="true" hidden><i style="--c:#ff7fb0"></i>implants</button><button type="button" data-family="germanium" aria-pressed="true" hidden><i style="--c:#b9a6ff"></i>germanium</button><button type="button" data-family="nitride" aria-pressed="true" hidden><i style="--c:#7ee0a5"></i>silicon nitride</button><button type="button" data-family="via" aria-pressed="true" hidden><i style="--c:#c9b6e4"></i>vias</button><button type="button" data-family="heater" aria-pressed="true" hidden><i style="--c:#ff9d6b"></i>heater</button><button type="button" data-family="metal" aria-pressed="true" hidden><i style="--c:#ffc457"></i>metal</button><button type="button" data-family="ground" aria-pressed="true"><i style="--c:#8fa3d9"></i>buried oxide</button></div><label class="solid-range"><span>apart</span><input type="range" min="0" max="1" step="0.01" value="0" data-apart aria-label="Lift the layers apart"></label><button type="button" class="solid-btn" data-true-height aria-pressed="false">true heights <small>now <b data-stretch-value>×10</b></small></button></div><div class="solid-section" hidden><div class="sec-fields" data-sec-fields role="group" aria-label="What the section shows"></div><svg role="img" aria-label="The cross-section under the pointer, with what the solver found there"></svg><p class="sec-source" data-sec-source></p><p><span data-probe-at></span><button type="button" data-probe-off>let go</button></p></div><figcaption><b>The device in 3D.</b> The shapes of <code>devices/gds/directional_coupler.gds</code>, raised to the heights that <code>process_layers.csv</code> gives them (Si_core), when the site is built; the solver builds the same structure from the same two files. Heights are stretched ×10 unless you ask for true heights. Point at a waveguide: a pane stands across it with the field the solver found there, and its section is drawn below with heights of its own, as its line says; a click holds it and opens the solid along it.</figcaption></figure>
+<h2 id="the-steps">The steps <a class="here" href="#the-steps" aria-label="Link to this section">#</a></h2>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>step</th>
+<th>folder</th>
+<th>solver</th>
+<th>script</th>
+<th>the question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>1_supermodes</code></td>
+<td>MODE (<span class="gloss" tabindex="0" data-def="Finite-difference eigenmode solver: the guided modes of one cross-section, with their effective indices and losses.">FDE</span>)</td>
+<td><code>supermodes_<wbr>fde.py</code></td>
+<td>How fast do two parallel waveguides exchange light, for a given gap?</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>2_<wbr>coupling_<wbr>length</code></td>
+<td><span class="gloss" tabindex="0" data-def="Finite-difference time domain: Maxwell&#x27;s equations stepped in time on a 3D grid. Close to exact, and the slowest of the solvers.">FDTD</span></td>
+<td><code>coupling_<wbr>length_<wbr>fdtd.py</code></td>
+<td>How long must the straight section be, with the bends counted in?</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>3_coupler_fdtd</code></td>
+<td>FDTD</td>
+<td><code>coupler_<wbr>fdtd.py</code></td>
+<td>What does the device as drawn do across the band?</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="run-it">Run it <a class="here" href="#run-it" aria-label="Link to this section">#</a></h2>
+<p>You need Lumerical with MODE and FDTD. See the
+<a href="../../course/simulations/index.html#prerequisites">prerequisites of chapter 4</a>. The run times are from the
+author's machine, with 16 threads.</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="nb">cd</span><span class="w"> </span>lumerical_simulations/directional_coupler/scripts
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>supermodes_fde.py<span class="w">                 </span><span class="c1"># step 1, about 2 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>coupling_length_fdtd.py<span class="w"> </span>--preview<span class="w"> </span><span class="c1"># draws the layout, the simulation region and the ports</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>coupling_length_fdtd.py<span class="w">           </span><span class="c1"># step 2, about 35 minutes for four lengths</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>coupler_fdtd.py<span class="w">                   </span><span class="c1"># step 3, about 13 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>coupler_fdtd.py<span class="w"> </span>--mesh<span class="w"> </span><span class="m">0</span>.01<span class="w"> </span>--name<span class="w"> </span>coupler_fdtd_fine<span class="w">   </span><span class="c1"># the mesh check of step 3, about 40 minutes</span>
+</code></pre></div>
+<p>The figures are redrawn from the kept results, without Lumerical:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/directional_coupler/figures/fig1_supermodes.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/directional_coupler/figures/fig2_coupling_length.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/directional_coupler/figures/fig3_coupler.py
+</code></pre></div>
+<hr />
+<h2 id="step-1-the-supermodes-by-mode">Step 1. The supermodes, by MODE <a class="here" href="#step-1-the-supermodes-by-mode" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> How long does it take two parallel strips, 0.2 µm apart, to pass their light across?</p>
+</div>
+<p><strong>The idea.</strong> Two waveguides side by side do not have a mode each. Together they have two: the even
+<span class="gloss" tabindex="0" data-def="A mode of two coupled waveguides taken together. The even and the odd supermode travel at different speeds; their beat moves light from one guide to the other.">supermode</span>, with the same field in both cores, and the odd one, with opposite fields. Light that
+starts in one waveguide is the sum of the two. They travel at slightly different speeds, so along
+the coupler the sum moves across to the other waveguide, and back again. All of it has crossed after</p>
+<div class="code code-plain"><pre><code>L_π = λ / (2 (n_even − n_odd))
+</code></pre></div>
+<p>and half of it after L<sub>π</sub> / 2. One mode calculation on the cross-section therefore gives the scale of
+the device.</p>
+<p><strong>The model.</strong> A straight piece of the two strips, written to <span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span> and loaded into a <span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span> with
+the <span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span>. The mode solver uses a window of 6 µm by 2.4 µm with a 20 nm mesh, and 10 nm over
+both cores and across the gap, with a mesh line on every silicon surface.</p>
+<p><strong>The results</strong> (<code>supermodes.txt</code>):</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th class="num">value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>even supermode, 1.55 µm</td>
+<td class="num">n<sub>eff</sub> = 2.45591</td>
+</tr>
+<tr>
+<td>odd supermode</td>
+<td class="num">n<sub>eff</sub> = 2.43528</td>
+</tr>
+<tr>
+<td>difference</td>
+<td class="num">0.02064</td>
+</tr>
+<tr>
+<td>cross-over length L<sub>π</sub></td>
+<td class="num">37.55 µm</td>
+</tr>
+<tr>
+<td>half of it</td>
+<td class="num">18.78 µm</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table table-wide" style="--cols:7"><table>
+<thead>
+<tr>
+<th>gap</th>
+<th>200 nm</th>
+<th>250 nm</th>
+<th>300 nm</th>
+<th>350 nm</th>
+<th>400 nm</th>
+<th>500 nm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L<sub>π</sub></td>
+<td>37.6 µm</td>
+<td>58.4 µm</td>
+<td>90.3 µm</td>
+<td>139 µm</td>
+<td>214 µm</td>
+<td>503 µm</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/directional_coupler/figures/fig1_supermodes.webp" width="2881" height="1102" alt="Even and odd supermode of two coupled strips, cross-over length against gap and against wavelength" loading="lazy" decoding="async"></button><figcaption><strong>Figure 1.</strong> The supermodes. Panels a and b are the even and the odd supermode; c is the cross-over
+length against the gap, on a logarithmic axis; d the same length against wavelength at a gap of
+200 nm.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a and b, the two supermodes.</em> The even one has light in the gap; the odd one has a zero in the
+middle of it. More of the even mode is in silicon and oxide between the cores, so its index is
+higher. The single strip of the <a href="../strip-waveguide/index.html">strip chapter</a> has 2.4445, between
+the two.</li>
+<li><em>c, the gap.</em> L<sub>π</sub> grows by a factor e for every 116 nm of gap. The field of one waveguide falls off
+exponentially outside its core, and the coupling is the part of that tail that reaches the other
+core.</li>
+<li><em>d, the wavelength.</em> L<sub>π</sub> falls from 46.8 µm at 1500 nm to 30.3 µm at 1600 nm, by 35 %. At a longer
+wavelength the mode is wider and reaches further into the gap.</li>
+</ul>
+<p><strong>What it tells you.</strong> At the smallest gap the process allows, a 50:50 coupler is about 19 µm long.
+The gap is the sensitive dimension. By the fit of panel c, 10 nm more gap makes L<sub>π</sub> 9 % longer. The
+length is not sensitive in that way: a micrometre more or less is 3 % of L<sub>π</sub>.</p>
+<div class="note note-warn">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-warn"/></svg>Pitfall</strong> The two supermodes differ by 0.02 in index, and L<sub>π</sub> is the inverse of that difference. An
+error of 0.001 in one index moves L<sub>π</sub> by 5 %. Step 1 therefore meshes the gap finely and puts mesh
+lines on the surfaces. Both modes are found in the same run, on the same mesh, so their common errors
+cancel in the difference.</p>
+</div>
+<h2 id="step-2-the-length-by-fdtd">Step 2. The length, by FDTD <a class="here" href="#step-2-the-length-by-fdtd" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> How long must the straight section be for a 50:50 split, when the S-bends are part of
+the device?</p>
+</div>
+<p><strong>The idea.</strong> The S-bends couple too. Where they approach the straight section, the two cores are
+already close. Step 1 knows nothing of that. FDTD on the whole layout includes it. The fraction of the
+light that crosses follows</p>
+<div class="code code-plain"><pre><code>cross / (cross + through) = sin²( π/2 · (L + L_bends) / L_π )
+</code></pre></div>
+<p>where L is the length of the straight section and L<sub>bends</sub> is the length of straight coupler that the
+four bends are worth. Two unknowns need at least two lengths; four lengths check that the formula
+holds.</p>
+<p><strong>The model.</strong> The builder's coupler with a 3 µm lead at each port, for straight sections of 0, 6, 12
+and 18 µm, each loaded into a Layer Builder. The FDTD region ends 1 µm before the ends of the leads, so
+the waveguides run on into the absorbing boundary. A mode port sits on each of the four waveguides;
+light enters at port 1. The mesh is the solver's automatic one (accuracy 2) with a 20 nm override over
+the gap, the straight section and 4 µm of the bends at each end.</p>
+<p>Run <code>--preview</code> first. It draws the layout with the region and the ports, which is the quickest way to
+catch a port in the wrong place.</p>
+<p><strong>The results</strong> (<code>coupling_length.txt</code>):</p>
+<div class="table table-wide" style="--cols:6"><table>
+<thead>
+<tr>
+<th>straight section</th>
+<th class="num">cross</th>
+<th class="num">through</th>
+<th class="num">sum</th>
+<th class="num">fraction that crosses</th>
+<th class="num">the fit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 µm</td>
+<td class="num">0.0158</td>
+<td class="num">0.9835</td>
+<td class="num">0.9994</td>
+<td class="num">0.0158</td>
+<td class="num">0.0159</td>
+</tr>
+<tr>
+<td>6 µm</td>
+<td class="num">0.1440</td>
+<td class="num">0.8546</td>
+<td class="num">0.9987</td>
+<td class="num">0.1442</td>
+<td class="num">0.1442</td>
+</tr>
+<tr>
+<td>12 µm</td>
+<td class="num">0.3685</td>
+<td class="num">0.6309</td>
+<td class="num">0.9994</td>
+<td class="num">0.3687</td>
+<td class="num">0.3688</td>
+</tr>
+<tr>
+<td>18 µm</td>
+<td class="num">0.6282</td>
+<td class="num">0.3706</td>
+<td class="num">0.9988</td>
+<td class="num">0.6290</td>
+<td class="num">0.6289</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L<sub>π</sub> from the fit</td>
+<td>35.81 µm</td>
+</tr>
+<tr>
+<td>L<sub>bends</sub>, what the four bends are worth</td>
+<td>2.88 µm</td>
+</tr>
+<tr>
+<td>50:50 length, L<sub>π</sub> / 2 − L<sub>bends</sub></td>
+<td>15.03 µm</td>
+</tr>
+<tr>
+<td>L<sub>π</sub> from the supermodes of step 1</td>
+<td>37.55 µm, 4.6 % longer</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/directional_coupler/figures/fig2_coupling_length.webp" width="2881" height="1007" alt="Fraction of light that crosses against the length of the straight section, and against wavelength for four lengths" loading="lazy" decoding="async"></button><figcaption><strong>Figure 2.</strong> The length. Panel a is the fraction that crosses against the length of the straight
+section: the four FDTD runs, the fit through them, and the curve that step 1 alone would predict.
+Panel b is the same fraction against wavelength, one line for each length.</figcaption></figure>
+<figure class="fig fig-wide sweep" id="sweep-coupler" data-sweep="coupler" data-reveal>
+<div class="toy">
+<svg class="toy-chart" role="img" aria-label="Fraction of the light that crosses against the length of the straight section"></svg>
+<p class="chart-legend"><span><i class="key key-cross"></i>cross, fit</span><span><i class="key key-through"></i>through, fit</span><span><i class="key key-dot"></i>FDTD, cross</span></p>
+<label class="toy-slider"><span>length of the straight section, step 2</span>
+<input type="range" min="0" max="3" step="1" value="3" aria-label="Length of the straight section, one of the 4 runs of step 2, from 0 to 18 micrometres">
+</label>
+<p class="toy-read" aria-hidden="true"></p>
+<p class="toy-say" role="status"></p>
+</div>
+<script type="application/json" class="sweep-data">{"kind":"coupler","l_pi":35.81179,"l_bends":2.878857,"design":15.027038,"x":[0.0,6.0,12.0,18.0],"fraction":[0.015839,0.144213,0.368714,0.628959],"range":[0.0,18.0],"n":4}</script>
+<figcaption><strong>Move the length of the straight section.</strong> The control stands on the 4 runs of step 2, from 0 to 18 µm; the dots are these runs. The curve is the fit of step 2, the sin² law with L<sub>π</sub> = 35.81 µm and L<sub>bends</sub> = 2.88 µm. It is drawn over the same range and is not read between the runs.</figcaption>
+</figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, the fit.</em> The four points lie on the sin² curve within 0.0001. With no straight section at all,
+1.6 % already crosses, in the bends. The dashed curve is step 1 without the bends, and it lies
+to the right: it needs more length for the same split.</li>
+<li><em>b, the wavelength.</em> Every length crosses more light at longer wavelengths. A coupler is 50:50 at
+one wavelength.</li>
+</ul>
+<p><strong>What it tells you.</strong> The straight section must be 15.0 µm. A design from the cross-section alone
+would have taken L<sub>π</sub> / 2 = 18.8 µm from step 1, and by the fit of this step that coupler crosses 66 %
+of the light, not 50 %. The bends account for most of that difference and the 4.6 % in L<sub>π</sub> for the
+rest.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>Energy.</em> Cross and through add up to 0.9987 or more in every run: the coupler loses under 0.006 dB.
+At most 6 × 10⁻⁵ of the power comes back at the input, and as little leaves at port 2.</li>
+<li><em>The model.</em> Two parameters fitted to four points leave no residual above 0.0001. The sin² law
+describes this device.</li>
+<li><em>Against step 1.</em> The two values of L<sub>π</sub> come from different solvers and differ by 4.6 %. Step 3
+simulates the device at the fitted length, which is the test that matters.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>The bends are not a detail.</em> At a 200 nm gap they are worth 2.9 µm of straight coupler, a fifth of
+the device.</li>
+<li><em>Do not extrapolate the fit far.</em> It is fitted between 0 and 18 µm. It predicts full crossing at
+32.9 µm; no run checks that.</li>
+<li><em>The fields are not kept.</em> A project with fields is hundreds of megabytes. The script reads the
+port results and saves the project again without them.</li>
+</ul>
+<h2 id="step-3-the-device-by-fdtd">Step 3. The device, by FDTD <a class="here" href="#step-3-the-device-by-fdtd" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> Does the coupler, as the builder draws it, split 50:50 at 1.55 µm, and what does it
+do across the band?</p>
+</div>
+<p><strong>The model.</strong> The layout that <code>devices/directional_coupler_builder.py</code> writes, with its 15 µm straight
+section, in the set-up of step 2. One run gives the whole band from 1.50 to 1.60 µm.</p>
+<p><strong>The results</strong> (<code>coupler_fdtd.txt</code>):</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cross, 1.55 µm</td>
+<td>0.4986</td>
+</tr>
+<tr>
+<td>through, 1.55 µm</td>
+<td>0.5007</td>
+</tr>
+<tr>
+<td>loss, 1.55 µm</td>
+<td>0.003 dB</td>
+</tr>
+<tr>
+<td>equal split at</td>
+<td>1550.3 nm</td>
+</tr>
+<tr>
+<td>back-reflection, 1.55 µm</td>
+<td>−43.5 dB</td>
+</tr>
+<tr>
+<td>light into port 2, 1.55 µm</td>
+<td>−43.6 dB</td>
+</tr>
+<tr>
+<td>the split moves by</td>
+<td>0.32 percentage points per nm</td>
+</tr>
+<tr>
+<td>between 45:55 and 55:45</td>
+<td>from 1536 to 1565 nm</td>
+</tr>
+<tr>
+<td>cross fraction at 1500 nm and 1600 nm</td>
+<td>35 % and 67 %</td>
+</tr>
+<tr>
+<td>loss, 1.50 to 1.60 µm</td>
+<td>0.003 to 0.009 dB</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/directional_coupler/figures/fig3_coupler.webp" width="2881" height="1543" alt="Field in the directional coupler, power in the cross and through ports against wavelength, loss and back-reflection" loading="lazy" decoding="async"></button><figcaption><strong>Figure 3.</strong> The device. Panel a is the field at 1550 nm, seen from above, with the outline of the
+layout; b the power in the two outputs against wavelength; c the loss and the back-reflection.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, the field.</em> The light enters at the lower left. Along the straight section it moves into the
+upper waveguide, and at the right both waveguides carry the same.</li>
+<li><em>b, the split.</em> The two lines cross at 1550 nm. Away from it the split changes almost linearly, by a
+third of a percentage point per nanometre.</li>
+<li><em>c, loss and reflection.</em> The loss stays under 0.01 dB. The reflection, on the right axis, stays
+under −40 dB.</li>
+</ul>
+<p><strong>What it tells you.</strong> The device does what steps 1 and 2 designed it for: 49.9 % crosses at 1.55 µm,
+against the 49.9 % the fit predicts for 15.0 µm. It is a narrow-band splitter: the split stays inside
+45:55 from 1536 to 1565 nm only. Where a split must hold over a wide band, the
+<a href="../mmi1x2/index.html">MMI splitter</a> is the better device.</p>
+<p><strong>The mesh, and how well the length is known.</strong> The run was repeated with 10 nm over the gap instead
+of 20 nm (<code>coupler_fdtd_fine.txt</code>; 37 minutes instead of 13):</p>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>mesh over the gap</th>
+<th class="num">cross at 1.55 µm</th>
+<th class="num">through</th>
+<th class="num">equal split at</th>
+<th class="num">loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20 nm, the default</td>
+<td class="num">0.4986</td>
+<td class="num">0.5007</td>
+<td class="num">1550.3 nm</td>
+<td class="num">0.003 dB</td>
+</tr>
+<tr>
+<td>10 nm</td>
+<td class="num">0.4855</td>
+<td class="num">0.5137</td>
+<td class="num">1554.3 nm</td>
+<td class="num">0.004 dB</td>
+</tr>
+</tbody>
+</table></div>
+<p>The finer mesh couples 2.6 % less. The equal split moves by 4 nm, and at 1.55 µm the device then
+splits 48.6:51.4. By the sin² law of step 2, the straight section would have to be about 0.3 µm
+longer, 15.3 µm, to bring the equal split back to 1550 nm. That figure is an estimate, not a run.</p>
+<p>So the 50:50 length is known to about 0.3 µm, and the 15.0 µm of the builder is the answer of the
+default mesh. The finer mesh moves the FDTD towards step 1, whose L<sub>π</sub> was the longer one. Running
+step 2 again with <code>--mesh 0.01</code> takes about two hours and settles it; it is exercise 4.</p>
+<hr />
+<h2 id="in-numbers">In numbers <a class="here" href="#in-numbers" aria-label="Link to this section">#</a></h2>
+<div class="table table-nohead" style="--cols:2"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>waveguides</td>
+<td>two strips, 0.5 µm × 220 nm, 0.2 µm apart</td>
+</tr>
+<tr>
+<td>supermodes at 1.55 µm</td>
+<td>n<sub>even</sub> = 2.4559, n<sub>odd</sub> = 2.4353</td>
+</tr>
+<tr>
+<td>L<sub>π</sub></td>
+<td>37.6 µm from the cross-section, 35.8 µm from FDTD</td>
+</tr>
+<tr>
+<td>the four S-bends are worth</td>
+<td>2.9 µm of straight coupler</td>
+</tr>
+<tr>
+<td>50:50 length</td>
+<td>15.0 µm with the default mesh; about 15.3 µm by the mesh check</td>
+</tr>
+<tr>
+<td>the device at 1.55 µm</td>
+<td>49.9 % cross, 50.1 % through, 0.003 dB loss (48.6 % cross with the finer mesh)</td>
+</tr>
+<tr>
+<td>bandwidth of the split</td>
+<td>±15 nm for 45:55</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="limits">Limits <a class="here" href="#limits" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>Smooth, vertical sidewalls, and the gap exactly as drawn. In fabrication the gap is the dimension
+that varies; step 1 gives its effect on L<sub>π</sub>.</li>
+<li>TE light only.</li>
+<li>The coupler is simulated alone. In a circuit, the waveguides that lead to it add their own loss and
+phase.</li>
+<li>The numbers are for a teaching process and have not been compared with a fabricated device.</li>
+</ul>
+<h2 id="exercises">Exercises <a class="here" href="#exercises" aria-label="Link to this section">#</a></h2>
+<ol>
+<li><strong>A tap.</strong> Use the fit of step 2 to choose the length for a 10 % tap. Build it, simulate it with
+<code>coupler_fdtd.py</code> after changing <code>LENGTH</code> in the builder, and compare.</li>
+<li><strong>A wider gap.</strong> Step 1 gives L<sub>π</sub> = 90 µm at a 300 nm gap. Run step 2 with the builder's <code>GAP</code> at
+0.30 and lengths of 0, 15, 30 and 45 µm. Are the bends worth more or less than at 200 nm, and why?</li>
+<li><strong>The wavelength of equal split.</strong> By how much must the length change to move the equal split from
+1550 to 1530 nm? Estimate it from panel b of figure 2, then run it.</li>
+<li><strong>The finer mesh.</strong> Run <code>coupling_length_fdtd.py --mesh 0.01</code>. What are L<sub>π</sub>, L<sub>bends</sub> and the 50:50
+length now, and how close is L<sub>π</sub> to the 37.55 µm of step 1? Set the builder's <code>LENGTH</code> to the new
+value and run <code>coupler_fdtd.py --mesh 0.01 --name coupler_fdtd_fine</code> again.</li>
+</ol>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<a class="card pager-prev" href="../rib-waveguide/index.html"><span>Previous</span><b>Rib waveguide and bend</b></a><a class="card pager-next" href="../mmi1x2/index.html"><span>Next</span><b>1×2 MMI splitter</b></a>
+</nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../../course/pdk/index.html">1. The PDK</a><a href="../../course/device/index.html">2. The device</a><a href="../../course/process-file/index.html">3. The process file</a><a href="../../course/simulations/index.html">4. The simulations</a><a href="../../course/your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../strip-waveguide/index.html">Strip waveguide</a><a href="../rib-waveguide/index.html">Rib waveguide</a><a href="index.html">Directional coupler</a><a href="../mmi1x2/index.html">1×2 MMI splitter</a><a href="../thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../../circuits/index.html">The chip</a><a href="../../circuits/clements-mesh/index.html">Clements mesh</a><a href="../../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="../../more/cornerstone-soi220a/index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/near.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/headfield.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/sources.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/solid.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/sweeps.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contributing · photonics-layout-cookbook</title>
+<meta name="description" content="Contributions of every size are welcome: typo fixes, clearer explanations, bug reports from your Lumerical version, new devices and new open processes.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/contributing/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contributing">
+<meta property="og:description" content="Contributions of every size are welcome: typo fixes, clearer explanations, bug reports from your Lumerical version, new devices and new open processes.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/contributing/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/contributing.jpg?v=031fed1e">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Contributing, with a wafer whose dies are the devices of the library">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../assets/fonts/cookbook-display-black.woff2", "../assets/fonts/cookbook-display.woff2", "../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","name":"Contributing","description":"Contributions of every size are welcome: typo fixes, clearer explanations, bug reports from your Lumerical version, new devices and new open processes.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/contributing/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/contributing.jpg?v=031fed1e"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"Contributing","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/contributing/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../index.html#course">Course</a>
+      <a href="../devices/index.html">Devices</a>
+<a href="../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+
+<header class="page-head">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../index.html">photonics-layout-cookbook</a>        <i>·</i> How to add a device</p>
+      <h1 class="display page-title" data-words aria-label="Contributing"><span class="w" style="--n:0">Contributing</span></h1>
+      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>9 min read</span>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CONTRIBUTING.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#set-up"><i aria-hidden="true"></i>Set-up</a></li>
+        <li><a href="#checks-before-a-pull-request"><i aria-hidden="true"></i>Checks before a pull request</a></li>
+        <li><a href="#the-rule-about-data"><i aria-hidden="true"></i>The rule about data</a></li>
+        <li><a href="#adding-a-device"><i aria-hidden="true"></i>Adding a device</a></li>
+        <li><a href="#adding-a-simulation-step"><i aria-hidden="true"></i>Adding a simulation step</a></li>
+        <li><a href="#adding-a-process"><i aria-hidden="true"></i>Adding a process</a></li>
+        <li><a href="#figures"><i aria-hidden="true"></i>Figures</a></li>
+        <li><a href="#writing-style-of-the-documents"><i aria-hidden="true"></i>Writing style of the documents</a></li>
+        <li><a href="#reporting-a-lumerical-problem"><i aria-hidden="true"></i>Reporting a Lumerical problem</a></li>
+        <li><a href="#licence"><i aria-hidden="true"></i>Licence</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>Contributions of every size are welcome: typo fixes, clearer explanations, bug reports from your
+Lumerical version, new devices and new open processes. The course is written for a reader who
+has simulated devices but has never written a <span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span>, so explanations matter as much as code.</p>
+<h2 id="set-up">Set-up <a class="here" href="#set-up" aria-label="Link to this section">#</a></h2>
+<p>The project uses <a href="https://docs.astral.sh/uv/" rel="noopener">uv</a> for a reproducible Python environment. Python
+3.12 or 3.13 is required.</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/q3430468220-tech/photonics-layout-cookbook.git
+<span class="nb">cd</span><span class="w"> </span>photonics-layout-cookbook
+uv<span class="w"> </span>sync<span class="w">                    </span><span class="c1"># creates .venv from uv.lock: runtime and development dependencies</span>
+uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install<span class="w">  </span><span class="c1"># optional: ruff, ruff format and whitespace checks on every commit</span>
+</code></pre></div>
+<p>Layout, the <span class="gloss" tabindex="0" data-def="An automatic check that a layout keeps the minimum widths, spaces and overlaps that the process can make.">DRC</span>, the tests and the figures need no Lumerical. Only the process-file compiler and
+the simulation scripts need it, with its <span class="gloss" tabindex="0" data-def="Finite-difference time domain: Maxwell&#x27;s equations stepped in time on a 3D grid. Close to exact, and the slowest of the solvers.">FDTD</span>, MODE, CHARGE, HEAT and INTERCONNECT licences.
+Set <code>LUMERICAL_ROOT</code> if Lumerical is not in a standard location.</p>
+<h2 id="checks-before-a-pull-request">Checks before a pull request <a class="here" href="#checks-before-a-pull-request" aria-label="Link to this section">#</a></h2>
+<p>Run these from the root of the repository. CI runs the lint and both test suites on Linux and
+Windows, with Python 3.12 and 3.13. It does not run the format check, so run that one yourself.</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.<span class="w">                                   </span><span class="c1"># lint (CI runs this)</span>
+uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>--check<span class="w"> </span>.<span class="w">                          </span><span class="c1"># formatting (only you run this)</span>
+uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w">                                         </span><span class="c1"># the tests of the main example (146 tests)</span>
+<span class="nb">cd</span><span class="w"> </span>more_processes/cornerstone_soi220a<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w">  </span><span class="c1"># the tests of the second process (24 passed, 1 skipped)</span>
+</code></pre></div>
+<p>If the format check fails, run <code>uv run ruff format .</code> and look at the diff before you commit.
+The <code>ruff</code> settings, the line length of 130 and the rule sets, are in <code>pyproject.toml</code>. Ruff leaves
+Markdown alone: <code>pyproject.toml</code> excludes <code>*.md</code>, so the snippets and tables of the course keep their
+hand-set alignment.</p>
+<p>The second process has its own folder and its own <code>pytest.ini</code>. Run its tests from that folder,
+as shown above. One of its tests is skipped unless the environment variable <code>CORNERSTONE_PDK</code> is set.</p>
+<h2 id="the-rule-about-data">The rule about data <a class="here" href="#the-rule-about-data" aria-label="Link to this section">#</a></h2>
+<p><strong>Only public data.</strong> Every layer name, layer number, thickness, doping level and design rule must
+come from a document anyone can download. Three rules follow.</p>
+<ol>
+<li><strong>A source tag on every number.</strong> Put the tag next to the value in the code, in the CSV tables
+and in the text. The repository uses these tags:
+<ul>
+<li><code>[B]</code>, <code>[BJ]</code>, <code>[GF]</code>, <code>[T]</code> for the main example. The list is in the docstring of
+<code>gsip_technology.py</code> and in <code>gsip_process_file_py/gsip_csv/README.md</code>.</li>
+<li><code>[YAML]</code>, <code>[DG]</code>, <code>[XS]</code>, <code>[MZM]</code>, <code>[HTR]</code> for CORNERSTONE SOI220A, defined in the docstring
+of <code>more_processes/cornerstone_soi220a/cornerstone_technology.py</code>.</li>
+<li><code>[assumed]</code> for a value that no public source gives. Say what you used instead and why.</li>
+</ul>
+</li>
+<li><strong>Public sources that disagree are recorded, not hidden.</strong> Add a row to the table of
+inconsistencies, as in <code>more_processes/cornerstone_soi220a/cornerstone_process_file_py/cornerstone_csv/README.md</code>,
+and say which value the code uses.</li>
+<li><strong>Never commit anything received under an NDA.</strong> That includes a PDK, a design manual, a
+tape-out file, and numbers from a foundry, also when they are &quot;anonymised&quot; or &quot;rounded&quot;. If a
+value is public, cite the public document. If it is not, it does not go into the repository.</li>
+</ol>
+<p>A public source is one that anyone can download without a licence or a registration with a
+foundry. A repository that you can clone without permission counts. A document that a foundry or
+a partner gave you under an agreement does not, even if a copy is found on the internet.</p>
+<h2 id="adding-a-device">Adding a device <a class="here" href="#adding-a-device" aria-label="Link to this section">#</a></h2>
+<p>A device follows the structure of the ring modulator. The steps below name the files to copy. The
+main example is the template; the second process has the same structure with different names.</p>
+<ol>
+<li><strong>Write the builder.</strong> Add <code>devices/&lt;device&gt;_builder.py</code>. A passive device starts from
+<code>devices/strip_waveguide_builder.py</code>, an active one from <code>devices/ring_modulator_builder.py</code>. Keep the
+cross-sections, the layers and the rules from the technology file (<code>gsip_technology.py</code>). Do
+not define layers or dimensions that a rule owns, and refuse arguments that break a rule, with a
+message that names it. The <code>__main__</code> block ends with <code>write_device</code> from <code>devices/__init__.py</code>,
+which writes <code>devices/gds/&lt;device&gt;.gds</code>, runs the DRC and draws the previews.</li>
+<li><strong>Add tests.</strong> Add the device to <code>tests/test_passive_devices.py</code>, or write a file of its own for an
+active device, after <code>tests/test_layout.py</code>. Check that the builder passes the DRC at its default
+and at two or three other parameter sets, that it rejects a parameter set that breaks a rule, and
+that its key dimensions are the ones the arguments say. The test of the kept layouts then also
+checks that <code>devices/gds/&lt;device&gt;.gds</code> is what the builder draws.</li>
+<li><strong>Add the simulation steps.</strong> Create <code>lumerical_simulations/&lt;device&gt;/scripts/</code> with a
+<code>common.py</code> that holds the dimensions of the device, read from the builder. Copy the one of
+<code>mmi1x2</code>. Add one script per solver run, named after the question it answers. Each script
+draws its layout with the builder, loads it with the <span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span> through <code>add_layer_builder</code>
+(<code>lumerical_simulations/flow.py</code>), and writes a <code>.txt</code> summary and a <code>.npz</code> of the result arrays.
+Take the solver set-up from <code>lumerical_simulations/solvers.py</code>; a recipe that a second device
+needs goes there. No thickness, material or doping level goes into a script.</li>
+<li><strong>Add the figures.</strong> Create <code>lumerical_simulations/&lt;device&gt;/figures/</code> with one <code>fig&lt;n&gt;_&lt;name&gt;.py</code>
+per figure. Each script reads the <code>.npz</code> files of its steps, so that it runs without Lumerical.
+Panels that several devices draw are in <code>lumerical_simulations/panels.py</code>. Follow the rules in
+the next section, and add the figure names to <code>EXPECTED</code> in <code>tests/test_figures.py</code>.</li>
+<li><strong>Write the README.</strong> Create <code>lumerical_simulations/&lt;device&gt;/README.md</code> with what each step
+answers, how to run it, the results, the checks, the pitfalls and the limits of the model. The
+README of <code>strip_waveguide</code> is the template for a passive device.</li>
+<li><strong>Link it.</strong> In <code>README.md</code> and <code>README_zh-CN.md</code>, point the card of the device at its chapter and
+add a row to the table below the cards. Change its status in <code>ROADMAP.md</code>.</li>
+</ol>
+<p>A step keeps little: the layout it simulated, the summary, the result arrays, and one Lumerical
+project without fields or modes in it. Dry runs, mesh checks and the layouts of a sweep write their
+projects to <code>build/scratch/</code>, which is not kept.</p>
+<p>State which runs you actually executed and with which Lumerical version. Do not report numbers from
+a run you did not make.</p>
+<h2 id="adding-a-simulation-step">Adding a simulation step <a class="here" href="#adding-a-simulation-step" aria-label="Link to this section">#</a></h2>
+<p>A step is one solver run with one question. To add one to an existing device:</p>
+<ol>
+<li>Write <code>scripts/&lt;step&gt;.py</code> in the device's folder. It uses the <code>common.py</code> next to it for the
+process file and the geometry, and writes its results to a step folder such as
+<code>6_interconnect_ring_modulator/</code>.</li>
+<li>Name the step folder with the next number, and keep its small <span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span> and its <code>.txt</code> summary there.
+Ignore the Lumerical projects in <code>.gitignore</code>, as the other folders do.</li>
+<li>Add <code>figures/fig&lt;n&gt;_&lt;name&gt;.py</code> that draws the result from the <code>.npz</code> file. Add it to the list in the
+README of the device.</li>
+<li>If the step needs the output of an earlier step, say so in its docstring and in the README.
+Do not draw such connections with characters in a code block: a drawing of that kind goes wrong
+without anyone noticing. For the ring modulator, add the connection to the table <code>FLOW</code> in
+<code>figures/fig_data_flow.py</code>. <code>tests/test_data_flow.py</code> compares that table with the folders the
+scripts read.</li>
+</ol>
+<h2 id="adding-a-process">Adding a process <a class="here" href="#adding-a-process" aria-label="Link to this section">#</a></h2>
+<p>A process gets its own technology file, DRC and process tables. The second process is the model:
+copy the folder <code>more_processes/cornerstone_soi220a/</code> to start, and replace the contents.</p>
+<ol>
+<li><strong>The technology file.</strong> Copy <code>cornerstone_technology.py</code> to <code>&lt;foundry&gt;_technology.py</code>. Replace the
+constants, the layer map, the design rules and the cross-sections. Keep the foundry's own layer
+names, and give the source of each constant in a comment.</li>
+<li><strong>The DRC.</strong> Copy <code>cornerstone_drc.py</code> to <code>&lt;foundry&gt;_drc.py</code>, and change the rules it checks to
+those of the process. Write the check as a pure Python function that returns a result with a
+<code>passed</code> flag.</li>
+<li><strong>The process file.</strong> Copy the folder <code>cornerstone_process_file_py/</code> to <code>&lt;foundry&gt;_process_file_py/</code>
+and fill the CSV tables. Keep the column names of the Ansys template, so that each table can
+be compared with the Ansys example line by line. The README in the <code>csv</code> folder gives the source
+of every number. The compiler must write the <code>.lbr</code> and read it back, and the read-back must
+pass before the process is accepted.</li>
+<li><strong>Tests.</strong> Add tests that tie the tables to the technology file, as in
+<code>tests/test_process_tables.py</code>.</li>
+<li><strong>The inconsistencies table.</strong> List every place where the public sources disagree, and which value
+you chose.</li>
+</ol>
+<h2 id="figures">Figures <a class="here" href="#figures" aria-label="Link to this section">#</a></h2>
+<p>Every figure of the course is drawn by a script from data kept in the repository. The rules are
+short.</p>
+<ul>
+<li><strong>Use <code>figstyle.py</code>.</strong> It sets the fonts, sizes, line widths, colour maps and panel labels of the
+journal style. Do not set your own style in a figure script. Read its docstring first: it lists the
+widths (89, 120 and 183 mm), the thin lines, the colour rules that survive colour-vision
+deficiency and greyscale, and the call that saves a figure.</li>
+<li><strong>One script per figure.</strong> A file <code>fig&lt;n&gt;_&lt;name&gt;.py</code> draws one figure and writes one PNG, at 400
+dpi, into its folder. The script must run without Lumerical.</li>
+<li><strong>Numbers computed from the data.</strong> Every number in a title, a label or an annotation comes from
+the <code>.npz</code> or <code>.txt</code> file, computed in the script. Do not type a number into a figure.</li>
+<li><strong>Panel labels.</strong> Label the panels a, b, c with <code>figstyle.panel_label</code>, in the order the caption
+describes them.</li>
+<li><strong>Caption and README.</strong> Each figure has a caption in the README that says what each panel shows,
+and the source it was drawn from.</li>
+</ul>
+<h2 id="writing-style-of-the-documents">Writing style of the documents <a class="here" href="#writing-style-of-the-documents" aria-label="Link to this section">#</a></h2>
+<p>The course is read by students, so the documents follow one style.</p>
+<ul>
+<li>Plain, direct English. Short sentences. Say what a thing is before what it is for. Define a term the
+first time it appears (PDK, DRC, process file, <span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span>, <span class="gloss" tabindex="0" data-def="The spacing between two neighbouring resonances of a ring, or fringes of an interferometer: λ² / (n_g L), with L the round trip or the difference of the arms.">FSR</span>, critical coupling).</li>
+<li>A teaching text, not marketing. No superlatives, and no &quot;powerful&quot;, &quot;seamless&quot;, &quot;simply&quot; or &quot;just&quot;.</li>
+<li>No em-dashes. Use the micro sign µ and a real minus sign − in text. Code blocks stay ASCII.</li>
+<li>Tables for parallel facts. Numbered lists for procedures. Short paragraphs for reasoning.</li>
+<li>Every number has a unit and a source, which is a file of the repository or one of the references.</li>
+<li>Code blocks must be copy-paste correct. Commands follow the script docstrings. Python snippets must
+run against the current code.</li>
+<li>Lead each section with the idea, then the detail, then how to check it. Prefer one worked example
+to three abstract sentences.</li>
+<li>Figures are shown as <code>&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;RELATIVE/PATH.png&quot; width=&quot;100%&quot; alt=&quot;...&quot;&gt;&lt;/p&gt;</code>,
+followed by a caption that starts with <code>**Figure N.**</code>. Links are relative to the document's folder.</li>
+<li>A chapter starts with a line of navigation: the previous chapter, the course map, the next chapter.
+It ends with &quot;Check yourself&quot; (three to six questions that the text answers) and &quot;Exercises&quot;
+(concrete changes to try, each naming the file to edit and what to observe).</li>
+</ul>
+<h2 id="reporting-a-lumerical-problem">Reporting a Lumerical problem <a class="here" href="#reporting-a-lumerical-problem" aria-label="Link to this section">#</a></h2>
+<p>Include the Lumerical version, the product (FDTD, MODE, CHARGE, HEAT or INTERCONNECT), the script
+and its arguments, and the full message. Many problems are property names that differ between
+versions.</p>
+<h2 id="licence">Licence <a class="here" href="#licence" aria-label="Link to this section">#</a></h2>
+<p>By contributing you agree that your contribution is released under the MIT licence of the
+repository.</p>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<span></span><a class="card pager-next" href="../index.html"><span>Back</span><b>Home</b></a></nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../course/pdk/index.html">1. The PDK</a><a href="../course/device/index.html">2. The device</a><a href="../course/process-file/index.html">3. The process file</a><a href="../course/simulations/index.html">4. The simulations</a><a href="../course/your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../devices/strip-waveguide/index.html">Strip waveguide</a><a href="../devices/rib-waveguide/index.html">Rib waveguide</a><a href="../devices/directional-coupler/index.html">Directional coupler</a><a href="../devices/mmi1x2/index.html">1×2 MMI splitter</a><a href="../devices/thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../devices/index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../circuits/index.html">The chip</a><a href="../circuits/clements-mesh/index.html">Clements mesh</a><a href="../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../roadmap/index.html">Roadmap</a><a href="../more/cornerstone-soi220a/index.html">A second process</a><a href="index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../index.html" data-index="../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../assets/palette.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

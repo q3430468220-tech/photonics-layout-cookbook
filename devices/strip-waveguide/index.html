@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Strip waveguide, bend and taper · photonics-layout-cookbook</title>
+<meta name="description" content="The strip waveguide is the wire of a silicon photonic circuit.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/strip-waveguide/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Strip waveguide, bend and taper">
+<meta property="og:description" content="The strip waveguide is the wire of a silicon photonic circuit.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/strip-waveguide/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/devices-strip-waveguide.jpg?v=b7eec246">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Strip waveguide, bend and taper, with the device seen from above">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Strip waveguide, bend and taper","description":"The strip waveguide is the wire of a silicon photonic circuit.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/strip-waveguide/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/devices-strip-waveguide.jpg?v=b7eec246"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"Device library","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/"},{"@type":"ListItem","position":3,"name":"Strip waveguide, bend and taper","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/strip-waveguide/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course">Course</a>
+      <a href="../index.html" aria-current="true">Devices</a>
+<a href="../../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="g-passive-strip_waveguide" viewBox="0 0 600 240"><path class="m-si" fill-rule="evenodd" d="M225.1,177.5 231.1,176.2 236.9,174.3 242.4,171.9 247.7,168.8 252.6,165.2 257.2,161.2 263.1,154.2 266.4,149.1 269.2,143.7 272.2,135.1 273.9,126.1 274.6,112.5 275.9,104.5 276.8,100.7 279.0,93.7 280.7,89.8 284.0,83.3 286.2,79.6 290.8,73.4 295.7,68.0 301.4,62.8 307.6,58.2 311.3,56.0 317.8,52.7 321.7,51.0 325.4,49.8 332.5,47.9 340.5,46.6 348.0,46.2 407.4,46.2 515.4,34.2 600.0,34.2 600.0,73.8 515.4,73.8 407.4,61.8 345.0,61.9 338.9,62.5 332.9,63.8 324.3,66.8 318.9,69.6 313.8,72.9 306.8,78.8 300.9,85.8 296.1,93.6 292.7,102.0 291.1,107.9 290.1,113.9 289.4,127.9 288.2,135.1 287.2,139.3 285.0,146.3 283.3,150.2 280.0,156.7 275.8,163.2 273.2,166.6 268.3,172.0 262.6,177.2 259.2,179.8 252.7,184.0 246.2,187.3 242.3,189.0 234.9,191.3 227.7,192.9 223.9,193.4 216.0,193.8 0.0,193.8 0.0,178.2 215.9,178.2Z"/></symbol></svg>
+<header class="page-head">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../index.html">Device library</a>        <i>·</i> Passive device</p>
+      <h1 class="display page-title" data-words aria-label="Strip waveguide, bend and taper"><span class="w" style="--n:0">Strip</span> <span class="w" style="--n:1">waveguide,</span> <span class="w" style="--n:2">bend</span> <span class="w" style="--n:3">and</span> <span class="w" style="--n:4">taper</span></h1>
+      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>12 min read</span>
+<span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-mode"/></svg>MODE</span><span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-eme"/></svg>EME</span>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/README.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+    <figure class="headfield headfield-band" data-travel><div class="headfield-view"><div class="headfield-pic" style="aspect-ratio: 880 / 176"><img src="../../assets/img/fields/strip-waveguide.png" alt="Field strength in the taper at 1550 nm, seen from above: the narrow input waveguide widens into the wide one, and the light stays in the fundamental mode." width="880" height="176" decoding="async"><span class="headfield-fringes" aria-hidden="true" style="--period: 2.88218cqw; background-image: linear-gradient(to right, rgba(0,0,0,0.0000) 0.00%, rgba(0,0,0,0.0051) 4.17%, rgba(0,0,0,0.0201) 8.33%, rgba(0,0,0,0.0439) 12.50%, rgba(0,0,0,0.0750) 16.67%, rgba(0,0,0,0.1112) 20.83%, rgba(0,0,0,0.1500) 25.00%, rgba(0,0,0,0.1888) 29.17%, rgba(0,0,0,0.2250) 33.33%, rgba(0,0,0,0.2561) 37.50%, rgba(0,0,0,0.2799) 41.67%, rgba(0,0,0,0.2949) 45.83%, rgba(0,0,0,0.3000) 50.00%, rgba(0,0,0,0.2949) 54.17%, rgba(0,0,0,0.2799) 58.33%, rgba(0,0,0,0.2561) 62.50%, rgba(0,0,0,0.2250) 66.67%, rgba(0,0,0,0.1888) 70.83%, rgba(0,0,0,0.1500) 75.00%, rgba(0,0,0,0.1112) 79.17%, rgba(0,0,0,0.0750) 83.33%, rgba(0,0,0,0.0439) 87.50%, rgba(0,0,0,0.0201) 91.67%, rgba(0,0,0,0.0051) 95.83%, rgba(0,0,0,0.0000) 100.00%)"></span></div></div><figcaption>Field |E| in the 20&nbsp;µm taper at 1550&nbsp;nm, by EME (<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/2_taper/taper.npz" rel="noopener">taper.npz</a>). Black below 5 % of peak. Fringes: direction only, 0.63&nbsp;µm guide period.</figcaption></figure>
+  </div>
+  <div class="wrap">
+    <div class="src-group">
+    <dl class="nums nums-head">
+      <div><dt>effective index of TE0, 1550 nm</dt><dd data-count data-source="src-0" data-source-label="Where 2.4445 comes from">2.4445</dd></div>
+      <div><dt>junction loss, 90° bend at 5 µm</dt><dd data-count data-source="src-1" data-source-label="Where 0.012 dB comes from">0.012<small>dB</small></dd></div>
+      <div><dt>20 µm taper</dt><dd data-count data-source="src-2" data-source-label="Where 0.02 dB comes from">0.02<small>dB</small></dd></div>
+    </dl>
+<aside class="src-panel" id="src-panel" role="region" aria-label="Where the number comes from" hidden tabindex="-1"><span class="src-caret" aria-hidden="true"></span><div class="src-body"></div></aside><p class="src-line"><span>Numbers from</span> <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/1_waveguide_modes/strip_modes.txt">1_waveguide_modes/strip_modes.txt</a>, <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/2_taper/taper.txt">2_taper/taper.txt</a></p><template id="src-0"><p class="src-head"><b>2.4445</b><span>effective index of TE0, 1550 nm</span></p><p class="src-k">Lines 5 and 6 of the kept summary</p><pre class="src-quote" tabindex="0"><span class="src-cols">  mode     n_eff      n_g  TE fraction  in core region  loss dB/cm</span>
+   TE0   <mark>2.44448</mark>   4.2387        0.983           1.000      -4e-09</pre><p class="src-note">The page rounds 2.44448 to 2.4445.</p><p class="src-k">How the run was made</p><p class="src-how">Strip waveguide W = 0.5 um, 220 nm silicon in oxide (gsip_process.lbr); FDE mesh 20 nm, core-surface mesh 10 nm, window 5.0 x 2.4 um</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/1_waveguide_modes/strip_modes.txt">result file<span>strip_modes.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/scripts/waveguide_modes_fde.py">script<span>waveguide_modes_fde.py</span></a></p></template><template id="src-1"><p class="src-head"><b>0.012</b><small>dB</small><span>junction loss, 90° bend at 5 µm</span></p><p class="src-k">Lines 13 and 16 of the kept summary</p><pre class="src-quote" tabindex="0"><span class="src-cols"> R (um)     n_eff  radiation dB/cm  radiation dB/90deg  junction dB  bend dB/90deg  mode shift nm</span>
+    5.0   2.44590        -4.69e-10            -3.7e-13       0.0060         <mark>0.0120</mark>           14.6</pre><p class="src-k">How the run was made</p><p class="src-how">Strip waveguide W = 0.5 um, 220 nm silicon in oxide (gsip_process.lbr); FDE mesh 20 nm, core-surface mesh 10 nm, window 5.0 x 2.4 um</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/1_waveguide_modes/strip_modes.txt">result file<span>strip_modes.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/scripts/waveguide_modes_fde.py">script<span>waveguide_modes_fde.py</span></a></p></template><template id="src-2"><p class="src-head"><b>0.02</b><small>dB</small><span>20 µm taper</span></p><p class="src-k">Line 3 of the kept summary</p><pre class="src-quote" tabindex="0">the device&#x27;s taper, 20.0 um: T = 0.9951 (<mark>0.021</mark> dB)</pre><p class="src-note">The page rounds 0.021 to 0.02 dB.</p><p class="src-k">How the run was made</p><p class="src-how">Linear taper 0.5 um -&gt; 3.0 um, strip, 220 nm silicon in oxide (gsip_process.lbr), TE0, 1.55 um; EME with 30 modes per cell, 20 cells along the taper (CVCS), mesh 20 nm, half structure</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/2_taper/taper.txt">result file<span>taper.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/strip_waveguide/scripts/taper_eme.py">script<span>taper_eme.py</span></a></p></template>    </div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#the-device"><i aria-hidden="true"></i>The device</a></li>
+        <li><a href="#the-steps"><i aria-hidden="true"></i>The steps</a></li>
+        <li><a href="#run-it"><i aria-hidden="true"></i>Run it</a></li>
+        <li><a href="#step-1-the-modes-by-mode"><i aria-hidden="true"></i>Step 1. The modes, by MODE</a></li>
+        <li><a href="#step-2-the-taper-by-eme"><i aria-hidden="true"></i>Step 2. The taper, by EME</a></li>
+        <li><a href="#in-numbers"><i aria-hidden="true"></i>In numbers</a></li>
+        <li><a href="#limits"><i aria-hidden="true"></i>Limits</a></li>
+        <li><a href="#exercises"><i aria-hidden="true"></i>Exercises</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>The <span class="gloss" tabindex="0" data-def="A silicon core etched down to the oxide and surrounded by cladding: the tightest confinement, and the sharpest bends.">strip waveguide</span> is the wire of a silicon photonic circuit. The 220 nm silicon layer is etched
+through on both sides of the core, and oxide surrounds what is left. This chapter draws one with the
+<span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span> and answers the questions a designer asks before routing with it. What does it guide? How tight
+can it bend? How long must a taper be when the width changes?</p>
+<p>It follows the same pattern as the ring modulator in <a href="../../course/simulations/index.html">chapter 4</a>. The
+layout comes from a builder, the structure comes from the layout and the <span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span>, and no script
+contains a thickness or a material.</p>
+<hr />
+<h2 id="the-device">The device <a class="here" href="#the-device" aria-label="Link to this section">#</a></h2>
+<figure class="plate"><div class="plate-drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240"><path class="m-si" fill-rule="evenodd" d="M225.1,177.5 231.1,176.2 236.9,174.3 242.4,171.9 247.7,168.8 252.6,165.2 257.2,161.2 263.1,154.2 266.4,149.1 269.2,143.7 272.2,135.1 273.9,126.1 274.6,112.5 275.9,104.5 276.8,100.7 279.0,93.7 280.7,89.8 284.0,83.3 286.2,79.6 290.8,73.4 295.7,68.0 301.4,62.8 307.6,58.2 311.3,56.0 317.8,52.7 321.7,51.0 325.4,49.8 332.5,47.9 340.5,46.6 348.0,46.2 407.4,46.2 515.4,34.2 600.0,34.2 600.0,73.8 515.4,73.8 407.4,61.8 345.0,61.9 338.9,62.5 332.9,63.8 324.3,66.8 318.9,69.6 313.8,72.9 306.8,78.8 300.9,85.8 296.1,93.6 292.7,102.0 291.1,107.9 290.1,113.9 289.4,127.9 288.2,135.1 287.2,139.3 285.0,146.3 283.3,150.2 280.0,156.7 275.8,163.2 273.2,166.6 268.3,172.0 262.6,177.2 259.2,179.8 252.7,184.0 246.2,187.3 242.3,189.0 234.9,191.3 227.7,192.9 223.9,193.4 216.0,193.8 0.0,193.8 0.0,178.2 215.9,178.2Z"/></svg>
+</div><figcaption>Strip waveguide, bend and taper, seen from above. <span class="legend"><span class="chip"><i class="swatch si"></i>silicon</span></span></figcaption></figure><p><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/devices/strip_waveguide_builder.py" rel="noopener">devices/strip_waveguide_builder.py</a> draws a straight
+waveguide, an S-bend, a taper and a wide waveguide in a row. It also has a cell for each part:
+<code>straight</code>, <code>bend</code> and <code>taper</code>. From the repository root:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>devices/strip_waveguide_builder.py
+</code></pre></div>
+<div class="code code-text"><pre><code>strip 0.5 um wide, S-bend of R = 5 um, route 37.853 um, taper 20 um to 3 um
+GDS -&gt; devices/gds/strip_waveguide.gds   ports: [&#x27;o1&#x27;, &#x27;o2&#x27;]
+DRC passed: 0 errors, 0 warnings
+</code></pre></div>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>parameter</th>
+<th class="num">default</th>
+<th>where it comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>width</code></td>
+<td class="num">0.5 µm</td>
+<td>routing width; step 1 shows what it guides</td>
+</tr>
+<tr>
+<td><code>radius</code></td>
+<td class="num">5 µm</td>
+<td>the strip bend radius of the design rules; step 1 shows the margin</td>
+</tr>
+<tr>
+<td><code>taper_length</code></td>
+<td class="num">20 µm</td>
+<td>step 2: from 16.5 µm on the taper passes 99 %</td>
+</tr>
+<tr>
+<td><code>wide_width</code></td>
+<td class="num">3 µm</td>
+<td>a wide waveguide for long straight runs</td>
+</tr>
+</tbody>
+</table></div>
+<p>The builder refuses a radius below the design rule and a width below the minimum of the waveguide
+layer, and names the rule:</p>
+<div class="code code-python"><div class="code-bar"><span>python</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="kn">from</span><span class="w"> </span><span class="nn">devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">strip_waveguide_builder</span> <span class="k">as</span> <span class="n">sw</span>
+
+<span class="n">sw</span><span class="o">.</span><span class="n">bend</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="c1"># ValueError: radius 3.0 um is below the strip bend radius, 5.0 um (gsip_technology.DESIGN_RULES['strip_bend_radius'])</span>
+</code></pre></div>
+<figure class="solid" data-solid="passive/strip_waveguide" data-src="../../assets/data/solid-passive-strip_waveguide.js"><div class="solid-stage"><canvas class="solid-canvas" role="img" aria-label="The strip waveguide, bend and taper in three dimensions; drag to turn it"></canvas><p class="solid-hint">point at a waveguide for its section · click to hold it · drag to turn · pinch or + − to zoom</p><div class="solid-zoom"><button type="button" data-zoom="1.25" aria-label="Closer">+</button><button type="button" data-zoom="0.8" aria-label="Further">−</button></div><p class="solid-flat">This browser draws no WebGL, so the solid cannot be shown here.</p></div><div class="solid-bar"><div class="solid-chips" role="group" aria-label="Show or hide a layer"><button type="button" data-family="silicon" aria-pressed="true"><i style="--c:#5ee7f5"></i>silicon</button><button type="button" data-family="implant" aria-pressed="true" hidden><i style="--c:#ff7fb0"></i>implants</button><button type="button" data-family="germanium" aria-pressed="true" hidden><i style="--c:#b9a6ff"></i>germanium</button><button type="button" data-family="nitride" aria-pressed="true" hidden><i style="--c:#7ee0a5"></i>silicon nitride</button><button type="button" data-family="via" aria-pressed="true" hidden><i style="--c:#c9b6e4"></i>vias</button><button type="button" data-family="heater" aria-pressed="true" hidden><i style="--c:#ff9d6b"></i>heater</button><button type="button" data-family="metal" aria-pressed="true" hidden><i style="--c:#ffc457"></i>metal</button><button type="button" data-family="ground" aria-pressed="true"><i style="--c:#8fa3d9"></i>buried oxide</button></div><label class="solid-range"><span>apart</span><input type="range" min="0" max="1" step="0.01" value="0" data-apart aria-label="Lift the layers apart"></label><button type="button" class="solid-btn" data-true-height aria-pressed="false">true heights <small>now <b data-stretch-value>×20</b></small></button></div><div class="solid-section" hidden><div class="sec-fields" data-sec-fields role="group" aria-label="What the section shows"></div><svg role="img" aria-label="The cross-section under the pointer, with what the solver found there"></svg><p class="sec-source" data-sec-source></p><p><span data-probe-at></span><button type="button" data-probe-off>let go</button></p></div><figcaption><b>The device in 3D.</b> The shapes of <code>devices/gds/strip_waveguide.gds</code>, raised to the heights that <code>process_layers.csv</code> gives them (Si_core), when the site is built; the solver builds the same structure from the same two files. Heights are stretched ×20 unless you ask for true heights. Point at a waveguide: a pane stands across it with the field the solver found there, and its section is drawn below with heights of its own, as its line says; a click holds it and opens the solid along it.</figcaption></figure>
+<h2 id="the-steps">The steps <a class="here" href="#the-steps" aria-label="Link to this section">#</a></h2>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>step</th>
+<th>folder</th>
+<th>solver</th>
+<th>script</th>
+<th class="long">the question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>1_<wbr>waveguide_<wbr>modes</code></td>
+<td>MODE (<span class="gloss" tabindex="0" data-def="Finite-difference eigenmode solver: the guided modes of one cross-section, with their effective indices and losses.">FDE</span>)</td>
+<td><code>waveguide_<wbr>modes_<wbr>fde.py</code></td>
+<td class="long">Which modes does the waveguide guide, how does the index change with wavelength and width, and what does a bend cost?</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>2_taper</code></td>
+<td>MODE (<span class="gloss" tabindex="0" data-def="Eigenmode expansion: the device is cut into cells along its length and the modes of the cells are joined. Fast for long devices that change slowly.">EME</span>)</td>
+<td><code>taper_eme.py</code></td>
+<td class="long">How long must the taper to the wide waveguide be?</td>
+</tr>
+</tbody>
+</table></div>
+<p>Each step folder keeps the layout it simulated (<code>.gds</code>), a summary (<code>.txt</code>) and the result arrays
+(<code>.npz</code>). The Lumerical project (<code>.lms</code>) is written next to them and is not kept in the repository;
+the script rebuilds it.</p>
+<h2 id="run-it">Run it <a class="here" href="#run-it" aria-label="Link to this section">#</a></h2>
+<p>You need Lumerical with MODE. See the <a href="../../course/simulations/index.html#prerequisites">prerequisites of chapter 4</a>
+for the installation and the process file.</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="nb">cd</span><span class="w"> </span>lumerical_simulations/strip_waveguide/scripts
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>waveguide_modes_fde.py<span class="w">      </span><span class="c1"># step 1, about 4 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>taper_eme.py<span class="w"> </span>--check<span class="w">        </span><span class="c1"># step 2, about 7 minutes</span>
+</code></pre></div>
+<p>The figures are redrawn from the kept results, without Lumerical:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/strip_waveguide/figures/fig1_modes.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/strip_waveguide/figures/fig2_taper.py
+</code></pre></div>
+<hr />
+<h2 id="step-1-the-modes-by-mode">Step 1. The modes, by MODE <a class="here" href="#step-1-the-modes-by-mode" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> What does a 0.5 µm strip guide at 1.55 µm, and what do a bend and a change of width
+do to it?</p>
+</div>
+<p><strong>The model.</strong> A straight 6 µm piece of the waveguide is written to <span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span> and loaded into a <span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span>
+with the process file. The mode solver works on the cross-section, in a window of 5 µm by 2.4 µm with
+perfectly matched layers on every side. The mesh is 20 nm, and 10 nm over the core, with a mesh line on
+each of the four surfaces of the core. Chapter 4 explains why those lines matter:
+<a href="../../course/simulations/index.html#the-mesh-and-why-it-decides-the-answer">the mesh, and why it decides the answer</a>.</p>
+<p>Before any mode is computed, the script reads the refractive index the solver sees: 3.4764 in the core
+and 1.4440 beside, below and above it. That is silicon in oxide, as the process file says. A wrong
+layer number in the process file would show up here.</p>
+<p>The solver returns more modes than the waveguide guides. Some live in the cladding and some in the
+absorbing boundary. The script keeps a mode when its index is above that of the oxide and its power
+sits around the core.</p>
+<p><strong>The results</strong> (<code>strip_modes.txt</code>):</p>
+<div class="table" style="--cols:2"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TE0, 1.55 µm</td>
+<td>n<sub>eff</sub> = 2.4445, n<sub>g</sub> = 4.239, TE fraction 0.983</td>
+</tr>
+<tr>
+<td>TM0, 1.55 µm</td>
+<td>n<sub>eff</sub> = 1.7723, n<sub>g</sub> = 3.781</td>
+</tr>
+<tr>
+<td>TE1, 1.55 µm</td>
+<td>n<sub>eff</sub> = 1.4934, only 0.049 above the oxide</td>
+</tr>
+<tr>
+<td>share of the field intensity inside the core (figure 1)</td>
+<td>TE0 68 %, TM0 21 %</td>
+</tr>
+<tr>
+<td>n<sub>eff</sub> of TE0, 1500 to 1600 nm</td>
+<td>2.5005 to 2.3865</td>
+</tr>
+<tr>
+<td>n<sub>g</sub> from the slope of n<sub>eff</sub>(λ)</td>
+<td>4.216 (0.5 % below the solver's value)</td>
+</tr>
+<tr>
+<td>90° bend, R = 5 µm</td>
+<td>0.012 dB, all of it at the two junctions with the straights</td>
+</tr>
+<tr>
+<td>90° bend, R = 3 µm</td>
+<td>0.034 dB</td>
+</tr>
+<tr>
+<td>radiation of the bend, R = 3 to 10 µm</td>
+<td>below 10⁻⁶ dB per 90°, the noise of the solver</td>
+</tr>
+<tr>
+<td>second TE mode</td>
+<td>absent up to 0.45 µm, guided from 0.50 µm</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/strip_waveguide/figures/fig1_modes.webp" width="2881" height="1448" alt="Strip waveguide: TE0 and TM0 modes, dispersion, bend loss against radius, effective index against core width" loading="lazy" decoding="async"></button><figcaption><strong>Figure 1.</strong> The strip waveguide. Panels a and b are the TE0 and the TM0 mode on the same colour
+scale; c is n<sub>eff</sub> of TE0 against wavelength; d the loss of a 90° bend against its radius; e the
+<span class="gloss" tabindex="0" data-def="The speed of the phase of a guided mode, written as an index: the mode gains a phase of 2π n_eff / λ per unit length.">effective index</span> of three modes against the core width.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a and b, the modes.</em> TE0 has its field across the core, between the two sidewalls, and 68 % of its
+intensity lies inside the silicon. TM0 has its field above and below the core, and only 21 % of it
+lies inside. That is why TE0 has the higher index, and why it is the mode circuits use.</li>
+<li><em>c, dispersion.</em> n<sub>eff</sub> falls by 0.114 across the band. The <span class="gloss" tabindex="0" data-def="The index that sets how fast a pulse, or the envelope of the light, travels: n_g = n_eff − λ dn_eff/dλ. It sets delays and the free spectral range.">group index</span>, n<sub>g</sub> = n − λ dn/dλ, is the
+index a pulse or a resonance sees; at 4.24 it is far above n<sub>eff</sub>. A ring or an interferometer made of
+this waveguide needs n<sub>g</sub>, not n<sub>eff</sub>, for its <span class="gloss" tabindex="0" data-def="The spacing between two neighbouring resonances of a ring, or fringes of an interferometer: λ² / (n_g L), with L the round trip or the difference of the arms.">free spectral range</span>.</li>
+<li><em>d, the bend.</em> The solver finds no radiation down to 3 µm. What a bend loses is at its two ends.
+The mode of a bend sits further out than the mode of a straight, 15 nm at R = 5 µm, so a little
+light is lost where the two meet. At 5 µm that is 0.006 dB per junction.</li>
+<li><em>e, the width.</em> Below 0.45 µm the strip carries one TE mode. At 0.5 µm a second one, TE1, is just
+above the oxide line. TM0 is guided at every width.</li>
+</ul>
+<p><strong>What it tells you.</strong> At 0.5 µm and R = 5 µm the strip is a good wire. A bend costs about a hundredth
+of a decibel, and the design rule of 5 µm has margin down to 3 µm. The strip is not strictly
+single-mode at 0.5 µm. TE1 is guided, though so weakly that a bend or a taper strips it off. A circuit
+that must not carry TE1 at all uses 0.45 µm.</p>
+<div class="note note-check">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Check</strong> The group index from the slope of n<sub>eff</sub>(λ), 4.216, agrees with the solver's value, 4.239,
+to 0.5 %. The two come from different calculations.</p>
+</div>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>A bend sweep needs a window that excludes the centre of the bend.</em> The solver maps the bend onto a
+straight guide, and the map breaks down at the centre. With the 5 µm window, radii of 1, 1.5 and
+2 µm returned no mode. The script now leaves out any radius below half the window plus 0.2 µm, and
+says so in its summary.</li>
+<li><em>&quot;Loss&quot; in the mode list can be negative.</em> Values around 10⁻⁹ dB/cm, of either sign, are the noise of
+the solver. The figure draws them on a floor, as open squares.</li>
+<li><em>The loss here is not the loss of a fabricated waveguide.</em> In a real strip the roughness of the
+sidewalls dominates, at a few decibels per centimetre in published work. The model has smooth walls.</li>
+</ul>
+<h2 id="step-2-the-taper-by-eme">Step 2. The taper, by EME <a class="here" href="#step-2-the-taper-by-eme" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> How long must a linear taper from 0.5 µm to 3 µm be, so that the light stays in the
+fundamental mode?</p>
+</div>
+<p><strong>The model.</strong> The taper with a straight at each end, loaded into a Layer Builder. The solver is EME,
+the eigenmode expansion method. It cuts the device into cells along its length, finds the modes of each
+cell once, and joins them at the cell boundaries. The taper is cut into 20 cells, with a correction for
+the staircase between them (CVCS). Each cell keeps 30 modes.</p>
+<p>The reason to use EME here is the length sweep. A longer taper has the same cells with the same modes;
+only the phase each mode collects changes. So the sweep over 79 lengths costs one mode calculation and
+a few seconds more. <span class="gloss" tabindex="0" data-def="Finite-difference time domain: Maxwell&#x27;s equations stepped in time on a 3D grid. Close to exact, and the slowest of the solvers.">FDTD</span> would need 79 runs.</p>
+<p>The device is mirror-symmetric and fed with TE0, so only half of it is solved, with an anti-symmetric
+wall on the axis. The official Ansys example of a linear taper does the same.</p>
+<p><strong>The results</strong> (<code>taper.txt</code>):</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>taper length</th>
+<th class="num">power in TE0 of the wide waveguide</th>
+<th class="num">loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 µm</td>
+<td class="num">42 %</td>
+<td class="num">3.7 dB</td>
+</tr>
+<tr>
+<td>3 µm</td>
+<td class="num">78 %</td>
+<td class="num">1.1 dB</td>
+</tr>
+<tr>
+<td>5 µm</td>
+<td class="num">90 %</td>
+<td class="num">0.47 dB</td>
+</tr>
+<tr>
+<td>10 µm</td>
+<td class="num">97.4 %</td>
+<td class="num">0.11 dB</td>
+</tr>
+<tr>
+<td>16.5 µm</td>
+<td class="num">99.0 %</td>
+<td class="num">0.04 dB</td>
+</tr>
+<tr>
+<td>20 µm, the device</td>
+<td class="num">99.5 %</td>
+<td class="num">0.02 dB</td>
+</tr>
+<tr>
+<td>30 µm</td>
+<td class="num">99.9 %</td>
+<td class="num">0.006 dB</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/strip_waveguide/figures/fig2_taper.webp" width="2881" height="976" alt="Taper: field in a 3 um taper and in the 20 um taper, and transmission against taper length" loading="lazy" decoding="async"></button><figcaption><strong>Figure 2.</strong> The taper. Panel a is the field in a taper of 3 µm; b in the taper of the device, 20 µm;
+c the power that arrives in TE0 of the wide waveguide against the taper length.</figcaption></figure>
+<figure class="fig fig-wide sweep" id="sweep-taper" data-sweep="taper" data-reveal>
+<div class="toy">
+<svg class="toy-chart" role="img" aria-label="Power in TE0 of the wide waveguide against the taper length"></svg>
+<p class="chart-legend"><span><i class="key key-cross"></i>power in TE0</span><span><i class="key key-check"></i>15 modes per cell</span></p>
+<label class="toy-slider"><span>taper length, step 2</span>
+<input type="range" min="0" max="78" step="1" value="38" aria-label="Taper length, one of the 79 lengths that step 2 simulated">
+</label>
+<p class="toy-read" aria-hidden="true"></p>
+<p class="toy-say" role="status"></p>
+</div>
+<script type="application/json" class="sweep-data">{"kind":"taper","x":[1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0,10.5,11.0,11.5,12.0,12.5,13.0,13.5,14.0,14.5,15.0,15.5,16.0,16.5,17.0,17.5,18.0,18.5,19.0,19.5,20.0,20.5,21.0,21.5,22.0,22.5,23.0,23.5,24.0,24.5,25.0,25.5,26.0,26.5,27.0,27.5,28.0,28.5,29.0,29.5,30.0,30.5,31.0,31.5,32.0,32.5,33.0,33.5,34.0,34.5,35.0,35.5,36.0,36.5,37.0,37.5,38.0,38.5,39.0,39.5,40.0],"T":[0.424516,0.463692,0.550701,0.669686,0.775265,0.838892,0.869512,0.885211,0.897686,0.91266,0.92713,0.939314,0.948499,0.954409,0.958405,0.962146,0.966447,0.970562,0.97419,0.977367,0.979224,0.979988,0.980615,0.981982,0.983662,0.985437,0.986821,0.987676,0.988109,0.988536,0.989244,0.990127,0.990768,0.991034,0.99105,0.991351,0.992393,0.993984,0.995126,0.995096,0.994175,0.992991,0.992019,0.99222,0.993652,0.995683,0.997198,0.997697,0.997289,0.99624,0.995122,0.994438,0.994282,0.994631,0.995432,0.996512,0.997555,0.998349,0.99869,0.998446,0.997882,0.997181,0.996535,0.996124,0.996029,0.996227,0.996673,0.997277,0.997963,0.998594,0.999073,0.999258,0.999158,0.998815,0.998346,0.997879,0.997513,0.997305,0.997245],"check":[0.440504,0.479538,0.553677,0.658053,0.763893,0.838338,0.872918,0.888757,0.899101,0.913276,0.927207,0.939095,0.948714,0.955073,0.958556,0.961703,0.96626,0.970827,0.974507,0.977474,0.979134,0.979784,0.980738,0.982333,0.984056,0.985834,0.987073,0.987675,0.988107,0.988785,0.98959,0.990239,0.990797,0.990915,0.990889,0.99127,0.99243,0.994059,0.995183,0.99506,0.994169,0.992985,0.992089,0.992301,0.993706,0.9957,0.997174,0.997687,0.997286,0.996263,0.995137,0.994447,0.994272,0.994639,0.99545,0.996541,0.997579,0.99836,0.998677,0.998439,0.997878,0.997186,0.996542,0.996129,0.99603,0.996229,0.996678,0.997286,0.997971,0.998601,0.999074,0.999257,0.999156,0.998814,0.998346,0.997879,0.997512,0.997306,0.997245],"design":20.0,"reached":16.5,"target":0.99,"n":79,"modes":30,"check_modes":15}</script>
+<figcaption><strong>Move the taper length.</strong> The curve is the power that arrives in TE0 of the wide waveguide for each of the 79 lengths of step 2, computed by EME with 30 modes per cell. The control stands on these runs only, and the dashed line marks the device, 20 µm.</figcaption>
+</figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, too short.</em> The waveguide widens faster than the mode can follow. A fifth of the light goes
+into higher modes of the wide waveguide. They travel at other speeds, and the pattern in the wide
+waveguide is their beating with TE0.</li>
+<li><em>b, long enough.</em> The mode widens with the waveguide and arrives as TE0.</li>
+<li><em>c, the sweep.</em> The curve rises steeply to 10 µm and then flattens. It does not rise evenly: beyond
+16.5 µm it ripples between 99.0 % and 99.9 %, because the little light in higher modes arrives in or
+out of phase. So the length is read where the curve stays above the target, not at its first
+crossing.</li>
+</ul>
+<p><strong>What it tells you.</strong> 20 µm is a safe length for this pair of widths. A longer taper buys almost
+nothing; a taper under 10 µm costs more than a tenth of a decibel.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>The sweep against a direct simulation.</em> The sweep stretches the taper in the solver without redrawing
+it. The device was also simulated as drawn, and so was a second layout with a 3 µm taper. Both agree
+with the sweep to four digits: 0.9951 and 0.7753.</li>
+<li><em>The number of modes.</em> With 15 modes per cell instead of 30, the transmission changes by 0.0002 at
+16.5 µm and beyond. Below 2 µm it changes by up to 0.016: a short taper scatters into many modes, and
+the answer there needs them.</li>
+<li><em>Against step 1.</em> The EME finds n<sub>eff</sub> = 2.4443 for TE0 of the input waveguide; the mode solver of
+step 1 found 2.4445.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>The Layer Builder builds only what lies inside its box.</em> The box is centred on the origin. A layout
+drawn from x = 0 to the right, in a box sized for its length, loses its far end without a warning,
+and the solver then finds no silicon there. An early version of this step lost the wide waveguide
+this way and reported a transmission of 1.5 %. The sign was in the mode list: the highest index in
+the last cell was 0.97, below that of oxide. <code>add_layer_builder</code> now sizes the box from the layout.</li>
+<li><em>Propagate the device before the sweep.</em> A length sweep leaves the swept group at the last length it
+tried. The script therefore reads the field and the transmission of the device first.</li>
+<li><em>Symmetry halves the work only if the feed is symmetric too.</em> The anti-symmetric wall keeps the modes
+that TE0 can excite. For a device without that symmetry, solve the whole cross-section, as the
+<a href="../mmi1x2/index.html">MMI chapter</a> does.</li>
+<li><em>A run can come back empty.</em> In two runs of this script, the last <code>run</code>, the one of the convergence
+check, returned without an error and without having run: no new engine log, and the project still
+in layout mode. The next command then failed with &quot;emesweep cannot be used while in layout mode&quot;. A
+second attempt ten seconds later ran normally. The cause was not found; an FDTD run was busy on the
+same machine both times. The scripts now run through <code>run_eme</code> in <code>lumerical_simulations/solvers.py</code>,
+which checks for results, tries once more, and says so on the console.</li>
+<li><em>The project file grows with the modes.</em> Saved after a run, the project of this step is several
+hundred megabytes, because it holds the fields of every mode of every cell. The script saves the
+project once more at its end, in layout mode, at under 1 MB.</li>
+</ul>
+<hr />
+<h2 id="in-numbers">In numbers <a class="here" href="#in-numbers" aria-label="Link to this section">#</a></h2>
+<div class="table table-nohead" style="--cols:2"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>waveguide</td>
+<td>0.5 µm × 220 nm silicon in oxide</td>
+</tr>
+<tr>
+<td>TE0 at 1.55 µm</td>
+<td>n<sub>eff</sub> = 2.4445, n<sub>g</sub> = 4.239</td>
+</tr>
+<tr>
+<td>modes guided at 0.5 µm</td>
+<td>TE0, TM0, and a weak TE1</td>
+</tr>
+<tr>
+<td>single TE mode</td>
+<td>up to 0.45 µm</td>
+</tr>
+<tr>
+<td>90° bend at R = 5 µm</td>
+<td>0.012 dB</td>
+</tr>
+<tr>
+<td>taper 0.5 to 3 µm, 20 µm long</td>
+<td>0.02 dB</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="limits">Limits <a class="here" href="#limits" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>Smooth, vertical sidewalls. Scattering loss, the main loss of a real strip, is not modelled.</li>
+<li>One wavelength for the bend and the taper, 1.55 µm.</li>
+<li>The bend loss is the radiation of a uniform bend plus the mismatch at its two ends. An Euler bend,
+which the builder also draws, removes the jump in curvature; its gain is not computed here.</li>
+<li>The numbers are for a teaching process and have not been compared with a fabricated device.</li>
+</ul>
+<h2 id="exercises">Exercises <a class="here" href="#exercises" aria-label="Link to this section">#</a></h2>
+<ol>
+<li><strong>The cut-off of TE1.</strong> Run <code>waveguide_modes_fde.py --widths 0.42 0.44 0.46 0.48</code> and find the width
+at which the second TE mode first appears.</li>
+<li><strong>A tighter bend.</strong> The window limits the radius. Change <code>Y_SPAN</code> in the script to 3 µm and run
+<code>--radii 2 2.5 3 --no-widths</code>. Does the radiation rise above the floor?</li>
+<li><strong>Another taper.</strong> In <code>devices/strip_waveguide_builder.py</code> set <code>WIDE_WIDTH</code> to 2.0 and run step 2
+again. Does a narrower end need a shorter taper?</li>
+</ol>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<span></span><a class="card pager-next" href="../rib-waveguide/index.html"><span>Next</span><b>Rib waveguide and bend</b></a>
+</nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../../course/pdk/index.html">1. The PDK</a><a href="../../course/device/index.html">2. The device</a><a href="../../course/process-file/index.html">3. The process file</a><a href="../../course/simulations/index.html">4. The simulations</a><a href="../../course/your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="index.html">Strip waveguide</a><a href="../rib-waveguide/index.html">Rib waveguide</a><a href="../directional-coupler/index.html">Directional coupler</a><a href="../mmi1x2/index.html">1×2 MMI splitter</a><a href="../thermo-optic-phase-shifter/index.html">Thermo-optic phase shifter</a>        <a href="../index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../../circuits/index.html">The chip</a><a href="../../circuits/clements-mesh/index.html">Clements mesh</a><a href="../../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="../../more/cornerstone-soi220a/index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/near.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/headfield.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/sources.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/solid.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/sweeps.js?v=0bf0c5b6" defer></script>
+</body>
+</html>

@@ -1,0 +1,1286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thermo-optic phase shifter · photonics-layout-cookbook</title>
+<meta name="description" content="A thermo-optic phase shifter is a waveguide with a heater above it.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090b1d">
+<link rel="canonical" href="https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/thermo-optic-phase-shifter/">
+<meta property="og:site_name" content="photonics-layout-cookbook">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thermo-optic phase shifter">
+<meta property="og:description" content="A thermo-optic phase shifter is a waveguide with a heater above it.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/thermo-optic-phase-shifter/">
+<meta property="og:image" content="https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/devices-thermo-optic-phase-shifter.jpg?v=69e99b67">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Thermo-optic phase shifter, with the device seen from above">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/img/icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<script>
+(function (root) {
+  root.classList.add("js");
+  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) root.classList.add("mac"); // for hints that name a key
+  // if the script of the page never runs, nothing may stay hidden
+  setTimeout(function () { if (!window.COOKBOOK_READY) root.classList.remove("js"); }, 3500);
+  // the fonts are asked for at once, together with the stylesheet (a page opened from disk may not preload one)
+  if (location.protocol === "file:") return;
+  for (const href of ["../../assets/fonts/cookbook-display-black.woff2", "../../assets/fonts/cookbook-display.woff2", "../../assets/fonts/inter.woff2"]) {
+    const link = document.createElement("link");
+    Object.assign(link, { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous", href });
+    document.head.append(link);
+  }
+})(document.documentElement);
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=0bf0c5b6">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"TechArticle","headline":"Thermo-optic phase shifter","description":"A thermo-optic phase shifter is a waveguide with a heater above it.","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/thermo-optic-phase-shifter/","inLanguage":"en","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"photonics-layout-cookbook","url":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},"image":"https://q3430468220-tech.github.io/photonics-layout-cookbook/assets/og/devices-thermo-optic-phase-shifter.jpg?v=69e99b67"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"photonics-layout-cookbook","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/"},{"@type":"ListItem","position":2,"name":"Device library","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/"},{"@type":"ListItem","position":3,"name":"Thermo-optic phase shifter","item":"https://q3430468220-tech.github.io/photonics-layout-cookbook/devices/thermo-optic-phase-shifter/"}]}]</script>
+</head>
+<body class="chapter">
+<a class="skip" href="#main">Skip to the text</a>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19.5v-15M6 10.5l6-6 6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.2"/><path d="M5 15V6.2A2.2 2.2 0 0 1 7.2 4H15"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.8l4.4 4.4L19 7.4"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M8.2 12.4l2.7 2.7 5-5.4"/></symbol>
+  <symbol id="i-planned" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" stroke-dasharray="2.6 3.2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.2C9.6 4.6 6.6 4.4 4 5.2v13.4c2.6-.8 5.6-.6 8 1 2.4-1.6 5.4-1.8 8-1V5.2c-2.6-.8-5.6-.6-8 1ZM12 6.2v13.4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5ZM3.5 12 12 16.5 20.5 12M3.5 16 12 20.5 20.5 16"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="9.8" r="6.2"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6ZM14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2.5 12c1.6-5.4 3.2-5.4 4.8 0s3.2 5.4 4.8 0 3.2-5.4 4.8 0 3.2 5.4 4.6 0"/></symbol>
+  <symbol id="i-wafer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 3.9v16.2M15.4 3.9v16.2M3.9 8.6h16.2M3.9 15.4h16.2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.6"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.6"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.6"/></symbol>
+  <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.8"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></symbol>
+  <symbol id="i-tests" viewBox="0 0 24 24"><path d="M10.5 6.5H20M10.5 12H20M10.5 17.5H20M4 6.4l1.4 1.4L8 5.2M4 11.9l1.4 1.4L8 10.7M4 17.4l1.4 1.4L8 16.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.5" width="17.6" height="15" rx="2.6"/><path d="M7.4 9.6l3 2.7-3 2.7M12.8 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.2V12l3.4 2.2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13L15 19.5l-6-2-5.5 2ZM9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6 20 20"/></symbol>
+  <symbol id="i-slide" viewBox="0 0 24 24"><path d="M3.5 12h17M7.5 8l-4 4 4 4M16.5 8l4 4-4 4"/></symbol>
+  <symbol id="i-ask" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M9.4 9.6a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.3 1-1.3 2M12 16.9v.1"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.2 20.6 19H3.4ZM12 10v4.4M12 16.9v.1"/></symbol>
+  <symbol id="i-fdtd" viewBox="0 0 24 24"><path d="M2.5 12h2.6l1.5-3.4 2.2 7.8 2.3-12 2.2 15.2 2.3-12 2.2 7.8 1.5-3.4h2.2"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><path d="M3 16.5c4.6 0 4.8-10.5 9-10.5s4.400 10.500 9 10.500M3 20h18"/></symbol>
+  <symbol id="i-eme" viewBox="0 0 24 24"><path d="M3.500 10h3.800v4H3.500ZM10.100 8.2h3.800v7.600h-3.800ZM16.700 6h3.800v12h-3.800Z"/></symbol>
+  <symbol id="i-charge" viewBox="0 0 24 24"><circle cx="7.800" cy="12" r="4.600"/><circle cx="17.200" cy="12" r="3.600"/><path d="M7.800 9.900v4.200M5.700 12h4.200M15.600 12h3.200"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24"><path d="M9.800 5a2.200 2.200 0 0 1 4.400 0v8.300a4.300 4.300 0 1 1-4.400 0ZM12 9.500v7"/></symbol>
+  <symbol id="i-interconnect" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.200"/><circle cx="19" cy="6.200" r="2.200"/><circle cx="19" cy="17.800" r="2.200"/><path d="M7.200 12h3.600l6.200-4.800M10.800 12l6.200 4.800"/></symbol>
+</svg><div class="backdrop" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><svg class="stars" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><circle cx="663" cy="970" r="0.6" opacity="0.37"/><circle cx="148" cy="840" r="0.9" opacity="0.26"/><circle cx="118" cy="931" r="0.9" opacity="0.13"/><circle cx="888" cy="428" r="0.5" opacity="0.15"/><circle cx="869" cy="60" r="1.1" opacity="0.17"/><circle cx="457" cy="645" r="0.9" opacity="0.48"/><circle cx="1181" cy="599" r="0.8" opacity="0.49"/><circle cx="95" cy="570" r="1.1" opacity="0.23"/><circle cx="295" cy="553" r="0.6" opacity="0.24"/><circle cx="1396" cy="185" r="0.6" opacity="0.34"/><circle cx="384" cy="381" r="0.6" opacity="0.39"/><circle cx="1155" cy="61" r="0.9" opacity="0.31"/><circle cx="1088" cy="437" r="1.0" opacity="0.3"/><circle cx="928" cy="370" r="0.7" opacity="0.42"/><circle cx="1431" cy="798" r="0.7" opacity="0.34"/><circle cx="1075" cy="506" r="1.1" opacity="0.4"/><circle cx="589" cy="623" r="1.2" opacity="0.16"/><circle cx="856" cy="168" r="1.0" opacity="0.18"/><circle cx="1001" cy="431" r="0.5" opacity="0.37"/><circle cx="1565" cy="571" r="0.9" opacity="0.45"/><circle cx="642" cy="348" r="1.0" opacity="0.35"/><circle cx="1187" cy="816" r="0.8" opacity="0.44"/><circle cx="552" cy="485" r="1.0" opacity="0.14"/><circle cx="1497" cy="718" r="0.7" opacity="0.34"/><circle cx="1395" cy="841" r="0.8" opacity="0.39"/><circle cx="1369" cy="355" r="0.5" opacity="0.3"/><circle cx="344" cy="625" r="0.6" opacity="0.14"/><circle cx="1573" cy="294" r="0.6" opacity="0.21"/><circle cx="800" cy="938" r="1.1" opacity="0.15"/><circle cx="919" cy="411" r="0.9" opacity="0.46"/><circle cx="881" cy="884" r="0.9" opacity="0.39"/><circle cx="734" cy="699" r="1.1" opacity="0.48"/><circle cx="309" cy="84" r="0.6" opacity="0.21"/><circle cx="477" cy="12" r="0.8" opacity="0.34"/><circle cx="538" cy="288" r="0.5" opacity="0.28"/><circle cx="756" cy="624" r="0.9" opacity="0.48"/><circle cx="1414" cy="879" r="0.9" opacity="0.35"/><circle cx="1384" cy="757" r="0.5" opacity="0.46"/><circle cx="1597" cy="974" r="1.1" opacity="0.42"/><circle cx="803" cy="407" r="0.8" opacity="0.16"/><circle cx="1299" cy="410" r="0.5" opacity="0.15"/><circle cx="427" cy="451" r="0.6" opacity="0.25"/><circle cx="107" cy="104" r="0.5" opacity="0.18"/><circle cx="207" cy="971" r="0.8" opacity="0.13"/><circle cx="425" cy="628" r="0.8" opacity="0.36"/><circle cx="711" cy="616" r="0.8" opacity="0.17"/><circle cx="999" cy="477" r="0.8" opacity="0.24"/><circle cx="295" cy="104" r="1.0" opacity="0.4"/><circle cx="980" cy="848" r="1.0" opacity="0.32"/><circle cx="420" cy="973" r="1.2" opacity="0.26"/><circle cx="1413" cy="556" r="1.1" opacity="0.41"/><circle cx="610" cy="658" r="1.1" opacity="0.38"/><circle cx="534" cy="530" r="0.8" opacity="0.18"/><circle cx="1580" cy="228" r="0.9" opacity="0.42"/><circle cx="675" cy="651" r="0.7" opacity="0.43"/><circle cx="1553" cy="873" r="0.6" opacity="0.21"/><circle cx="820" cy="757" r="1.1" opacity="0.2"/><circle cx="1009" cy="364" r="1.0" opacity="0.5"/><circle cx="572" cy="483" r="0.7" opacity="0.38"/><circle cx="705" cy="457" r="1.1" opacity="0.39"/><circle cx="715" cy="977" r="1.2" opacity="0.15"/><circle cx="209" cy="232" r="0.8" opacity="0.25"/><circle cx="988" cy="639" r="1.2" opacity="0.35"/><circle cx="3" cy="490" r="1.1" opacity="0.25"/><circle cx="1317" cy="86" r="1.1" opacity="0.17"/><circle cx="795" cy="801" r="1.0" opacity="0.2"/><circle cx="365" cy="444" r="1.1" opacity="0.25"/><circle cx="1478" cy="405" r="0.8" opacity="0.4"/><circle cx="173" cy="742" r="0.6" opacity="0.5"/><circle cx="56" cy="154" r="0.9" opacity="0.3"/></svg></div>
+
+<header class="nav" data-nav>
+  <div class="nav-in">
+    <a class="brand" href="../../index.html" aria-label="photonics-layout-cookbook, home">
+      <img class="brand-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451">
+      <span class="brand-name">photonics-layout-cookbook</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="../../index.html#course">Course</a>
+      <a href="../index.html" aria-current="true">Devices</a>
+<a href="../../circuits/index.html">Circuits</a>      <a class="nav-opt" href="../../roadmap/index.html">Roadmap</a>
+<button class="nav-search" type="button" data-palette-open aria-label="Search" aria-keyshortcuts="Control+K Meta+K"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="nav-search-word">Search</span><kbd class="nav-search-key" aria-hidden="true"><span class="key-win">Ctrl K</span><span class="key-mac">⌘ K</span></kbd></button>      <a class="nav-gh" href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub<svg class="ico ico-out" aria-hidden="true"><use href="#i-out"/></svg><svg class="ico ico-mark" aria-hidden="true"><use href="#i-github"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="progress" aria-hidden="true"><i></i></div>
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="g-active-thermo_optic_phase_shifter" viewBox="0 0 504 312"><path class="m-pit" fill-rule="evenodd" d="M373.0,186.0 373.0,225.0 131.0,225.0 131.0,186.0ZM373.0,87.0 373.0,126.0 131.0,126.0 131.0,87.0Z"/><path class="m-si" fill-rule="evenodd" d="M0.0,163.8 0.0,148.2 504.0,148.2 504.0,163.8Z"/><path class="m-heater" fill-rule="evenodd" d="M100.8,168.6 100.8,143.4 403.2,143.4 403.2,168.6Z"/><path class="m-metal" fill-rule="evenodd" d="M110.9,120.0 110.9,192.0 45.4,192.0 45.4,120.0ZM458.6,120.0 458.6,192.0 393.1,192.0 393.1,120.0Z"/></symbol></svg>
+<header class="page-head has-art">
+  <div class="wrap page-head-in">
+    <div class="page-head-text">
+      <p class="eyebrow"><span class="pip"></span>
+<a href="../index.html">Device library</a>        <i>·</i> Active device</p>
+      <h1 class="display page-title" data-words aria-label="Thermo-optic phase shifter"><span class="w" style="--n:0">Thermo-optic</span> <span class="w" style="--n:1">phase</span> <span class="w" style="--n:2">shifter</span></h1>
+      <p class="page-meta">
+        <span><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>38 min read</span>
+<span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-heat"/></svg>HEAT</span><span class="tag"><svg class="ico" aria-hidden="true"><use href="#i-mode"/></svg>MODE</span>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/README.md" rel="noopener">source on GitHub<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+      </p>
+    </div>
+    <div class="page-art" aria-hidden="true"><svg class="glyph" viewBox="0 0 161.5 100"><use href="#g-active-thermo_optic_phase_shifter" width="100%" height="100%"/></svg></div>
+  </div>
+  <div class="wrap">
+    <div class="src-group">
+    <dl class="nums nums-head">
+      <div><dt>heater power for π, with trenches</dt><dd data-count data-source="src-0" data-source-label="Where 10.26 mW comes from">10.26<small>mW</small></dd></div>
+      <div><dt>the same without trenches</dt><dd data-count data-source="src-1" data-source-label="Where 22.0 mW comes from">22.0<small>mW</small></dd></div>
+      <div><dt>time constant, with trenches</dt><dd data-count data-source="src-2" data-source-label="Where 18.0 µs comes from">18.0<small>µs</small></dd></div>
+    </dl>
+<aside class="src-panel" id="src-panel" role="region" aria-label="Where the number comes from" hidden tabindex="-1"><span class="src-caret" aria-hidden="true"></span><div class="src-body"></div></aside><p class="src-line"><span>Numbers from</span> <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/2_phase_shift/phase.txt">2_phase_shift/phase.txt</a>, <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/3_switching_time/switching.txt">3_switching_time/switching.txt</a></p><template id="src-0"><p class="src-head"><b>10.26</b><small>mW</small><span>heater power for π, with trenches</span></p><p class="src-k">Line 2 of the kept summary</p><pre class="src-quote" tabindex="0">answer: the device as drawn needs <mark>10.26</mark> mW for pi and 20.51 mW for 2 pi; without trenches it would need 22.00 and 44.00 mW.  The trenches lower the power by a factor 2.15.</pre><p class="src-k">How the run was made</p><p class="src-how">MODE (FDE), Lumerical 2025 R1: TE0 at 1.55 um, mesh 20 nm with 10 nm on the surfaces of the core, window 3.4 x 1.8 um with PML; temperature maps of step 1 (100 um of film)</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/2_phase_shift/phase.txt">result file<span>phase.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/scripts/phase_shift_fde.py">script<span>phase_shift_fde.py</span></a></p></template><template id="src-1"><p class="src-head"><b>22.0</b><small>mW</small><span>the same without trenches</span></p><p class="src-k">Line 2 of the kept summary</p><pre class="src-quote" tabindex="0">answer: the device as drawn needs 10.26 mW for pi and 20.51 mW for 2 pi; without trenches it would need <mark>22.00</mark> and 44.00 mW.  The trenches lower the power by a factor 2.15.</pre><p class="src-k">How the run was made</p><p class="src-how">MODE (FDE), Lumerical 2025 R1: TE0 at 1.55 um, mesh 20 nm with 10 nm on the surfaces of the core, window 3.4 x 1.8 um with PML; temperature maps of step 1 (100 um of film)</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/2_phase_shift/phase.txt">result file<span>phase.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/scripts/phase_shift_fde.py">script<span>phase_shift_fde.py</span></a></p></template><template id="src-2"><p class="src-head"><b>18.0</b><small>µs</small><span>time constant, with trenches</span></p><p class="src-k">Line 2 of the kept summary</p><pre class="src-quote" tabindex="0">answer: the device has a time constant of <mark>18.0</mark> us and rises from 10 to 90 % in 49.9 us; without trenches 6.1 and 26.9 us.  The trenches make it 2.9 times slower and lower the power for pi 2.19 times (the cross-section with a trench on each side; step 2 has the device as drawn).</pre><p class="src-k">How the run was made</p><p class="src-how">HEAT, two-dimensional transient, Lumerical 2025 R1: mesh 0.02 to 0.5 um, time step 2e-08 to 2e-06 s, 10 mW switched on at t = 0 for 400 us; run time 10.6 min</p><p class="src-links"><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/3_switching_time/switching.txt">result file<span>switching.txt</span></a><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/thermo_optic_phase_shifter/scripts/heat_transient.py">script<span>heat_transient.py</span></a></p></template>    </div>
+  </div>
+</header>
+
+<div class="wrap page-grid">
+  <aside class="rail">
+    <nav class="toc" data-toc aria-label="On this page">
+      <p class="rail-h">On this page</p>
+      <ol>
+        <li><a href="#the-device"><i aria-hidden="true"></i>The device</a></li>
+        <li><a href="#the-steps"><i aria-hidden="true"></i>The steps</a></li>
+        <li><a href="#run-it"><i aria-hidden="true"></i>Run it</a></li>
+        <li><a href="#step-1-the-heat-by-heat"><i aria-hidden="true"></i>Step 1. The heat, by HEAT</a></li>
+        <li><a href="#step-2-the-phase-by-mode"><i aria-hidden="true"></i>Step 2. The phase, by MODE</a></li>
+        <li><a href="#step-3-the-speed-by-heat"><i aria-hidden="true"></i>Step 3. The speed, by HEAT</a></li>
+        <li><a href="#step-4-the-neighbour-by-heat"><i aria-hidden="true"></i>Step 4. The neighbour, by HEAT</a></li>
+        <li><a href="#in-numbers"><i aria-hidden="true"></i>In numbers</a></li>
+        <li><a href="#against-published-devices"><i aria-hidden="true"></i>Against published devices</a></li>
+        <li><a href="#limits"><i aria-hidden="true"></i>Limits</a></li>
+        <li><a href="#check-yourself"><i aria-hidden="true"></i>Check yourself</a></li>
+        <li><a href="#exercises"><i aria-hidden="true"></i>Exercises</a></li>
+        <li><a href="#references"><i aria-hidden="true"></i>References</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="prose">
+<p>A thermo-optic phase shifter is a waveguide with a heater above it. A current through the heater
+warms the silicon core, warm silicon has a higher refractive index, and the light that passes gains
+phase. It is the tuning element of interferometers, switches and filters. A mesh of Mach-Zehnder
+interferometers for optical computing has two of them in every interferometer.</p>
+<p>A heater has two numbers that matter: the power it needs for a phase shift of π, and the time it
+takes to get there. This chapter draws a phase shifter with the <span class="gloss" tabindex="0" data-def="Process design kit: the layers, rules and ready-made cells of a fabrication process, as a designer uses them to draw a layout.">PDK</span> and finds both. Its design
+choice is a pair of deep trenches beside the heater. They stop the heat from spreading sideways, so
+the same phase needs less than half the power. The chapter also shows what the trenches cost in
+speed, and what a waveguide next to the heater still feels.</p>
+<p>The work takes four steps: the heat first, then the phase, then the speed, then the neighbour.</p>
+<hr />
+<h2 id="the-device">The device <a class="here" href="#the-device" aria-label="Link to this section">#</a></h2>
+<figure class="plate"><div class="plate-drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 504 312"><path class="m-pit" fill-rule="evenodd" d="M373.0,186.0 373.0,225.0 131.0,225.0 131.0,186.0ZM373.0,87.0 373.0,126.0 131.0,126.0 131.0,87.0Z"/><path class="m-si" fill-rule="evenodd" d="M0.0,163.8 0.0,148.2 504.0,148.2 504.0,163.8Z"/><path class="m-heater" fill-rule="evenodd" d="M100.8,168.6 100.8,143.4 403.2,143.4 403.2,168.6Z"/><path class="m-metal" fill-rule="evenodd" d="M110.9,120.0 110.9,192.0 45.4,192.0 45.4,120.0ZM458.6,120.0 458.6,192.0 393.1,192.0 393.1,120.0Z"/></svg>
+</div><figcaption>Thermo-optic phase shifter, seen from above. <span class="legend"><span class="chip"><i class="swatch pit"></i>trench</span><span class="chip"><i class="swatch si"></i>silicon</span><span class="chip"><i class="swatch heater"></i>heater</span><span class="chip"><i class="swatch metal"></i>metal</span></span></figcaption></figure><p><a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/devices/thermo_optic_phase_shifter_builder.py" rel="noopener">devices/thermo_optic_phase_shifter_builder.py</a>
+draws a <span class="gloss" tabindex="0" data-def="A silicon core etched down to the oxide and surrounded by cladding: the tightest confinement, and the sharpest bends.">strip waveguide</span>, 0.5 µm wide, with a film of titanium nitride (TiN) above it. The film is
+150 nm thick and lies 0.88 µm above the core. At each end it widens into a landing, where a via
+takes the current up to metal 2, and a wire leads north to a pad. A deep trench runs along each
+side of the film. From the repository root:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>devices/thermo_optic_phase_shifter_builder.py
+</code></pre></div>
+<div class="code code-text"><pre><code>heater 100 um long, trenches along 96 um (96% of the filament), filament resistance 500 ohm
+GDS -&gt; devices/gds/thermo_optic_phase_shifter.gds   ports: [&#x27;o1&#x27;, &#x27;o2&#x27;, &#x27;H1&#x27;, &#x27;H2&#x27;]
+DRC passed: 0 errors, 0 warnings
+</code></pre></div>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>parameter</th>
+<th class="num">default</th>
+<th>where it comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>length</code></td>
+<td class="num">100 µm</td>
+<td>the heated length: the film between its two landings. It sets the temperature and the voltage, not the power (step 2)</td>
+</tr>
+<tr>
+<td><code>heater_width</code></td>
+<td class="num">2.0 µm</td>
+<td>the widest film that the closest trench allows (step 1)</td>
+</tr>
+<tr>
+<td><code>trench_gap</code></td>
+<td class="num">2.0 µm</td>
+<td>centre line of the core to the inner edge of each trench: the closest the rules allow. <code>None</code> draws no trenches</td>
+</tr>
+<tr>
+<td><code>trench_width</code></td>
+<td class="num">6.0 µm</td>
+<td>the width does not enter the result (step 1); the minimum of the layer is 5 µm</td>
+</tr>
+<tr>
+<td><code>width</code></td>
+<td class="num">0.5 µm</td>
+<td>the strip of the <a href="../strip-waveguide/index.html">strip waveguide chapter</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>Light enters at <code>o1</code> and leaves at <code>o2</code>. The current flows from pad <code>H1</code> to pad <code>H2</code>. The film
+between the landings has a resistance of 10 Ω/sq × 100 µm / 2 µm = 500 Ω.</p>
+<p><strong>The trenches.</strong> The layer <code>DEEPTRENCH</code> removes everything from the top of the cladding down to
+5 µm inside the substrate, and leaves air. The two trenches leave a wall of oxide, 4 µm wide, with
+the core and the film in it. Three rules of the PDK meet at a gap of 2.0 µm:</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>rule</th>
+<th class="num">value</th>
+<th>what the device has</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minimum space of <code>DEEPTRENCH</code>: the wall between two trenches</td>
+<td class="num">4.00 µm</td>
+<td>4.00 µm</td>
+</tr>
+<tr>
+<td><code>trench_to_heater</code>: trench to the edge of the film</td>
+<td class="num">1.00 µm</td>
+<td>1.00 µm</td>
+</tr>
+<tr>
+<td><code>trench_to_waveguide</code>: trench to the edge of the core (a warning)</td>
+<td class="num">1.50 µm</td>
+<td>1.75 µm</td>
+</tr>
+<tr>
+<td><code>trench_to_metal</code>: trench to a metal</td>
+<td class="num">2.00 µm</td>
+<td>2.00 µm to each wire</td>
+</tr>
+</tbody>
+</table></div>
+<p>The last rule is why the trenches are 96 µm long and the film 100 µm: they stop 2 µm before the
+wires. All four are teaching values of this PDK, not foundry rules
+(<a href="../../course/pdk/index.html">docs/pdk.md</a>). The builder refuses a set of arguments that breaks one of them,
+and its message names the rule.</p>
+<p><strong>The reference.</strong> <code>trench_gap=None</code> draws the same device without trenches. The pads, the wires and
+the film stay where they are. Every step simulates both, so each result of the trenches has a
+number to stand against.</p>
+<p><strong>No undercut.</strong> The process also has a layer <code>UNDERCUT</code>, which removes the substrate under a
+heater. This device does not use it, for two reasons. With a trench on each side and no substrate
+below, the wall hangs free, and its heat can leave only through its two ends. A cross-section does
+not contain the ends, so the model of this chapter cannot describe it (see the pitfalls of step 1).
+And an undercut is a different trade: the published devices need a milliwatt or so, and take from a
+hundred microseconds to two milliseconds (see <a href="#against-published-devices">Against published devices</a>).</p>
+<figure class="solid" data-solid="active/thermo_optic_phase_shifter" data-src="../../assets/data/solid-active-thermo_optic_phase_shifter.js"><div class="solid-stage"><canvas class="solid-canvas" role="img" aria-label="The thermo-optic phase shifter in three dimensions; drag to turn it"></canvas><p class="solid-hint">point at a waveguide for its section · click to hold it · drag to turn · pinch or + − to zoom</p><div class="solid-zoom"><button type="button" data-zoom="1.25" aria-label="Closer">+</button><button type="button" data-zoom="0.8" aria-label="Further">−</button></div><p class="solid-flat">This browser draws no WebGL, so the solid cannot be shown here.</p></div><div class="solid-bar"><div class="solid-chips" role="group" aria-label="Show or hide a layer"><button type="button" data-family="silicon" aria-pressed="true"><i style="--c:#5ee7f5"></i>silicon</button><button type="button" data-family="implant" aria-pressed="true" hidden><i style="--c:#ff7fb0"></i>implants</button><button type="button" data-family="germanium" aria-pressed="true" hidden><i style="--c:#b9a6ff"></i>germanium</button><button type="button" data-family="nitride" aria-pressed="true" hidden><i style="--c:#7ee0a5"></i>silicon nitride</button><button type="button" data-family="via" aria-pressed="true"><i style="--c:#c9b6e4"></i>vias</button><button type="button" data-family="heater" aria-pressed="true"><i style="--c:#ff9d6b"></i>heater</button><button type="button" data-family="metal" aria-pressed="true"><i style="--c:#ffc457"></i>metal</button><button type="button" data-family="ground" aria-pressed="true"><i style="--c:#8fa3d9"></i>buried oxide</button></div><label class="solid-range"><span>apart</span><input type="range" min="0" max="1" step="0.01" value="0" data-apart aria-label="Lift the layers apart"></label><button type="button" class="solid-btn" data-true-height aria-pressed="false">true heights <small>now <b data-stretch-value>×3</b></small></button></div><div class="solid-section" hidden><div class="sec-fields" data-sec-fields role="group" aria-label="What the section shows"></div><svg role="img" aria-label="The cross-section under the pointer, with what the solver found there"></svg><p class="sec-source" data-sec-source></p><p><span data-probe-at></span><button type="button" data-probe-off>let go</button></p></div><figcaption><b>The device in 3D.</b> The shapes of <code>devices/gds/thermo_optic_phase_shifter.gds</code>, raised to the heights that <code>process_layers.csv</code> gives them (Si_core, Heater, Via1_on_heater, Metal2, Via2, Metal3), when the site is built; the solver builds the same structure from the same two files. Heights are stretched ×3 unless you ask for true heights. Point at a waveguide: a pane stands across it with the field the solver found there, and its section is drawn below with heights of its own, as its line says; a click holds it and opens the solid along it. The deep trenches are the holes in the glass of the buried oxide.</figcaption></figure>
+<h2 id="the-steps">The steps <a class="here" href="#the-steps" aria-label="Link to this section">#</a></h2>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>step</th>
+<th>folder</th>
+<th>solver</th>
+<th>script</th>
+<th class="long">the question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>1_<wbr>heat_<wbr>cross_<wbr>section</code></td>
+<td>HEAT, steady state</td>
+<td><code>heat_<wbr>cross_<wbr>section.py</code></td>
+<td class="long">How many kelvin does the core gain per milliwatt, with and without trenches?</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>2_phase_shift</code></td>
+<td>MODE (<span class="gloss" tabindex="0" data-def="Finite-difference eigenmode solver: the guided modes of one cross-section, with their effective indices and losses.">FDE</span>)</td>
+<td><code>phase_<wbr>shift_<wbr>fde.py</code></td>
+<td class="long">How much heater power gives a phase shift of π?</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>3_<wbr>switching_<wbr>time</code></td>
+<td>HEAT, transient</td>
+<td><code>heat_<wbr>transient.py</code></td>
+<td class="long">How fast does the core follow the power, and what do the trenches cost in speed?</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>4_neighbour</code></td>
+<td>HEAT, steady state</td>
+<td><code>neighbour_<wbr>heat.py</code></td>
+<td class="long">How much of the heat reaches a waveguide next to the heater?</td>
+</tr>
+</tbody>
+</table></div>
+<p>The method of steps 1 and 2 is that of the Ansys application example &quot;Thermally tuned waveguide&quot;:
+a HEAT run gives the temperature, the temperature map is laid over the optical model, and a mode
+solver gives the phase. Here both models are built from the layout and the <span class="gloss" tabindex="0" data-def="The description of a fabrication process for the simulator: every layer, the height it starts at, its thickness, its material and its doping.">process file</span>.</p>
+<h2 id="run-it">Run it <a class="here" href="#run-it" aria-label="Link to this section">#</a></h2>
+<p>You need Lumerical with HEAT and MODE. See the
+<a href="../../course/simulations/index.html#prerequisites">prerequisites of chapter 4</a>. The run times are from the
+author's machine, with Lumerical 2025 R1.</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code><span class="nb">cd</span><span class="w"> </span>lumerical_simulations/thermo_optic_phase_shifter/scripts
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>heat_cross_section.py<span class="w">     </span><span class="c1"># step 1, about 12 minutes for 22 cases</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>phase_shift_fde.py<span class="w">        </span><span class="c1"># step 2, about 2 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>heat_transient.py<span class="w">         </span><span class="c1"># step 3, about 10 minutes</span>
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>neighbour_heat.py<span class="w">         </span><span class="c1"># step 4, about 3 minutes</span>
+</code></pre></div>
+<p>Run them in this order. Step 2 reads the temperature maps that step 1 writes
+(<code>device_T_10mW.mat</code> and two more). Like the Lumerical projects, the maps are not kept in the
+repository, so step 2 needs a run of step 1 first. Steps 3 and 4 read the result arrays of steps 1
+and 2, which are kept.</p>
+<p>The figures are redrawn from the kept results, without Lumerical:</p>
+<div class="code code-bash"><div class="code-bar"><span>shell</span><button type="button" class="copy" aria-label="Copy the code"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span>copy</span></button></div><pre><code>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/thermo_optic_phase_shifter/figures/fig1_heat.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/thermo_optic_phase_shifter/figures/fig2_phase.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/thermo_optic_phase_shifter/figures/fig3_switching.py
+uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>lumerical_simulations/thermo_optic_phase_shifter/figures/fig4_neighbour.py
+</code></pre></div>
+<hr />
+<h2 id="step-1-the-heat-by-heat">Step 1. The heat, by HEAT <a class="here" href="#step-1-the-heat-by-heat" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> How many kelvin does one milliwatt of heater power add to the core, and what do
+the trenches change?</p>
+</div>
+<p><strong>The idea.</strong> In the steady state all the heat that the film makes leaves through the silicon
+substrate, which is the heat sink. Silicon conducts heat about a hundred times better than oxide:
+148 against 1.38 W/m/K in the thermal models that the process file names for the two materials
+(step 4 reads both values back from the heat flux). So what decides the temperature is the
+oxide between the film and the substrate: 0.88 µm of cladding down to the core, then 2 µm of buried
+oxide. The rise of the core is the power times the thermal resistance of the path below it.</p>
+<p>Without trenches the heat spreads sideways on its way down. The path gets wider, its resistance
+falls, and the core stays cooler. A trench on each side stops the spreading: all the heat has to go
+down through the wall. If it flowed evenly through a wall of width W and length L, the <span class="gloss" tabindex="0" data-def="The silicon dioxide under the silicon layer of an SOI wafer, 2 µm in GSiP. It keeps the light from leaking into the substrate.">buried oxide</span>
+of thickness t under the core would give</p>
+<div class="code code-plain"><pre><code>rise of the core per unit power = t / (k W L) = 2 µm / (1.38 W/m/K × 4 µm × 100 µm) = 3.62 K/mW
+</code></pre></div>
+<p>One consequence is worth stating before any run. The rise per milliwatt goes as 1 / L: a film
+twice as long warms half as much for the same power. The rise times the length, in K µm/mW, is a
+property of the cross-section alone. It is the number to compare two heaters by.</p>
+<p><strong>The model.</strong> A straight piece of the device's cross-section: the core, the film and, for the
+device, the two trenches. It is written to <span class="gloss" tabindex="0" data-def="The file format of a layout: polygons on numbered layers, the drawing a foundry makes its masks from.">GDS</span> and loaded into a <span class="gloss" tabindex="0" data-def="The object of Lumerical that builds a 3D structure from a GDS file and a process table, one layer after the other.">Layer Builder</span> with the process
+file, so the stack, the depth of the trench and the materials come from there. The run is a
+two-dimensional steady state normalised to the heated length of 100 µm, so the power that is set is
+the total heater power. The region is 40 µm wide and ends 0.2 µm below the top of the cladding.
+The mesh has edges of 0.02 to 0.5 µm.</p>
+<p>The heat source is a uniform source on the solid <code>Heater</code>, and the heat sink a temperature of 300 K
+on the solid <code>Si_Substrate</code>. <a href="../../course/simulations/index.html#the-heat-source-and-why-it-matters">Chapter 4</a>
+explains why the source has to be written this way. The recipe is <code>add_heat_cross_section</code> in
+<a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/solvers.py" rel="noopener">solvers.py</a>.</p>
+<p>The script solves 22 cases: the device and the reference, each at 5, 10, 20 and 40 mW; six more
+trench gaps; three more heater widths, each with and without trenches; and the checks.</p>
+<p><strong>The results</strong> (<code>heat.txt</code>):</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>with trenches</th>
+<th>without trenches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rise of the core</td>
+<td>3.874 K/mW</td>
+<td>1.768 K/mW</td>
+</tr>
+<tr>
+<td>rise of the film</td>
+<td>5.855 K/mW</td>
+<td>2.942 K/mW</td>
+</tr>
+<tr>
+<td>film over core</td>
+<td>1.51</td>
+<td>1.66</td>
+</tr>
+<tr>
+<td>rise of the core times the length</td>
+<td>387.4 K µm/mW</td>
+<td>176.8 K µm/mW</td>
+</tr>
+<tr>
+<td>hottest point at 10 mW</td>
+<td>59 K above the substrate</td>
+<td>30 K</td>
+</tr>
+</tbody>
+</table></div>
+<p>The trenches multiply the rise of the core by 2.19. In the device as drawn they run beside 96 µm of
+the 100 µm of film. Averaged along the film, the core gains
+(0.96 × 387.4 + 0.04 × 176.8) / 100 = 3.790 K/mW, which is 2.14 times the rise without trenches.</p>
+<div class="table table-wide" style="--cols:9"><table>
+<thead>
+<tr>
+<th>trench gap</th>
+<th class="num">1.75 µm</th>
+<th class="num">2 µm</th>
+<th class="num">2.5 µm</th>
+<th class="num">3 µm</th>
+<th class="num">4 µm</th>
+<th class="num">6 µm</th>
+<th class="num">10 µm</th>
+<th>none</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rise of the core (K/mW)</td>
+<td class="num">4.37</td>
+<td class="num">3.87</td>
+<td class="num">3.22</td>
+<td class="num">2.81</td>
+<td class="num">2.35</td>
+<td class="num">1.99</td>
+<td class="num">1.80</td>
+<td>1.77</td>
+</tr>
+<tr>
+<td>the even wall, t / (k W L)</td>
+<td class="num">4.14</td>
+<td class="num">3.62</td>
+<td class="num">2.90</td>
+<td class="num">2.42</td>
+<td class="num">1.81</td>
+<td class="num">1.21</td>
+<td class="num">0.72</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>The gap of 1.75 µm is closer than the rules allow. It is in the table for the trend only.</p>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>heater width</th>
+<th class="num">closest gap the rules allow</th>
+<th class="num">core, with trenches</th>
+<th class="num">core, without</th>
+<th class="num">film over core, with trenches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0 µm</td>
+<td class="num">2.0 µm</td>
+<td class="num">3.95 K/mW</td>
+<td class="num">1.89 K/mW</td>
+<td class="num">1.62</td>
+</tr>
+<tr>
+<td>1.5 µm</td>
+<td class="num">2.0 µm</td>
+<td class="num">3.91 K/mW</td>
+<td class="num">1.83 K/mW</td>
+<td class="num">1.55</td>
+</tr>
+<tr>
+<td>2.0 µm</td>
+<td class="num">2.0 µm</td>
+<td class="num">3.87 K/mW</td>
+<td class="num">1.77 K/mW</td>
+<td class="num">1.51</td>
+</tr>
+<tr>
+<td>3.0 µm</td>
+<td class="num">2.5 µm</td>
+<td class="num">3.13 K/mW</td>
+<td class="num">1.64 K/mW</td>
+<td class="num">1.49</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/thermo_optic_phase_shifter/figures/fig1_heat.webp" width="2881" height="1858" alt="Temperature maps of the cross-section without and with trenches, rise of the core against the trench gap, rise of core and film against power" loading="lazy" decoding="async"></button><figcaption><strong>Figure 1.</strong> The heat. Panels a and b are the temperature rise at 10 mW without and with the
+trenches, on the same colour scale. Panel c is the rise of the core per milliwatt against the trench
+gap, with the even wall of the formula above; d the rise of the core and of the film against the
+power.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, without trenches.</em> The heat spreads over some 10 µm to each side on its way down. The film
+reaches 30 K.</li>
+<li><em>b, with trenches.</em> The wall is the only way down. Above the film the oxide is as hot as the film,
+because no heat flows upwards: the top of the oxide is insulating in this model. Below the film
+the temperature falls evenly to the substrate.</li>
+<li><em>c, the gap.</em> At the closest gap the simulated rise lies 7 % above the even wall. With a wider
+gap the two part: the even wall keeps falling as 1 / W, and the simulated rise levels off at the
+value without trenches. A trench 10 µm away adds 2 %.</li>
+<li><em>d, the power.</em> The four lines are straight. The largest deviation from the slope is 0.001 %.</li>
+</ul>
+<p><strong>What it tells you.</strong> A trench has to be close to work. At 2 µm it multiplies the rise by 2.19, at
+4 µm by 1.33 and at 6 µm by 1.12. Step 4 gives the scale: without trenches the rise falls off
+sideways by a factor e every 4.8 µm, so a trench further out than that finds little heat to stop.
+The width of the trench does not matter: 4, 6 and 10 µm give the same rise.</p>
+<p>The film width is the smaller lever. A narrower film heats the core 2 % more, but it runs hotter
+itself and has twice the resistance. A 3 µm film pushes the trench out to 2.5 µm, by the rule
+<code>trench_to_heater</code>, and that costs 19 %. So the device takes the widest film that the closest trench
+allows.</p>
+<p>The film is always hotter than the core, here by a factor 1.5. It is the film that limits how far
+the phase can be driven. Step 2 gives its temperature at π and at 2π.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>Energy.</em> The heat that arrives at the sink equals the power that was set within 0.03 % in all 22
+cases.</li>
+<li><em>Width of the region.</em> With trenches the result is the same for 20, 40 and 80 µm. Without them a
+20 µm region is 2 % high, and 40 µm agrees with 80 µm within 0.03 %.</li>
+<li><em>Mesh.</em> With the edges halved the rise changes by +0.23 % (device) and +0.25 % (reference).</li>
+<li><em>By hand.</em> The even wall gives 362 K µm/mW, the simulation 387, which is 7 % more. The film is
+2 µm wide and the wall 4 µm, so under the film the heat is denser than at the edges of the wall,
+and the core lies under the film.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>The air is not in the model.</em> HEAT solves the solids. The trench is a hole with insulating walls:
+nothing conducts or convects across it. For a deep trench that is a fair model, since air
+conducts some fifty times less than oxide (0.026 W/m/K, a textbook value that is not in the
+process file).</li>
+<li><em>A trench together with an undercut does not converge, and the script is not told.</em> A trial for
+this chapter put the <code>UNDERCUT</code> layer under the wall (Lumerical 2025 R1; the run is not kept). The
+wall then has no solid path to the heat sink. The solver log says &quot;Heat Flow Newton solver failed
+to converge after 40 iterations … a partial result will be saved&quot;, the call from Python raises
+nothing, and the temperature that is read back is −4000 K everywhere. The scripts therefore run
+the solver through <code>run_checked</code> in <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/lumerical_simulations/solvers.py" rel="noopener">solvers.py</a>, which reads the log
+<code>&lt;project&gt;_p0.log</code> after every run and stops when the solver did not converge. An undercut alone,
+without trenches, converges: the oxide then still holds on at its sides.</li>
+<li><em>Compare heaters by K µm/mW.</em> The rise per milliwatt of a 50 µm heater is twice that of a 100 µm
+heater of the same cross-section. Neither is the better heater.</li>
+</ul>
+<h2 id="step-2-the-phase-by-mode">Step 2. The phase, by MODE <a class="here" href="#step-2-the-phase-by-mode" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> How much heater power gives a phase shift of π?</p>
+</div>
+<p><strong>The idea.</strong> After a length L, light with the <span class="gloss" tabindex="0" data-def="The speed of the phase of a guided mode, written as an index: the mode gains a phase of 2π n_eff / λ per unit length.">effective index</span> n<sub>eff</sub> has the phase 2π n<sub>eff</sub> L / λ.
+A change of the index by Δn<sub>eff</sub> changes the phase by 2π L Δn<sub>eff</sub> / λ. That is π when
+Δn<sub>eff</sub> = λ / (2 L), here 1.55 µm / 200 µm = 0.00775. The index follows the power linearly, so</p>
+<div class="code code-plain"><pre><code>P_π = λ / (2 L · dn_eff/dP)
+</code></pre></div>
+<p>where P is the total heater power. Step 1 showed that the rise per milliwatt goes as 1 / L. So does
+dn_eff/dP, and the length cancels: <strong>P_π does not depend on the length of the heater.</strong> A film twice
+as long needs half the rise for the same phase, and reaches it with the same power. What the length
+sets is the temperature at π, and with the resistance the voltage.</p>
+<p><strong>The model.</strong> The cross-section of step 1 in the mode solver. The silicon of the process file has
+a <span class="gloss" tabindex="0" data-def="The rise of the index with temperature: about 1.8 × 10⁻⁴ per kelvin for silicon at 1550 nm. A heater turns it into a phase shift.">thermo-optic coefficient</span> of 1.87 × 10⁻⁴ /K, so its index follows the temperature once the
+simulation has a temperature map. The script lays the maps of step 1 over the structure one at a
+time, as a <code>temperature</code> grid attribute, and finds the TE0 mode at 1.55 µm: cold, at 10 mW and at
+20 mW for the device, cold and at 10 mW for the reference.</p>
+<p>The window is 3.4 µm by 1.8 µm with PML on four sides. It holds silicon and oxide only: it ends
+inside the wall, before the trench, and below the film. The mesh is 20 nm, with 10 nm and a mesh
+line on every surface of the core.</p>
+<p><strong>The results</strong> (<code>phase.txt</code>):</p>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>case</th>
+<th class="num">heater power</th>
+<th class="num">n<sub>eff</sub></th>
+<th class="num">change</th>
+<th class="num">per milliwatt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cold</td>
+<td class="num">0</td>
+<td class="num">2.444493</td>
+<td class="num"></td>
+<td class="num"></td>
+</tr>
+<tr>
+<td>with trenches</td>
+<td class="num">10 mW</td>
+<td class="num">2.452215</td>
+<td class="num">0.007722</td>
+<td class="num">7.722 × 10⁻⁴</td>
+</tr>
+<tr>
+<td>with trenches</td>
+<td class="num">20 mW</td>
+<td class="num">2.459945</td>
+<td class="num">0.015452</td>
+<td class="num">7.726 × 10⁻⁴</td>
+</tr>
+<tr>
+<td>without trenches</td>
+<td class="num">10 mW</td>
+<td class="num">2.448016</td>
+<td class="num">0.003523</td>
+<td class="num">3.523 × 10⁻⁴</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th></th>
+<th class="num">power for π</th>
+<th class="num">power for 2π</th>
+<th>at π: core, film</th>
+<th>at π: voltage, current</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cross-section with trenches</td>
+<td class="num">10.03 mW</td>
+<td class="num">20.06 mW</td>
+<td>+38.9 K, +58.7 K</td>
+<td>2.24 V, 4.48 mA</td>
+</tr>
+<tr>
+<td><strong>the device as drawn</strong></td>
+<td class="num"><strong>10.26 mW</strong></td>
+<td class="num"><strong>20.51 mW</strong></td>
+<td>+38.9 K, +58.8 K</td>
+<td>2.26 V, 4.53 mA</td>
+</tr>
+<tr>
+<td>without trenches</td>
+<td class="num">22.00 mW</td>
+<td class="num">44.00 mW</td>
+<td>+38.9 K, +64.7 K</td>
+<td>3.32 V, 6.63 mA</td>
+</tr>
+</tbody>
+</table></div>
+<p>The device as drawn is the average along its film: 96 % of it has trenches beside it and 4 % has
+not. At 2π the film of the device is 117.7 K above the substrate, at 3.20 V and 6.40 mA. Without
+trenches it would be 129.4 K, at 4.69 V and 9.38 mA.</p>
+<div class="table table-wide" style="--cols:6"><table>
+<thead>
+<tr>
+<th>trench wall to the edge of the core</th>
+<th>1.75 µm (the device)</th>
+<th>1.25 µm</th>
+<th>1.00 µm</th>
+<th>0.75 µm</th>
+<th>0.50 µm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>change of n<sub>eff</sub></td>
+<td>−1.1 × 10⁻¹⁴</td>
+<td>−4.2 × 10⁻¹¹</td>
+<td>−2.5 × 10⁻⁹</td>
+<td>−1.5 × 10⁻⁷</td>
+<td>−9.6 × 10⁻⁶</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/thermo_optic_phase_shifter/figures/fig2_phase.webp" width="2881" height="1039" alt="The TE0 mode of the strip, phase shift against heater power with and without trenches, and the change of the effective index when a trench wall comes close" loading="lazy" decoding="async"></button><figcaption><strong>Figure 2.</strong> The phase. Panel a is the TE0 mode whose index the temperature moves. Panel b is the
+phase shift against the heater power with and without trenches: the points are the mode-solver
+runs, the lines go through them and the origin. Panel c is the change of the effective index when
+the wall of a trench comes close to the core, with the tail of the mode drawn through the closest
+point.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, the mode.</em> 68 % of |E|² lies in the core. Weighted with the permittivity that is 92 % of the
+electric energy, and the energy is what counts for the change of the index.</li>
+<li><em>b, the power.</em> The two points with trenches lie on one line within 0.05 %. The line reaches π at
+10.0 mW and the line without trenches at 22.0 mW.</li>
+<li><em>c, the wall.</em> The change falls about sixty times for every 0.25 µm. That is close to the square
+of the tail of the mode in the oxide, exp(−2γd) with γ = 8.0 µm⁻¹, which gives 55 times. At the
+1.75 µm of the device nothing is left of it.</li>
+</ul>
+<p><strong>What it tells you.</strong> The device needs 10.26 mW for π, and without trenches it would need 22.0 mW.
+A circuit that must reach every phase needs 2π: 20.5 mW at 3.2 V, with the film 118 K above the
+substrate.</p>
+<p>The core has to warm by 38.9 K for π, whatever the trenches do. That number follows from the
+length alone: λ / (2 L) divided by the change of n<sub>eff</sub> per kelvin.</p>
+<p>The effective index changes by 1.994 × 10⁻⁴ per kelvin, 7 % more than the index of silicon itself.
+Only 92 % of the energy is in the silicon, which would make it less. But the light is slow: its
+<span class="gloss" tabindex="0" data-def="The index that sets how fast a pulse, or the envelope of the light, travels: n_g = n_eff − λ dn_eff/dλ. It sets delays and the free spectral range.">group index</span> is 4.24 against 3.48 for silicon, so it spends more time in the heated silicon than a
+plane wave would. The product, (4.24 / 3.48) × 0.92 × 1.87 × 10⁻⁴ = 2.10 × 10⁻⁴ /K, is 5 % above
+the simulated value; it leaves out the dispersion of silicon.</p>
+<p>A trench wall 1.75 µm from the core does not touch the light. The rule of 1.5 µm leaves room for a
+real wall, which is rough, where this one is perfectly flat.</p>
+<p>The film is 0.88 µm above the core. In a window that holds it, it adds 0.0085 dB/cm, which is
+0.0001 dB over the device.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>Mesh.</em> With the mesh halved the cold index moves by 9 × 10⁻⁴, and the change per milliwatt by
+0.10 %. The error of the mesh is the same in the cold and in the warm run and cancels in the
+difference.</li>
+<li><em>Window.</em> A window 5.0 µm wide gives the same change per milliwatt for the reference.</li>
+<li><em>Against the strip chapter.</em> The cold mode has n<sub>eff</sub> = 2.44449 and n<sub>g</sub> = 4.2387. The
+<a href="../strip-waveguide/index.html">strip waveguide chapter</a> has 2.44448 and 4.2387 for the same guide
+in another window.</li>
+<li><em>Linearity.</em> The runs at 10 and 20 mW give the same change per milliwatt within 0.05 %.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>The path of the temperature file.</em> The script command <code>importdataset</code> reads a backslash followed
+by a t as a tab. On Windows a path through <code>\thermo_optic_phase_shifter</code> therefore fails with
+&quot;cannot open file&quot;. The script passes the path with forward slashes.</li>
+<li><em>Keep the trench and the film out of the window when they are not the question.</em> For P_π the
+window holds silicon and oxide only. The wall and the film each get a window of their own, and
+each is compared with a second run in the same window. The absolute loss of such a window is not
+a property of the guide: the low window of the wall check reports 0.0055 dB/cm for the guide
+without trenches too, from the boundary above and below the core.</li>
+<li><em>The oxide has no thermo-optic coefficient in the process file.</em> With a textbook value of about
+1 × 10⁻⁵ /K, the 8 % of the energy outside the silicon would add about one per cent to the change
+of the index, by the same estimate as above: (4.24 / 1.44) × 0.08 × 1 × 10⁻⁵ /K.</li>
+</ul>
+<h2 id="step-3-the-speed-by-heat">Step 3. The speed, by HEAT <a class="here" href="#step-3-the-speed-by-heat" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> How fast does the core follow the heater power, and what do the trenches cost in
+speed?</p>
+</div>
+<p><strong>The idea.</strong> Before the core settles, the oxide around it has to warm up. Without trenches the
+oxide near the core warms first and quickly, and the oxide further out adds little. With trenches
+the whole wall has to warm, from the substrate to the top of the cladding. The wall is a column of
+oxide that is cold at its foot and insulated everywhere else. Its slowest mode decays with</p>
+<div class="code code-plain"><pre><code>τ_slowest = 4 h² / (π² α) = 25.8 µs      h = 7.5 µm, the height of the column in the model
+                                         α = k / (ρ c) = 8.84 × 10⁻⁷ m²/s for fused silica
+</code></pre></div>
+<p><strong>The model.</strong> The cross-section of step 1 in a transient run. The run starts cold, and 10 mW are
+switched on at t = 0. The mean temperature of the core is read at every time step, which the solver
+chooses between 20 ns and 2 µs. For the device the power goes off again after 400 µs, so that the
+fall is simulated too. The same is run for trench gaps of 3, 4 and 6 µm and without trenches.</p>
+<p><strong>The results</strong> (<code>switching.txt</code>):</p>
+<div class="table" style="--cols:3"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th class="num">with trenches</th>
+<th class="num">without trenches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>time constant τ: 63 % of the final rise</td>
+<td class="num">18.0 µs</td>
+<td class="num">6.1 µs</td>
+</tr>
+<tr>
+<td>rise from 10 to 90 %</td>
+<td class="num">49.9 µs</td>
+<td class="num">26.9 µs</td>
+</tr>
+<tr>
+<td>fall from 90 to 10 %</td>
+<td class="num">49.7 µs</td>
+<td class="num"></td>
+</tr>
+<tr>
+<td>0.35 / rise time, a rule of thumb for the bandwidth</td>
+<td class="num">7.0 kHz</td>
+<td class="num">13.0 kHz</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table table-wide" style="--cols:6"><table>
+<thead>
+<tr>
+<th>trench gap</th>
+<th>2 µm</th>
+<th>3 µm</th>
+<th>4 µm</th>
+<th>6 µm</th>
+<th>none</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>time constant τ</td>
+<td>18.0 µs</td>
+<td>16.1 µs</td>
+<td>13.5 µs</td>
+<td>8.9 µs</td>
+<td>6.1 µs</td>
+</tr>
+<tr>
+<td>power for π</td>
+<td>10.0 mW</td>
+<td>13.8 mW</td>
+<td>16.5 mW</td>
+<td>19.6 mW</td>
+<td>22.0 mW</td>
+</tr>
+<tr>
+<td>power for π × τ</td>
+<td>181 mW µs</td>
+<td>223 mW µs</td>
+<td>224 mW µs</td>
+<td>173 mW µs</td>
+<td>135 mW µs</td>
+</tr>
+</tbody>
+</table></div>
+<p>The table compares cross-sections. Its 10.0 mW at 2 µm is the cross-section with a trench on each
+side, not the 10.26 mW of the device as drawn. The power for π of a gap is that value of step 2,
+scaled by the rise of the core that step 1 found for the gap. For the guide without trenches the
+scaling gives 21.98 mW, and step 2 solved that case: 22.00 mW.</p>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/thermo_optic_phase_shifter/figures/fig3_switching.webp" width="2881" height="1070" alt="The core and the film switched on and off, the normalised rise for five trench gaps, and the power for pi against the time constant" loading="lazy" decoding="async"></button><figcaption><strong>Figure 3.</strong> The speed. Panel a is the device switched on for 400 µs and off again: the rise of
+the film and of the core. Panel b is the rise of the core for each trench gap, over its final
+value, with a dot where it passes 63 %. Panel c is the power for π against the time constant, with
+lines along which their product is the same.</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, on and off.</em> The film jumps and the core follows. The fall mirrors the rise, as it must in a
+linear model.</li>
+<li><em>b, the gap.</em> Every curve starts steeply and ends slowly. The closer the trench, the more of the
+rise is left to the slow end.</li>
+<li><em>c, power against time.</em> From no trenches to the closest trench the points move down and to the
+right: less power, more time. None of them moves towards the lower left, where a better heater
+would lie.</li>
+</ul>
+<p><strong>What it tells you.</strong> In the cross-section the trenches lower the power by a factor 2.19 and
+raise the time constant by a factor 2.94. The product of the two is the figure of merit that papers
+quote, and smaller is better. It is larger with any of these trenches than without: 135 mW µs
+without, 181 with the closest one, and up to 224 in between. The heat that the trench keeps in has
+to fill the wall first.</p>
+<p>So the trench is the right choice where power counts and a few kilohertz are enough: a mesh that is
+set and then left alone. It is the wrong one where the phase has to move fast.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>Final value.</em> The rise ends within 0.01 % of the steady state of step 1.</li>
+<li><em>Time step.</em> With half the time step the time constant and the rise time move by 0.02 %.</li>
+<li><em>Length of the run.</em> A run twice as long ends within 0.02 % of the same value.</li>
+<li><em>Rise against fall.</em> The 10 to 90 % times agree within 0.5 %. The time constant of the fall is
+3.8 % longer than that of the rise, and 1.9 % with half the time step: the solver starts the rise
+with its smallest step and meets the switch-off with its largest.</li>
+<li><em>By hand.</em> The late part of the simulated rise, from 60 to 150 µs, decays with 25.3 µs. The
+slowest mode of the column gives 25.8 µs, 2 % more. The other gaps give 25.4 to 25.6 µs: the same
+column, whatever its width. The time constant of 18.0 µs is shorter because the faster modes
+carry part of the rise.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>One number is not the response.</em> A single exponential has a rise time of 2.20 time constants.
+The device has 2.77 and the guide without trenches 4.39, because heat diffuses: it starts fast
+and ends slowly. A time constant, a 10 to 90 % time and a −3 dB bandwidth are three different
+quantities. Say which one you quote.</li>
+<li><em>The switch-off meets a large time step.</em> If the fall is what you need, lower the largest time
+step, as the check does.</li>
+<li><em>The time steps make the project large.</em> The solver stores every step in the project file. The
+script switches back to layout mode before it saves.</li>
+</ul>
+<h2 id="step-4-the-neighbour-by-heat">Step 4. The neighbour, by HEAT <a class="here" href="#step-4-the-neighbour-by-heat" aria-label="Link to this section">#</a></h2>
+<div class="note note-ask">
+<p><strong class="note-name"><svg class="ico" aria-hidden="true"><use href="#i-ask"/></svg>The question</strong> How much of the heat reaches a waveguide next to the heater?</p>
+</div>
+<p><strong>The idea.</strong> In a circuit the neighbours of a heated waveguide are other waveguides whose phase
+matters. A neighbour that warms by 1 % of the heated core's own rise takes 1 % of its phase,
+unasked, if it is as long as the heater and lies beside it.</p>
+<p>Heat reaches a neighbour on two paths. One goes sideways through the oxide. The other goes down
+into the silicon substrate, along it, and up again. A trench cuts the first. It cannot cut the
+second: it reaches 5 µm into a substrate that is hundreds of micrometres thick.</p>
+<p><strong>The model.</strong> Three parts.</p>
+<ul>
+<li><em>a.</em> The cross-section of step 1 in a region 120 µm wide, with the substrate held at 300 K as in
+steps 1 to 3. Only the path through the oxide exists.</li>
+<li><em>b.</em> The same with the substrate in the model: 9.5 µm of silicon, and the bottom of the
+simulation region held at 300 K instead of the whole solid. Heat can now pass under the trenches.</li>
+<li><em>c.</em> An estimate by formula, not a simulation, for a wafer 725 µm thick. That thickness is the
+usual one of a 200 mm wafer and an assumption of this chapter, not a value of the process. A
+heater 100 µm long is short against such a wafer, so its heat spreads in three dimensions, which
+a cross-section cannot show.</li>
+</ul>
+<p><strong>The results</strong> (<code>neighbour.txt</code>). The share of the heated arm's phase that a neighbour takes:</p>
+<div class="table table-wide" style="--cols:8"><table>
+<thead>
+<tr>
+<th>distance of the neighbour</th>
+<th>5 µm</th>
+<th>10 µm</th>
+<th>15 µm</th>
+<th>20 µm</th>
+<th>30 µm</th>
+<th>40 µm</th>
+<th>50 µm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a, no trenches</td>
+<td>27.8 %</td>
+<td>8.6 %</td>
+<td>3.0 %</td>
+<td>1.04 %</td>
+<td>0.13 %</td>
+<td>0.016 %</td>
+<td>0.002 %</td>
+</tr>
+<tr>
+<td>a, trenches</td>
+<td>in the trench</td>
+<td>none</td>
+<td>none</td>
+<td>none</td>
+<td>none</td>
+<td>none</td>
+<td>none</td>
+</tr>
+<tr>
+<td>b, no trenches</td>
+<td>28.6 %</td>
+<td>9.2 %</td>
+<td>3.3 %</td>
+<td>1.23 %</td>
+<td>0.18 %</td>
+<td>0.027 %</td>
+<td>0.004 %</td>
+</tr>
+<tr>
+<td>b, trenches</td>
+<td>in the trench</td>
+<td>0.021 %</td>
+<td>0.014 %</td>
+<td>0.008 %</td>
+<td>0.002 %</td>
+<td>0.0004 %</td>
+<td>0.0001 %</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table table-wide" style="--cols:5"><table>
+<thead>
+<tr>
+<th>c, the path through a wafer of 725 µm</th>
+<th>25 µm</th>
+<th>50 µm</th>
+<th>100 µm</th>
+<th>250 µm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>share of the phase</td>
+<td>0.72 %</td>
+<td>0.44 %</td>
+<td>0.24 %</td>
+<td>0.08 %</td>
+</tr>
+</tbody>
+</table></div>
+<p>With the substrate in the model the heated core itself is 3.2 % warmer with trenches and 1.6 %
+without. That is what steps 1 to 3 leave out by holding the substrate at 300 K.</p>
+<figure class="fig fig-dark fig-wide"><button type="button" class="zoom" aria-label="Enlarge the figure"><img src="../../media/lumerical_simulations/thermo_optic_phase_shifter/figures/fig4_neighbour.webp" width="2881" height="1133" alt="Temperature rise at the height of the core against the distance from the heated waveguide, and the share of the phase that a neighbour takes" loading="lazy" decoding="async"></button><figcaption><strong>Figure 4.</strong> The neighbour. Panel a is the rise at the height of the core against the distance
+from the heated waveguide, for the four two-dimensional runs. Panel b is the share of the heated
+arm's phase that a neighbour takes: through the oxide without trenches (simulated), under the
+trenches through 9.5 µm of substrate (simulated), and through a wafer of 725 µm (the estimate).</figcaption></figure>
+<p><strong>Reading the figure.</strong></p>
+<ul>
+<li><em>a, the oxide.</em> Without trenches the rise falls by a factor e every 4.8 µm. With trenches and the
+substrate held at 300 K nothing is left beyond them. With the substrate in the model a little
+heat passes under them.</li>
+<li><em>b, the wafer.</em> The path through the oxide falls steeply. The estimate for the wafer falls about
+as 1 / d. From about 20 µm on it is the larger of the two, also without trenches.</li>
+</ul>
+<p><strong>What it tells you.</strong> The trenches remove the path through the oxide. Without them a neighbour
+20 µm away takes 1.0 % of the phase, and one 30 µm away 0.13 %.</p>
+<p>The path through the substrate remains, with or without trenches. By the estimate a neighbour
+50 µm away takes 0.4 % of the phase, and distance helps slowly: 0.2 % at 100 µm. At P_π it warms by
+0.17 K. In a circuit with many heaters these shares add up. The phases then cannot be set one by
+one: each has to be set with the others at their working power.</p>
+<p><strong>Checks.</strong></p>
+<ul>
+<li><em>The materials.</em> From the heat flux between two planes, the buried oxide conducts 1.380 W/m/K and
+the substrate 148.0 W/m/K in these runs.</li>
+<li><em>The oxide, by hand.</em> A layer of oxide of height h, cold at its foot and insulated on top, passes
+a rise sideways as exp(−π d / (2 h)). For the 7.5 µm of the model that is a factor e every
+4.77 µm; the fit of run a, from 15 to 50 µm, gives 4.78 µm.</li>
+<li><em>The formula for a slab.</em> Before it is used for the wafer, the slab formula is tested on run b:
+summed over the strip where the oxide hands its heat to the substrate, it gives the simulated rise
+of the substrate surface within 0.2 % from 10 to 40 µm.</li>
+<li><em>The estimate c itself is not checked by a simulation.</em> It needs a three-dimensional model.</li>
+</ul>
+<p><strong>Pitfalls.</strong></p>
+<ul>
+<li><em>A substrate held at 300 K hides the path through it.</em> It is the usual heat sink of a
+cross-section, and steps 1 to 3 use it. For the heated core it costs 3 %. For a neighbour it
+hides everything.</li>
+<li><em>To put the substrate in the model, hold the bottom of the region.</em> The temperature boundary
+condition then has the surface type &quot;simulation region&quot; with <code>z min</code> switched on, instead of the
+solid <code>Si_Substrate</code>.</li>
+<li><em>A thin substrate is not a wafer.</em> Run b has 9.5 µm of silicon over a cold plane, which carries
+heat sideways over a few micrometres only: 0.02 % at 10 µm. In a wafer the heat has 725 µm to
+spread in, and the estimate is twenty times larger at five times the distance.</li>
+</ul>
+<hr />
+<h2 id="in-numbers">In numbers <a class="here" href="#in-numbers" aria-label="Link to this section">#</a></h2>
+<div class="table table-nohead" style="--cols:2"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>waveguide</td>
+<td>strip, 0.5 µm × 220 nm, TE at 1.55 µm</td>
+</tr>
+<tr>
+<td>heater</td>
+<td>TiN film, 2.0 µm × 150 nm, 100 µm long, 0.88 µm above the core, 500 Ω</td>
+</tr>
+<tr>
+<td>trenches</td>
+<td>from 2 to 8 µm from the centre line on each side, beside 96 µm of the film</td>
+</tr>
+<tr>
+<td>rise of the core</td>
+<td>3.79 K/mW (1.77 K/mW without trenches)</td>
+</tr>
+<tr>
+<td>power for π</td>
+<td>10.26 mW (22.0 mW without trenches)</td>
+</tr>
+<tr>
+<td>power for 2π</td>
+<td>20.51 mW (44.0 mW without trenches)</td>
+</tr>
+<tr>
+<td>at π</td>
+<td>2.26 V and 4.53 mA; the core 38.9 K and the film 58.8 K above the substrate</td>
+</tr>
+<tr>
+<td>at 2π</td>
+<td>3.20 V and 6.40 mA; the film 117.7 K above the substrate</td>
+</tr>
+<tr>
+<td>time constant</td>
+<td>18.0 µs (6.1 µs without trenches)</td>
+</tr>
+<tr>
+<td>rise from 10 to 90 %</td>
+<td>49.9 µs (26.9 µs without trenches)</td>
+</tr>
+<tr>
+<td>power for π × time constant, of the cross-section</td>
+<td>181 mW µs (135 mW µs without trenches)</td>
+</tr>
+<tr>
+<td>a neighbour, through the oxide</td>
+<td>nothing beyond the trenches; 1.0 % of the phase at 20 µm without them</td>
+</tr>
+<tr>
+<td>a neighbour, through the substrate</td>
+<td>about 0.4 % of the phase at 50 µm (an estimate)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="against-published-devices">Against published devices <a class="here" href="#against-published-devices" aria-label="Link to this section">#</a></h2>
+<p>The numbers above are simulations of a teaching process. No measured device of exactly this kind,
+a TiN film above a 220 nm strip with trenches and no undercut, was found to compare them with.
+The published devices below are of other kinds. They show where a heater of this kind stands.</p>
+<div class="table table-wide" style="--cols:4"><table>
+<thead>
+<tr>
+<th>device</th>
+<th>power</th>
+<th>speed</th>
+<th>source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>this chapter: TiN film above the core, with trenches (simulated)</td>
+<td>10.3 mW for π</td>
+<td>τ = 18.0 µs</td>
+<td>steps 2 and 3</td>
+</tr>
+<tr>
+<td>this chapter: the same without trenches (simulated)</td>
+<td>22.0 mW for π</td>
+<td>τ = 6.1 µs</td>
+<td>steps 2 and 3</td>
+</tr>
+<tr>
+<td>heater of doped silicon in the waveguide itself</td>
+<td>24.77 mW for π</td>
+<td>130 kHz (−3 dB)</td>
+<td>Harris et al. 2014</td>
+</tr>
+<tr>
+<td>heater in the silicon of an adiabatic bend, about 10 µm long</td>
+<td>12.7 mW for π</td>
+<td>τ = 2.4 µs</td>
+<td>Watts et al. 2013</td>
+</tr>
+<tr>
+<td>phase shifter of an interferometer in a foundry process, without and with substrate undercut</td>
+<td>43.46 mW and 1.07 mW for π</td>
+<td>rise time 12.6 µs and 1.853 ms</td>
+<td>Parsons et al. 2025</td>
+</tr>
+<tr>
+<td>free-standing strip waveguides</td>
+<td>0.54 mW to switch</td>
+<td>rise time 141 µs</td>
+<td>Sun and Reano 2010</td>
+</tr>
+<tr>
+<td>suspended arms</td>
+<td>0.49 mW to switch</td>
+<td>rise 144 µs, fall 122 µs</td>
+<td>Fang et al. 2011</td>
+</tr>
+<tr>
+<td>racetrack resonator with undercut</td>
+<td>2.4 mW per <span class="gloss" tabindex="0" data-def="The spacing between two neighbouring resonances of a ring, or fringes of an interferometer: λ² / (n_g L), with L the round trip or the difference of the arms.">free spectral range</span></td>
+<td>10 to 90 % in about 170 µs</td>
+<td>Dong et al. 2010</td>
+</tr>
+</tbody>
+</table></div>
+<p>Three things follow from the table.</p>
+<ol>
+<li><em>Where the heat is made.</em> Watts et al. make it in the silicon of the waveguide itself, and
+report a product of power and time constant of 30.5 mW µs. The film of this chapter has
+135 mW µs without trenches. One difference is that its heat is made 0.88 µm above the core and
+has to cross the oxide first; the comparison is of one measured device with one simulated film.</li>
+<li><em>Isolation buys power with time.</em> The measured devices with an undercut or free-standing
+waveguides need a milliwatt or so, and take from a hundred microseconds to two milliseconds. The
+trenches of this chapter are a small step in the same direction: half the power, three times the
+time.</li>
+<li><em>Trenches are also there for the neighbours.</em> Jacques et al. conclude that deep trenches are
+the best structures that need no special fabrication against the heat that leaks to devices
+near a heater. Step 4 shows which path they close and which they leave open.</li>
+</ol>
+<h2 id="limits">Limits <a class="here" href="#limits" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>The model is a cross-section. The device as drawn is the average of two cross-sections along its
+film. The ends of the film, the landings, the aluminium wires and the pads are not in the thermal
+model; the wires carry some heat away at both ends.</li>
+<li>The air is not in the model, neither in the trenches nor above the chip. The top of the oxide is
+insulating, and the region ends 0.2 µm below it.</li>
+<li>Steps 1 to 3 hold the substrate at 300 K. Step 4 puts that at 3 % of the core rise. A real chip
+sits on a carrier that warms too.</li>
+<li>The material values are those of the process file at 300 K. At 2π the film is 118 K hotter than
+that, and the conductivity of a deposited film depends on how it was made. The linearity check
+tests the solver, not the materials.</li>
+<li>The phase is that of TE0 at 1.55 µm. The oxide has no thermo-optic coefficient in the process
+file.</li>
+<li>No undercut, and no three-dimensional run.</li>
+<li>The numbers are for a teaching process and have not been compared with a fabricated device.</li>
+</ul>
+<h2 id="check-yourself">Check yourself <a class="here" href="#check-yourself" aria-label="Link to this section">#</a></h2>
+<ol>
+<li>Why does the power for π not depend on the length of the heater? What does the length set?</li>
+<li>The trenches multiply the rise of the core by 2.19, but the device as drawn gains only 2.14
+times the rise without trenches. Where does the difference come from?</li>
+<li>The even wall gives 3.62 K/mW and the simulation 3.87 K/mW. What does the formula leave out?</li>
+<li>The time constant is 18.0 µs and the 10 to 90 % rise time 49.9 µs. A single exponential would
+have a rise time of 2.20 time constants, or 39.5 µs. Why is the rise time longer?</li>
+<li>With trenches and the substrate held at 300 K, a neighbour 10 µm away feels nothing. Why is that
+not the crosstalk of a real chip?</li>
+</ol>
+<details>
+<summary>Answers</summary>
+<ol>
+<li>The phase needs a fixed product of length and index change. A longer film needs a smaller rise,
+and the rise per milliwatt of a longer film is smaller by the same factor, so the power is the
+same. The length sets the temperature at π, 38.9 K for 100 µm, and through the resistance the
+voltage.</li>
+<li>The trenches run beside 96 µm of the 100 µm of film, because they stop 2 µm before the metal
+wires. The last 2 µm at each end heat the core as a film without trenches does.</li>
+<li>It assumes that the heat is spread evenly over the 4 µm of the wall when it passes the core. The
+film is only 2 µm wide and 0.88 µm above the core, so the heat is still denser in the middle,
+where the core is.</li>
+<li>Heat diffuses. The rise is a sum of modes with different time constants: the fast ones give the
+steep start, and the slowest one, 25 µs for the wall, gives the long end.</li>
+<li>Holding the substrate at 300 K removes the path through it. In a wafer the heat spreads in the
+substrate and warms what stands on it. Step 4 estimates 0.4 % of the phase at 50 µm.</li>
+</ol>
+</details>
+<h2 id="exercises">Exercises <a class="here" href="#exercises" aria-label="Link to this section">#</a></h2>
+<ol>
+<li><strong>A shorter heater.</strong> Set <code>LENGTH</code> in <code>devices/thermo_optic_phase_shifter_builder.py</code> to 50, and
+run steps 1 and 2. Compare the power for π, the rise of the core per milliwatt, the temperature
+of the film at π and the voltage with the tables above. Which of them change, and by how much?
+Copy the folders <code>1_heat_cross_section</code> and <code>2_phase_shift</code> first, because the runs overwrite
+their results. Afterwards restore them and set <code>LENGTH</code> back: the tests compare the kept layout
+with the builder.</li>
+<li><strong>A faster device.</strong> A circuit needs a time constant below 10 µs. Read from the table of step 3
+which trench gap that allows, and how much power for π it saves against no trenches. Then run
+<code>uv run python heat_transient.py --gaps 2.5 10</code> from the <code>scripts</code> folder, for two gaps that
+step 1 has and the table of step 3 has not. Copy the folder <code>3_switching_time</code> first, because
+the run overwrites its results, and restore it afterwards.</li>
+<li><strong>When has the phase settled?</strong> Read <code>device_t_s</code> and <code>device_core_K</code> from
+<code>3_switching_time/switching.npz</code>, and find the time after which the core stays within 1 % of
+its final value. How many time constants is that, and what does a single exponential predict?</li>
+<li><strong>The film as the limit.</strong> Suppose the film may not get hotter than 150 K above the substrate.
+From the rises per milliwatt in <code>2_phase_shift/phase.txt</code>, find the largest phase the device can
+reach, and the largest without trenches. Why do the trenches help here too?</li>
+<li><strong>The pitch of two arms.</strong> Without trenches, how far apart must the two arms of an
+interferometer be for the path through the oxide to stay below 0.1 % of the phase? Use the table
+of step 4. What does the estimate for the wafer say at that distance?</li>
+</ol>
+<h2 id="references">References <a class="here" href="#references" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>M. Jacques, A. Samani, E. El-Fiky, D. Patel, Z. Xing and D. V. Plant, &quot;Optimization of
+thermo-optic phase-shifter design and mitigation of thermal crosstalk on the SOI platform&quot;,
+Optics Express 27, 10456 (2019), <a href="https://doi.org/10.1364/OE.27.010456" rel="noopener">doi:10.1364/OE.27.010456</a></li>
+<li>N. C. Harris, Y. Ma, J. Mower, T. Baehr-Jones, D. Englund, M. Hochberg and C. Galland,
+&quot;Efficient, compact and low loss thermo-optic phase shifter in silicon&quot;, Optics Express 22,
+10487 (2014), <a href="https://doi.org/10.1364/OE.22.010487" rel="noopener">doi:10.1364/OE.22.010487</a></li>
+<li>M. R. Watts, J. Sun, C. DeRose, D. C. Trotter, R. W. Young and G. N. Nielson, &quot;Adiabatic
+thermo-optic Mach-Zehnder switch&quot;, Optics Letters 38, 733 (2013),
+<a href="https://doi.org/10.1364/OL.38.000733" rel="noopener">doi:10.1364/OL.38.000733</a></li>
+<li>R. Parsons et al., &quot;Highly uniform thermally undercut silicon photonic devices in a 300 mm CMOS
+foundry process&quot;, <a href="https://arxiv.org/abs/2503.09009" rel="noopener">arXiv:2503.09009</a> (2025)</li>
+<li>P. Sun and R. M. Reano, &quot;Submilliwatt thermo-optic switches using free-standing
+silicon-on-insulator strip waveguides&quot;, Optics Express 18, 8406 (2010),
+<a href="https://doi.org/10.1364/OE.18.008406" rel="noopener">doi:10.1364/OE.18.008406</a></li>
+<li>Q. Fang, J. F. Song, T.-Y. Liow, H. Cai, M. B. Yu, G. Q. Lo and D.-L. Kwong, &quot;Ultralow power
+silicon photonics thermo-optic switch with suspended phase arms&quot;, IEEE Photonics Technology
+Letters 23, 525 (2011), <a href="https://doi.org/10.1109/LPT.2011.2114336" rel="noopener">doi:10.1109/LPT.2011.2114336</a></li>
+<li>P. Dong, W. Qian, H. Liang, R. Shafiiha, D. Feng, G. Li, J. E. Cunningham, A. V. Krishnamoorthy
+and M. Asghari, &quot;Thermally tunable silicon racetrack resonators with ultralow tuning power&quot;,
+Optics Express 18, 20298 (2010), <a href="https://doi.org/10.1364/OE.18.020298" rel="noopener">doi:10.1364/OE.18.020298</a></li>
+<li>Ansys Optics, application example &quot;Thermally tuned waveguide&quot;, in its versions for the FDE and
+the FEEM solver: the method of steps 1 and 2</li>
+</ul>
+<hr />
+<p><em>The figures are drawn from the result files kept in this repository. Ansys and Lumerical are
+trademarks of ANSYS, Inc. This chapter has no affiliation with or endorsement by Ansys.</em></p>
+
+  </article>
+</div>
+
+<nav class="wrap pager" aria-label="Previous and next chapter">
+<a class="card pager-prev" href="../mmi1x2/index.html"><span>Previous</span><b>1×2 MMI splitter</b></a><a class="card pager-next" href="../../roadmap/index.html"><span>Next</span><b>The roadmap</b></a>
+</nav>
+
+<div class="lightbox" hidden><button type="button" aria-label="Close the enlarged figure"></button></div>
+</main>
+
+<footer class="foot">
+<div class="foot-mesh" aria-hidden="true"><div class="mesh-fade"><img class="mesh-svg" src="../../assets/data/mesh.svg?v=0bf0c5b6" alt="" width="4000" height="400" loading="lazy" decoding="async"></div></div>  <div class="wrap foot-top">
+    <p class="display foot-line" data-reveal>Engineering light<br><span class="thin">at the chip scale</span></p>
+    <a class="btn" href="#main">Back to the top<svg class="ico" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </div>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <img class="foot-logo" src="../../assets/img/logo-light.svg" alt="DARK MODE" width="843" height="451" loading="lazy">
+      <p class="foot-note">photonics-layout-cookbook is an open course from DARK MODE, Photonics Notes. The code is under the MIT licence.</p>
+    </div>
+    <nav class="foot-cols" aria-label="Site">
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>Course</h2>
+<a href="../../course/pdk/index.html">1. The PDK</a><a href="../../course/device/index.html">2. The device</a><a href="../../course/process-file/index.html">3. The process file</a><a href="../../course/simulations/index.html">4. The simulations</a><a href="../../course/your-foundry/index.html">5. Your foundry</a>      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Devices</h2>
+<a href="../strip-waveguide/index.html">Strip waveguide</a><a href="../rib-waveguide/index.html">Rib waveguide</a><a href="../directional-coupler/index.html">Directional coupler</a><a href="../mmi1x2/index.html">1×2 MMI splitter</a><a href="index.html">Thermo-optic phase shifter</a>        <a href="../index.html">All 28 devices</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-grid"/></svg>Circuits</h2>
+<a href="../../circuits/index.html">The chip</a><a href="../../circuits/clements-mesh/index.html">Clements mesh</a><a href="../../circuits/svd-multiplier/index.html">Real matrix multiplier</a>        <a href="../../roadmap/index.html#circuits-and-links">What comes next</a>
+      </div>
+      <div>
+        <h2><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg>Project</h2>
+        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook" rel="noopener">GitHub</a>
+<a href="../../roadmap/index.html">Roadmap</a><a href="../../more/cornerstone-soi220a/index.html">A second process</a><a href="../../contributing/index.html">Contributing</a>        <a href="https://github.com/q3430468220-tech/photonics-layout-cookbook/blob/main/CITATION.cff" rel="noopener">How to cite</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-legal">
+    <p>This project is not affiliated with or endorsed by Ansys, Tower Semiconductor, CORNERSTONE, the authors of the textbook or the gdsfactory team. “Ansys” and “Lumerical” are trademarks of ANSYS, Inc.</p>
+    <p>Typefaces: the headings are set in subsets of <a href="../../assets/fonts/OFL-lato.txt">Lato Black and Lato Light</a>, which carry the name Cookbook Display as their licence asks of a changed font; the text in <a href="../../assets/fonts/OFL-inter.txt">Inter</a>; the code in <a href="../../assets/fonts/OFL-jetbrainsmono.txt">JetBrains Mono</a>. All are under the SIL Open Font License.</p>
+    <p>Behind this footer: the layout of an 8 × 8 Clements mesh, drawn abstractly and without light. Its 28 Mach-Zehnder interferometers stand in eight columns, each with a heater on one arm and one on its input, and every output has a heater of its own. Circuits like it are <a href="../../roadmap/index.html#circuits-and-links">on the roadmap</a>.</p>
+  </div>
+</footer>
+
+<dialog class="palette" data-palette data-root="../../index.html" data-index="../../assets/data/search.js?v=0bf0c5b6" aria-label="Search the site">
+  <div class="palette-in">
+    <div class="palette-field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="text" data-palette-input role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="palette-list" aria-label="Search chapters, sections and devices" placeholder="Search chapters, sections, devices" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="palette-close" type="button" data-palette-close aria-label="Close search"><svg class="ico" aria-hidden="true"><use href="#i-cross"/></svg></button>
+    </div>
+    <div class="palette-list" id="palette-list" role="listbox" aria-label="Results" data-palette-list></div>
+    <p class="palette-status" data-palette-status role="status" aria-live="polite"></p>
+    <p class="palette-keys" aria-hidden="true"><kbd>↑</kbd> <kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog><script src="../../assets/site.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/learn.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/palette.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/sources.js?v=0bf0c5b6" defer></script>
+<script src="../../assets/solid.js?v=0bf0c5b6" defer></script>
+</body>
+</html>
