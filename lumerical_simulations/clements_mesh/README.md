@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[Previous: thermo-optic phase shifter](../thermo_optic_phase_shifter/README.md) · [Circuits](../../README.md#circuits) · [Device library](../../README.md#device-library)
+[Previous: thermo-optic phase shifter](../thermo_optic_phase_shifter/README.md) · [Circuits](../../README.md#circuits) · [Device library](../../README.md#device-library) · [Next: real matrix multiplier](../svd_multiplier/README.md)
 
 </div>
 

@@ -1,0 +1,43 @@
+INTERCONNECT, Lumerical 2025 R1, and the Python model of the same circuit (svd_model.py): the 4 x 4 real matrix multiplier
+  of devices/svd_multiplier_builder.py, two meshes and four attenuators, 32 couplers and 36 heaters;
+  P_pi = 10.26 mW, propagation loss 2.2 dB/cm (assumed); analyser 1.5035 to 1.5995 um, 101 points;
+  run time 5.3 min
+
+answer: the drawn multiplier holds every random matrix to a relative error of 4.8e-13 or less at 1.55 um, after the fit; the recipe alone misses by 4.09 (median), because it knows nothing of the phase of the waveguides, and the two meshes fitted alone come to 2.6e-03.  F stays above 0.99 over 12 nm for the first random matrix.  The ill-conditioned matrix, whose smallest singular value is below what an attenuator can set, stops at 1.0e-03.
+
+a. the recipe, the meshes fitted alone, and the fit of the whole, at 1.55 um, the Python model
+  target            recipe: 1 - F   error    meshes alone: error   fitted: 1 - F   error     heaters (mW)  singular values of M / s
+  random 1               9.82e-01   7.360             3.26e-03       -2.22e-16  2.73e-13           388  1.000 0.272 0.213 0.136
+  random 2               9.77e-01   6.477             2.96e-03        2.22e-16  3.45e-13           345  1.000 0.445 0.228 0.055
+  random 3               9.87e-01   8.620             2.38e-03        4.44e-16  2.53e-13           281  1.000 0.711 0.303 0.125
+  random 4               9.63e-01   5.112             2.81e-03        0.00e+00  2.60e-13           355  1.000 0.544 0.317 0.085
+  random 5               7.38e-01   1.680             2.33e-03       -2.22e-16  1.96e-13           288  1.000 0.755 0.326 0.018
+  random 6               6.30e-01   1.305             2.73e-03       -2.22e-16  2.24e-13           347  1.000 0.565 0.171 0.091
+  random 7               9.93e-01  11.635             2.82e-03       -2.22e-16  2.67e-13           387  1.000 0.492 0.216 0.035
+  random 8               8.42e-01   2.306             2.06e-03       -2.22e-16  2.35e-13           304  1.000 0.783 0.316 0.254
+  random 9               3.50e-01   0.735             2.07e-03        0.00e+00  1.90e-13           331  1.000 0.892 0.272 0.132
+  random 10              6.53e-01   1.372             3.04e-03        4.44e-16  3.20e-13           311  1.000 0.315 0.226 0.141
+  random 11              9.04e-01   3.067             2.56e-03       -2.22e-16  4.16e-13           372  1.000 0.650 0.196 0.103
+  random 12              9.85e-01   8.097             1.82e-03        0.00e+00  4.79e-13           307  1.000 0.709 0.534 0.343
+  ill-conditioned        7.51e-01   1.736             3.50e-03        1.04e-06  1.02e-03           386  1.000 0.300 0.030 0.001
+  random: fitted error median 2.6e-13, largest 4.8e-13; heater power 281 to 388 mW, mean 335 mW (36 heaters, each in [0, 2 P_pi))
+
+b. INTERCONNECT against the model, over the band
+  target            error at 1.55 um   1 - F at 1.55 um   band with F > 0.99      largest difference of an entry   light lost in the dumps, per input
+  random 1                  4.34e-04          1.89e-07         12 nm (1544 to 1556)                        8.7e-04   0.806 0.506 0.826 0.371
+  ill-conditioned           1.01e-03          1.02e-06         13 nm (1543 to 1557)                        1.1e-03   0.655 0.179 0.863 0.853
+  (the difference of an entry is the reflection of the couplers, which only INTERCONNECT includes)
+
+c. against the wavelength, INTERCONNECT: the relative error, and 1 - F
+  lambda (um)          random 1      1 - F   ill-conditioned      1 - F
+       1.5035         8.069e-01   3.94e-01         8.581e-01   4.24e-01
+       1.5126         6.257e-01   2.81e-01         6.479e-01   2.96e-01
+       1.5217         4.599e-01   1.75e-01         4.613e-01   1.75e-01
+       1.5311         3.032e-01   8.42e-02         2.945e-01   7.98e-02
+       1.5405         1.511e-01   2.23e-02         1.431e-01   2.01e-02
+       1.5500         4.344e-04   1.89e-07         1.009e-03   1.02e-06
+       1.5597         1.531e-01   2.29e-02         1.431e-01   2.01e-02
+       1.5694         3.122e-01   8.88e-02         2.988e-01   8.19e-02
+       1.5793         4.816e-01   1.88e-01         4.755e-01   1.84e-01
+       1.5893         6.640e-01   3.06e-01         6.778e-01   3.15e-01
+       1.5995         8.600e-01   4.25e-01         9.065e-01   4.51e-01

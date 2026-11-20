@@ -1,0 +1,39 @@
+INTERCONNECT, Lumerical 2025 R1: one attenuator of devices/svd_multiplier_builder.py (row 0 and its dump), built from
+  the FDTD S-parameters of the coupler, the strip of the strip waveguide chapter and the heater of the phase shifter chapter
+  coupler at 1.55 um: |S31|^2 = 0.4986, |S41|^2 = 0.5007; P_pi = 10.26 mW; propagation loss 2.2 dB/cm (assumed)
+  analyser 1.5035 to 1.5995 um, 101 points; run time 0.6 min
+
+answer: the heater sets the field the row keeps from 2.0e-03 to 1, as sin(theta / 2), and its phase moves by 0.50 rad per rad of theta (1/2 for ideal couplers).  The row cannot be dimmed below -54.1 dB at 1.55 um: a singular value smaller than 2.0e-03 times the largest cannot be set.
+
+a. the heater swept at 1.55 um, light into the row
+  at 0 mW the row keeps 3.93e-06 of what passes (-54.1 dB); ((tau^2 - kappa^2) / (tau^2 + kappa^2))^2 = 4.27e-06 (-53.7 dB)
+  through the attenuator, the row and the dump together (the same at every power): 0.9836 (0.072 dB)
+  heater (P_pi)  row keeps (power)  dump  field kept  sin(theta/2)  phase of the row against P_pi (rad)
+           0.00             0.0000  0.9836      0.0020        0.0000  -0.0715
+           0.20             0.0929  0.8897      0.3074        0.3090  -1.2506
+           0.40             0.3359  0.6438      0.5855        0.5878  -0.9398
+           0.60             0.6361  0.3398      0.8073        0.8090  -0.6268
+           0.80             0.8788  0.0939      0.9505        0.9511  -0.3135
+           1.00             0.9714  0.0000      1.0000        1.0000  +0.0000
+           1.20             0.8785  0.0939      0.9505        0.9511  +0.3135
+           1.40             0.6356  0.3399      0.8072        0.8090  +0.6268
+           1.60             0.3354  0.6438      0.5853        0.5878  +0.9396
+           1.80             0.0927  0.8896      0.3072        0.3090  +1.2503
+           2.00             0.0000  0.9836      0.0020        0.0000  -0.0715
+
+b. against the wavelength
+  lambda (um)  kappa^2  leak at 0 mW (dB)  formula (dB)  field kept at P_pi / 2
+       1.5035   0.3603              -11.1         -11.1                  0.7321
+       1.5126   0.3851              -12.8         -12.8                  0.7234
+       1.5217   0.4112              -15.1         -15.0                  0.7160
+       1.5311   0.4389              -18.3         -18.3                  0.7101
+       1.5405   0.4682              -24.0         -23.9                  0.7063
+       1.5500   0.4990              -54.1         -53.7                  0.7050
+       1.5597   0.5310              -24.2         -24.2                  0.7064
+       1.5694   0.5644              -17.9         -17.8                  0.7108
+       1.5793   0.5991              -14.1         -14.1                  0.7188
+       1.5893   0.6351              -11.4         -11.4                  0.7304
+       1.5995   0.6719               -9.3          -9.3                  0.7457
+  the leak is (1 - 2 kappa^2)^2 with the split kappa^2 of the FDTD coupler at each wavelength: deepest where it splits 50:50
+
+c. the Python model of svd_model.py against INTERCONNECT, all 41 powers and 101 wavelengths: largest difference of an entry 2.2e-04, the reflection of the couplers that only INTERCONNECT includes.

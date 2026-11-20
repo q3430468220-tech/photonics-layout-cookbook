@@ -1,0 +1,43 @@
+INTERCONNECT, Lumerical 2025 R1, and the Python model (svd_model.py): the 4 x 4 multiplier of
+  devices/svd_multiplier_builder.py as a layer that classifies 2 x 2 images; 2000 images to train, 1000 to test, noise 0.2
+  analyser 1.5035 to 1.5995 um, 101 points; run time 2.5 min
+
+answer: read coherently, the optical layer classifies 99.3 % of the test images right at 1.55 um, as the electronic layer does (99.3 %), and keeps within 1 % of it over 58 nm.  Read by plain photodiodes, the same W falls to 74.6 %: the sign is lost, and top and bottom, left and right, look alike.  A W trained for the photodiode gets back to 99.6 %.
+
+a. the electronic layer
+  W trained for the logits W x: test accuracy 99.3 %;  read as |W x| (the sign lost): 74.6 %
+  W trained for the photodiode, logits (W x)^2: 99.6 %
+  W (logits)                       W (photodiode)          (rows: top, bottom, left, right; columns: the pixels)
+   +4.28  +4.18  -4.21  -4.18       -2.81  -3.12  +0.83  +0.26
+   -4.09  -4.24  +4.24  +4.20       +0.42  +0.17  -2.66  -2.96
+   +4.11  -4.38  +4.44  -4.23       +2.80  -0.46  +2.71  -0.55
+   -3.98  +4.09  -4.10  +4.13       -0.00  -2.86  +0.27  -2.68
+
+b. programmed and measured, at 1.55 um
+  W              error (model)  error (INTERCONNECT)  heaters (mW)  same class as electronic  singular values of W / s
+  coherent             7.2e-05               3.8e-04           351                    100.0 %  1.000 0.979 0.008 0.003
+  power                6.4e-13               2.9e-04           387                    100.0 %  1.000 0.908 0.847 0.010
+  the model against INTERCONNECT, both W, all wavelengths: largest difference of an entry 1.2e-03
+
+c. W for the logits, read by photodiodes at 1.55 um: true class (rows) against the class read (columns)
+                   top  bottom    left   right
+  top              267       2       3       0
+  bottom             0     252       1       0
+  left               1       1     227       0
+  right              1       0     245       0
+
+d. the accuracy against the wavelength (%)
+  lambda (um)  coherent  sign lost  photodiode W   error of W (coherent)
+       1.5035      78.7       38.7          66.2               2.07e+00
+       1.5126      98.4       42.9          73.0               1.37e+00
+       1.5217      99.4       47.5          89.1               9.02e-01
+       1.5311      99.6       81.4          98.7               5.50e-01
+       1.5405      99.4       99.3          99.6               2.62e-01
+       1.5500      99.3       74.6          99.6               3.79e-04
+       1.5597      99.4       51.3          99.6               2.63e-01
+       1.5694      98.4       51.9          98.7               5.57e-01
+       1.5793      94.3       51.7          88.4               9.26e-01
+       1.5893      78.6       50.9          72.5               1.45e+00
+       1.5995      61.6       49.0          52.8               2.30e+00
+  coherent: within 1 % of the electronic layer from 1513 to 1570 nm (58 nm)
+  power: within 1 % of the electronic layer from 1531 to 1569 nm (38 nm)

@@ -1,0 +1,47 @@
+INTERCONNECT, Lumerical 2025 R1, and the Python model (svd_model.py): the 4 x 4 multiplier of
+  devices/svd_multiplier_builder.py as the convolution layer of a network that reads handwritten digits;
+  E. Alpaydin and C. Kaynak, Optical Recognition of Handwritten Digits, UCI Machine Learning Repository (1998), doi:10.24432/C50P49, CC BY 4.0
+  3823 digits to train, 1797 of other writers to test; kernels of 2 x 2, stride 1, 49 patches per digit;
+  analyser 1.5035 to 1.5995 um, 101 points; run time 3.7 min
+
+answer: with the multiplier as its convolution layer, the network reads 97.3 % of the test digits right at 1.55 um when its kernels were trained for photodiodes, 95.6 % with the fixed Haar kernels and 95.7 % with learned kernels read coherently, each as its electronic network does to within 0.0 points.  The learned kernels read by photodiodes, the sign lost, fall to 56.4 %.
+
+a. the three networks
+  kernels      read-out              electronic  optical at 1.55 um  within 1 point of electronic     heaters (mW)  error of K (INTERCONNECT)  singular values of K / s
+  Haar         coherent, then ReLU        95.6 %              95.6 %  1534 to 1560 nm (26 nm)                 391                    6.1e-04  1.000 1.000 1.000 1.000
+  learned      coherent, then ReLU        95.7 %              95.7 %  1525 to 1575 nm (51 nm)                 334                    3.9e-04  1.000 0.474 0.219 0.036
+  photodiode   |field|^2, photodiode       97.3 %              97.3 %  1540 to 1561 nm (21 nm)                 378                    4.6e-04  1.000 0.806 0.434 0.188
+  the learned kernels read by photodiodes (|field| in place of ReLU): electronic 56.4 %, optical 56.4 %
+  the model against INTERCONNECT, all three, all wavelengths: largest difference of an entry 1.0e-03
+
+b. the kernels, as 2 x 2 windows (top left, top right / bottom left, bottom right), rows of K
+  Haar:  [+0.50 +0.50 / +0.50 +0.50]   [+0.50 +0.50 / -0.50 -0.50]   [+0.50 -0.50 / +0.50 -0.50]   [+0.50 -0.50 / -0.50 +0.50]
+  learned:  [-3.15 +0.49 / +7.47 -0.18]   [-1.91 +6.89 / -5.13 -0.64]   [+8.69 +2.50 / -9.57 -3.79]   [-0.51 -0.12 / -0.40 -0.29]
+  photodiode:  [-0.76 +0.09 / +0.21 -1.90]   [-2.12 +2.36 / +1.43 -2.06]   [-2.37 -0.66 / +0.46 +2.48]   [-1.41 -2.53 / +2.39 +1.52]
+
+c. the accuracy against the wavelength, INTERCONNECT (%)
+  lambda (um)        Haar     learned  photodiode   learned, sign lost
+       1.5035        31.5        53.8        31.0                 20.9
+       1.5126        71.8        84.2        47.4                 40.1
+       1.5217        85.4        93.7        70.9                 56.7
+       1.5311        93.9        95.8        90.4                 60.4
+       1.5405        95.6        95.8        96.8                 57.8
+       1.5500        95.6        95.7        97.3                 56.4
+       1.5597        94.7        95.8        96.8                 58.2
+       1.5694        89.3        95.8        89.1                 62.9
+       1.5793        79.5        93.5        66.4                 65.5
+       1.5893        58.9        82.6        41.0                 53.5
+       1.5995        36.6        49.1        23.9                 31.1
+
+d. photodiode kernels at 1.55 um, optical: true digit (rows) against the digit read (columns)
+            0     1     2     3     4     5     6     7     8     9
+    0     174     0     0     2     0     0     0     0     1     1
+    1       0   177     3     0     1     0     0     0     1     0
+    2       0     1   171     0     2     0     0     0     3     0
+    3       0     0     2   178     0     0     0     0     1     2
+    4       0     1     0     0   177     0     1     0     1     1
+    5       0     1     0     0     0   179     0     0     0     2
+    6       0     0     0     0     0     0   181     0     0     0
+    7       0     0     0     0     2     1     0   171     1     4
+    8       0     2     0     0     1     0     0     0   171     0
+    9       0     1     0     5     4     0     0     0     1   169

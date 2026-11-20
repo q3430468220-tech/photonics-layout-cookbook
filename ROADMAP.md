@@ -22,6 +22,7 @@ dot and a link to that chapter. Nothing below has a date.
 | v0.3 | the GSiP teaching PDK with a full back end, the heater-tuned ring modulator, seven simulation steps and five chapters |
 | since v0.3 | the device library: builders in `devices/`, shared solver recipes, the first four passive devices and the thermo-optic phase shifter |
 | since v0.3 | the first circuit: a 4×4 Clements mesh, built from the coupler and the phase shifter and run in INTERCONNECT |
+| since v0.3 | optical computing: a 4×4 real matrix multiplier, two meshes and a column of attenuators, used as the convolution layer of a network that reads handwritten digits |
 
 ## Unit devices: passive
 
@@ -88,13 +89,14 @@ computing is built on it.
 
 Done: the [4×4 Clements mesh](lumerical_simulations/clements_mesh/README.md) of programmable
 photonics, with its layout, the programming of a matrix, the heat of the neighbours and the errors
-of the couplers. Next: a real matrix multiplier for optical computing, made of two such meshes and
-a column of attenuators. Then a WDM microring link, then a switch fabric.
+of the couplers; and the [4×4 real matrix multiplier](lumerical_simulations/svd_multiplier/README.md)
+of optical computing, made of two such meshes and a column of attenuators. Next: a WDM microring
+link, then a switch fabric.
 
 | direction | layout | what the link simulation reports | unit devices it needs |
 |---|---|---|---|
 | Programmable photonics | an N×N Mach-Zehnder mesh in the Clements arrangement ([done](lumerical_simulations/clements_mesh/README.md) for 4×4) | matrix fidelity, band, thermal crosstalk between heaters and its calibration, coupler errors | directional couplers, thermo-optic phase shifters |
-| Optical computing | a real matrix multiplier: two meshes and a column of attenuators, by the singular value decomposition; a microring weight bank | the matrix-vector product against its target; the precision in bits; power and speed per operation | the mesh above, variable optical attenuators, photodetectors, ring filters |
+| Optical computing | a real matrix multiplier: two meshes and a column of attenuators, by the singular value decomposition ([done](lumerical_simulations/svd_multiplier/README.md) for 4×4); a microring weight bank | the matrix-vector product against its target; the precision in bits; power and speed per operation | the mesh above, variable optical attenuators, photodetectors, ring filters |
 | Optical switching | N×N fabrics built from the 2×2 switch (Beneš and path-independent-loss arrangements); a ring-based switch | insertion loss and crosstalk per path; extinction; switching time and power | 2×2 Mach-Zehnder switches, splitters, crossings, thermo-optic and PIN phase shifters, ring filters |
 | Optical interconnects | a WDM transmitter with several ring modulators on one bus; a ring or Mach-Zehnder demultiplexer; a germanium receiver; a Mach-Zehnder modulator link | link budget; eye diagram; bit error rate against received power; crosstalk between channels; locking of the rings with their heaters | ring modulator, Mach-Zehnder modulator, photodetector, ring filters, splitters, grating or edge couplers |
 

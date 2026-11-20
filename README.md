@@ -354,15 +354,16 @@ was. That process does not exist yet.
 
 Circuits are built from the devices of the library, with the kept results of their chapters, and
 run in INTERCONNECT. They come in four directions: programmable photonics, optical computing,
-optical interconnects and optical switching. The first is a programmable mesh; a real matrix
-multiplier for optical computing is built on it next, then a WDM ring link and a switch fabric
-([ROADMAP.md](ROADMAP.md#circuits-and-links)).
+optical interconnects and optical switching. The first is a programmable mesh; the real matrix
+multiplier of optical computing is built from two of them. A WDM ring link and a switch fabric
+come next ([ROADMAP.md](ROADMAP.md#circuits-and-links)).
 
 <p align="center"><img src="lumerical_simulations/clements_mesh/figures/fig0_layout.png" width="100%" alt="Layout of the 4 by 4 Clements mesh: six interferometers in four columns, sixteen heaters with trenches and thirty-two pads"></p>
 
 | circuit | built from | tools | result at 1.55 µm, TE |
 |---|---|---|---|
 | [Clements mesh, 4 × 4](lumerical_simulations/clements_mesh/README.md) | directional coupler, thermo-optic phase shifter | INTERCONNECT, Python | any unitary matrix to 1 − F below 10⁻⁶, about 160 mW of heaters; F > 0.99 over 13 nm; the heat of the neighbours costs 10⁻³ and a fit takes it back; with the coupler gaps off by σ = 5 nm a fit still holds every matrix tried |
+| [Real matrix multiplier, 4 × 4](lumerical_simulations/svd_multiplier/README.md) | two Clements meshes and four Mach-Zehnder attenuators | INTERCONNECT, Python | any real matrix by its singular value decomposition, to a relative error below 5 × 10⁻¹³, about 335 mW; the smallest singular value it can set is 2 × 10⁻³ of the largest; F > 0.99 over 12 nm; as the convolution layer of a network, 97.3 % of 1797 handwritten test digits read right, each as the electronic network reads it; the same kernels read without their sign fall to 56 % |
 
 ## Roadmap
 
@@ -372,7 +373,7 @@ The unit devices of the library come first, then the circuits and links built fr
 | area | planned |
 |---|---|
 | programmable photonics | the 4×4 Clements mesh is [done](lumerical_simulations/clements_mesh/README.md) |
-| optical computing | a real matrix multiplier built on the mesh; a microring weight bank |
+| optical computing | the 4×4 real matrix multiplier is [done](lumerical_simulations/svd_multiplier/README.md); a microring weight bank |
 | optical switching | N×N switch fabrics: layout, loss and crosstalk |
 | optical interconnects | WDM transmitters, demultiplexers and receivers: layout, link budget, eye diagram |
 
